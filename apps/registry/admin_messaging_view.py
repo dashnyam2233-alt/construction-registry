@@ -1,7 +1,7 @@
 # registry/admin_messaging_view.py
 from django.template.response import TemplateResponse
 from django.contrib import messages as django_messages
-from .models import (
+from apps.messaging.models import (
     MessageLog,
 )
 from apps.core.models import (

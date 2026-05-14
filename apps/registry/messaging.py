@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def _get_config():
     """SiteConfig-г lazy import-оор авна"""
-    from .models import SiteConfig
+    from apps.messaging.models import SiteConfig
     return SiteConfig.get()
 
 

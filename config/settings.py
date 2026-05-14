@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "apps.public",
     "apps.accounts",
     "apps.core",
+    "apps.messaging",
 ]
 
 MIDDLEWARE = [

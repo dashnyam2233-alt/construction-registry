@@ -29,7 +29,7 @@ from .import_templates import (
     build_non_government_org_template_xlsx,
 )
 
-from .models import (
+from apps.messaging.models import (
     SiteConfig,
     MessageLog,
 )
