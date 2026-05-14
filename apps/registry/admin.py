@@ -1156,7 +1156,7 @@ class MessageLogAdmin(admin.ModelAdmin):
     subject_short.short_description = "Гарчиг/Агуулга"
 
     def changelist_view(self, request, extra_context=None):
-        from registry.admin_messaging_view import messaging_admin_view
+        from apps.registry.admin_messaging_view import messaging_admin_view
         # Зөвхөн MessageLog-ийн changelist дээр ажиллана
         if self.model._meta.model_name == 'messagelog':
             return messaging_admin_view(request)

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from registry.meta_graph import (
+from apps.registry.meta_graph import (
     MetaGraphError,
     post_to_facebook_page,
     publish_instagram_image,

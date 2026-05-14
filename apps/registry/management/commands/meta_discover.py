@@ -1,7 +1,7 @@
 import json
 from django.core.management.base import BaseCommand, CommandError
 
-from registry.meta_graph_discovery import MetaGraphError, discover_from_user_token
+from apps.registry.meta_graph_discovery import MetaGraphError, discover_from_user_token
 
 
 class Command(BaseCommand):

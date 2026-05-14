@@ -1,5 +1,5 @@
 from django import template
-from registry.models import Banner, PublicPost
+from apps.registry.models import Banner, PublicPost
 
 register = template.Library()
 

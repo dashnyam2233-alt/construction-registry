@@ -6,21 +6,17 @@ SECRET_KEY = "REPLACE_ME_WITH_YOUR_EXISTING_SECRET_KEY"
 
 DEBUG = True
 
-# ✅ Domain-оор ажиллуулахын тулд host-уудыг зөвшөөрнө
 ALLOWED_HOSTS = ["www.barilgainfo.mn", "barilgainfo.mn", "127.0.0.1", "localhost"]
 
-# ✅ Domain дээр login/register POST хийхэд CSRF алдаа гарахаас сэргийлнэ
 CSRF_TRUSTED_ORIGINS = [
     "https://www.barilgainfo.mn",
     "https://barilgainfo.mn",
-    # Хэрвээ https тохируулаагүй, түр http-оор ажиллуулж байгаа бол:
     "http://www.barilgainfo.mn",
     "http://barilgainfo.mn",
 ]
 
-# ✅ Email эсвэл username-ээр нэвтрэх backend нэмэв
 AUTHENTICATION_BACKENDS = [
-    "registry.backends.EmailOrUsernameModelBackend",
+    "apps.registry.backends.EmailOrUsernameModelBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -33,11 +29,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # ✅ Excel Import / Export
     "import_export",
 
-    # ✅ Local app (ready() ажиллуулахын тулд ингэж заана)
-    "registry.apps.RegistryConfig",
+    "apps.registry.apps.RegistryConfig",
 ]
 
 MIDDLEWARE = [
@@ -64,8 +58,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
 
-                # ✅ Admin + User sidebar өгөгдөл
-                "registry.context_processors.public_sidebar",
+                "apps.registry.context_processors.public_sidebar",
             ],
         },
     },
@@ -104,7 +97,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-# ── Email (SMTP) ──
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
