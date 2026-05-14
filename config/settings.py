@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "import_export",
-
+    "rest_framework",
     "apps.registry.apps.RegistryConfig",
     "apps.public",
     "apps.accounts",

@@ -16,6 +16,7 @@ urlpatterns = [
     path("admin/messaging/", admin.site.admin_view(messaging_admin_view), name="admin-messaging"),
     path("admin/meta-publish/", admin.site.admin_view(meta_publish_view), name="meta-publish"),
     path("admin/", admin.site.urls),
+    path("api/", include("apps.api.urls")),
 ]
 
 if settings.DEBUG:
