@@ -1,38 +1,77 @@
 import os
 import re
-from pathlib import Path
 
-ROOT = Path("apps/registry")
-MODELS = ["PublicPost", "Banner", "HeroBanner", "SliderAd", "SubBanner"]
+FILES = [
+    r"apps\registry\admin.py",
+    r"apps\registry\forms.py",
+    r"apps\registry\views.py",
+    r"apps\registry\resources.py",
+]
 
-for py in ROOT.rglob("*.py"):
-    text = py.read_text(encoding="utf-8")
-    orig = text
+# Replacements: (pattern, replacement)
+REPLACEMENTS = [
+    # "from .models import ... UserCompanyProfile ..." -> remove UserCompanyProfile, add import line
+    # We'll handle by simple string replace + add new import at top
+]
 
-    # Replace: from .models import X, Y, Z  (where X/Y/Z includes our 5)
-    # Strategy: scan import lines and split them
-    def replace_import(match):
-        prefix = match.group(1)  # "from .models import" or "from apps.registry.models import"
-        items_raw = match.group(2)
-        items = [i.strip() for i in items_raw.split(",")]
-        public_items = [i for i in items if i in MODELS]
-        registry_items = [i for i in items if i not in MODELS and i]
-        lines = []
-        if registry_items:
-            lines.append(f"{prefix} {', '.join(registry_items)}")
-        if public_items:
-            lines.append(f"from apps.public.models import {', '.join(public_items)}")
-        return "\n".join(lines)
+NEW_IMPORT = "from apps.accounts.models import AdminGroup, UserCompanyProfile\n"
 
-    # Single-line imports
-    text = re.sub(
-        r"(from \.models import|from apps\.registry\.models import)\s+([A-Za-z_, ]+)",
-        replace_import,
-        text,
+for path in FILES:
+    if not os.path.exists(path):
+        print(f"SKIP (not found): {path}")
+        continue
+
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    original = content
+
+    # Remove UserCompanyProfile and AdminGroup from existing .models imports
+    def clean_models_import(match):
+        names = match.group(1)
+        items = [n.strip() for n in names.split(",")]
+        items = [n for n in items if n and n not in ("UserCompanyProfile", "AdminGroup")]
+        if not items:
+            return ""
+        return f"from .models import {', '.join(items)}"
+
+    # single-line: from .models import A, B, C
+    content = re.sub(
+        r"from \.models import ([^\n\(]+)",
+        clean_models_import,
+        content,
     )
 
-    if text != orig:
-        py.write_text(text, encoding="utf-8")
-        print(f"Updated: {py}")
+    # multi-line: from .models import (\n    A,\n    B,\n)
+    def clean_multiline(match):
+        names = match.group(1)
+        items = [n.strip().rstrip(",") for n in names.split("\n")]
+        items = [n for n in items if n and n not in ("UserCompanyProfile", "AdminGroup")]
+        if not items:
+            return ""
+        return "from .models import (\n    " + ",\n    ".join(items) + ",\n)"
+
+    content = re.sub(
+        r"from \.models import \(([^)]+)\)",
+        clean_multiline,
+        content,
+    )
+
+    # Add new import after the last "from" or "import" line at top
+    if "from apps.accounts.models import" not in content:
+        lines = content.split("\n")
+        insert_idx = 0
+        for i, line in enumerate(lines):
+            if line.startswith("from ") or line.startswith("import "):
+                insert_idx = i + 1
+        lines.insert(insert_idx, NEW_IMPORT.rstrip())
+        content = "\n".join(lines)
+
+    if content != original:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        print(f"UPDATED: {path}")
+    else:
+        print(f"NO CHANGE: {path}")
 
 print("Done.")

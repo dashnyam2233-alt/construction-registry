@@ -31,13 +31,14 @@ from .import_templates import (
 
 from .models import (
     GovernmentOrganization, NonGovernmentOrganization, Company, Worker,
-    FamilyMember, AdminGroup, Brigade, BrigadeMember, UserCompanyProfile,
+    FamilyMember, Brigade, BrigadeMember,
     CITY_CHOICES, UB_DISTRICT_CHOICES, COMPANY_ACTIVITY_DIRECTION_CHOICES,
     normalize_search_text,
     SiteConfig, MessageLog,
 )
 from apps.public.models import Banner, PublicPost, HeroBanner, SliderAd, SubBanner
 from .birth_soums import BIRTH_SOUMS
+from apps.accounts.models import AdminGroup, UserCompanyProfile
 
 ROLE_ADMIN = "ADMIN_FULL"
 ROLE_OPERATOR = "COMPANY_OPERATOR"

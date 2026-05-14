@@ -1,12 +1,12 @@
 from import_export import resources
 
 from .models import (
+from apps.accounts.models import AdminGroup, UserCompanyProfile
     GovernmentOrganization,
     NonGovernmentOrganization,
     Company,
     Worker,
     FamilyMember,
-    AdminGroup,
     Brigade,
     BrigadeMember,
 )

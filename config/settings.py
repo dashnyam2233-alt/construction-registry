@@ -16,7 +16,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    "apps.registry.backends.EmailOrUsernameModelBackend",
+    "apps.accounts.backends.EmailOrUsernameModelBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
 
     "apps.registry.apps.RegistryConfig",
     "apps.public",
+    "apps.accounts",
 ]
 
 MIDDLEWARE = [
