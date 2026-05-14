@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 
-from .models import Company, Worker, Brigade
+from apps.core.models import Company, Worker, Brigade
 from apps.public.models import Banner, PublicPost, HeroBanner, SliderAd, SubBanner
 from apps.accounts.models import AdminGroup, UserCompanyProfile
 

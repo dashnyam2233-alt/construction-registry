@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "apps.registry.apps.RegistryConfig",
     "apps.public",
     "apps.accounts",
+    "apps.core",
 ]
 
 MIDDLEWARE = [

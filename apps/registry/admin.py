@@ -30,11 +30,21 @@ from .import_templates import (
 )
 
 from .models import (
-    GovernmentOrganization, NonGovernmentOrganization, Company, Worker,
-    FamilyMember, Brigade, BrigadeMember,
-    CITY_CHOICES, UB_DISTRICT_CHOICES, COMPANY_ACTIVITY_DIRECTION_CHOICES,
+    SiteConfig,
+    MessageLog,
+)
+from apps.core.models import (
+    GovernmentOrganization,
+    NonGovernmentOrganization,
+    Company,
+    Worker,
+    FamilyMember,
+    Brigade,
+    BrigadeMember,
+    CITY_CHOICES,
+    UB_DISTRICT_CHOICES,
+    COMPANY_ACTIVITY_DIRECTION_CHOICES,
     normalize_search_text,
-    SiteConfig, MessageLog,
 )
 from apps.public.models import Banner, PublicPost, HeroBanner, SliderAd, SubBanner
 from .birth_soums import BIRTH_SOUMS
@@ -482,7 +492,7 @@ class CompanyAdmin(RoleScopedAdmin):
         if request.resolver_match and request.resolver_match.kwargs.get("object_id"):
             obj_id = request.resolver_match.kwargs["object_id"]
             try:
-                from .models import Company as _C
+                from apps.core.models import Company as _C
                 obj = _C.objects.get(pk=obj_id)
                 if obj.slug:
                     extra_context["company_web_url"] = f"/company/{obj.slug}/"

@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-from apps.registry.models import SearchNormalizedMixin
+from apps.core.models import SearchNormalizedMixin
 
 
 class PublicPost(SearchNormalizedMixin, models.Model):

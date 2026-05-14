@@ -6,7 +6,7 @@ from typing import List, Tuple
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 
-from .models import (
+from apps.core.models import (
     CITY_CHOICES,
     UB_DISTRICT_CHOICES,
     COMPANY_ACTIVITY_DIRECTION_CHOICES,

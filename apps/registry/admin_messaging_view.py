@@ -2,8 +2,17 @@
 from django.template.response import TemplateResponse
 from django.contrib import messages as django_messages
 from .models import (
-    Company, Worker, FamilyMember, Brigade, BrigadeMember, MessageLog,
-    CITY_CHOICES, COMPANY_ACTIVITY_DIRECTION_CHOICES, UB_DISTRICT_CHOICES
+    MessageLog,
+)
+from apps.core.models import (
+    Company,
+    Worker,
+    FamilyMember,
+    Brigade,
+    BrigadeMember,
+    CITY_CHOICES,
+    COMPANY_ACTIVITY_DIRECTION_CHOICES,
+    UB_DISTRICT_CHOICES,
 )
 from .messaging import send_message, CHANNEL_LABELS
 

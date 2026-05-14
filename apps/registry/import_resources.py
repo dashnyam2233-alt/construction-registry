@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from import_export import resources, fields
 from import_export.widgets import Widget, ForeignKeyWidget
 
-from .models import (
+from apps.core.models import (
     Company,
     Worker,
     CITY_CHOICES,

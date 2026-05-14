@@ -1,8 +1,11 @@
 from import_export import resources
 
 from .models import (
-from apps.accounts.models import AdminGroup, UserCompanyProfile
+    from apps.accounts.models import AdminGroup,
+    UserCompanyProfile
     GovernmentOrganization,
+)
+from apps.core.models import (
     NonGovernmentOrganization,
     Company,
     Worker,
