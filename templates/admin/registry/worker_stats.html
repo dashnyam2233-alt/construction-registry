@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+  <div class="content">
+    <h1>{{ title }}</h1>
+
+    <form method="get" style="margin-bottom: 16px;">
+      <fieldset class="module aligned">
+        <div class="form-row">
+          <div>
+            <label>Компанийн төрөл:</label>
+            <select name="company_type">
+              <option value="">— Бүгд —</option>
+              {% for k, v in company_type_choices %}
+                <option value="{{ k }}" {% if k == selected_company_type %}selected{% endif %}>{{ v }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Мэргэжил:</label>
+            <select name="profession">
+              <option value="">— Бүгд —</option>
+              {% for k, v in profession_choices %}
+                <option value="{{ k }}" {% if k == selected_profession %}selected{% endif %}>{{ v }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="submit-row">
+        <input type="submit" class="default" value="Apply" />
+        <a class="button cancel-link" href="{% url 'admin:registry_worker_stats' %}">Reset</a>
+        <a class="button" href="{% url 'admin:registry_worker_changelist' %}">Ажилтны жагсаалт</a>
+      </div>
+    </form>
+
+    <div class="module">
+      <table>
+        <thead>
+          <tr>
+            <th>Компанийн төрөл</th>
+            {% for h in profession_headers %}
+              <th style="text-align:right;">{{ h }}</th>
+            {% endfor %}
+            <th style="text-align:right;">Нийт</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in matrix %}
+            <tr>
+              <th>{{ row.company_type_label }}</th>
+              {% for c in row.counts %}
+                <td style="text-align:right;">{{ c }}</td>
+              {% endfor %}
+              <td style="text-align:right;"><b>{{ row.row_total }}</b></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Нийт</th>
+            {% for t in col_totals %}
+              <th style="text-align:right;">{{ t }}</th>
+            {% endfor %}
+            <th style="text-align:right;">{{ grand_total }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+{% endblock %}

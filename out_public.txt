@@ -1,0 +1,495 @@
+.venv\Lib\site-packages\click\core.py:805:                    # has been designed as part of Click public API, we return ``None``
+.venv\Lib\site-packages\click\types.py:693:        Future work my be considered to make this mapping user-configurable from public
+.venv\Lib\site-packages\django\contrib\admin\tests.py:35:        clicking a link or submitting a form. See the other public methods that
+.venv\Lib\site-packages\django\contrib\auth\models.py:58:    certain status or publication date."
+.venv\Lib\site-packages\django\contrib\flatpages\templatetags\flatpages.py:34:        # was provided, filter the list to only public flatpages.
+.venv\Lib\site-packages\django\contrib\flatpages\views.py:24:    Public interface to the flat page view.
+.venv\Lib\site-packages\django\contrib\gis\geos\io.py:18:# Public classes for (WKB|WKT)Reader, which return GEOSGeometry
+.venv\Lib\site-packages\django\contrib\gis\geos\mutable_list.py:169:    # ### Public list interface Methods ###
+.venv\Lib\site-packages\django\contrib\gis\geos\prototypes\io.py:149:# Non-public WKB/WKT reader classes for internal use because
+.venv\Lib\site-packages\django\contrib\postgres\serializers.py:7:        # Ranges are implemented in psycopg2._range but the public import
+.venv\Lib\site-packages\django\core\asgi.py:7:    The public interface to Django's ASGI support. Return an ASGI 3 callable.
+.venv\Lib\site-packages\django\core\asgi.py:9:    Avoids making django.core.handlers.ASGIHandler a public API, in case the
+.venv\Lib\site-packages\django\core\cache\__init__.py:13:See docs/topics/cache.txt for information on the public API.
+.venv\Lib\site-packages\django\core\files\storage\base.py:17:    # The following methods represent a public interface to private methods.
+.venv\Lib\site-packages\django\core\files\storage\base.py:58:    # These methods are part of the public API, with default implementations.
+.venv\Lib\site-packages\django\core\files\storage\base.py:139:    # The following methods form the public API for storage systems, but with
+.venv\Lib\site-packages\django\core\management\commands\dumpdata.py:176:        if format not in serializers.get_public_serializer_formats():
+.venv\Lib\site-packages\django\core\management\commands\loaddata.py:149:        self.serialization_formats = serializers.get_public_serializer_formats()
+.venv\Lib\site-packages\django\core\serializers\xml_serializer.py:495:        tpl = "DTDForbidden(name='{}', system_id={!r}, public_id={!r})"
+.venv\Lib\site-packages\django\core\serializers\xml_serializer.py:512:        tpl = "EntitiesForbidden(name='{}', system_id={!r}, public_id={!r})"
+.venv\Lib\site-packages\django\core\serializers\xml_serializer.py:527:        tpl = "ExternalReferenceForbidden(system_id='{}', public_id={})"
+.venv\Lib\site-packages\django\core\serializers\__init__.py:114:def get_public_serializer_formats():
+.venv\Lib\site-packages\django\core\wsgi.py:7:    The public interface to Django's WSGI support. Return a WSGI callable.
+.venv\Lib\site-packages\django\core\wsgi.py:9:    Avoids making django.core.handlers.WSGIHandler a public API, in case the
+.venv\Lib\site-packages\django\db\models\fields\__init__.py:2841:    It is intended that AutoFieldMixin become public API when it is possible to
+.venv\Lib\site-packages\django\db\models\manager.py:98:            # Only copy public methods or methods with the attribute
+.venv\Lib\site-packages\django\db\models\options.py:530:        combined with filtering of field properties is the public API for
+.venv\Lib\site-packages\django\db\models\options.py:571:        combined with filtering of field properties is the public API for
+.venv\Lib\site-packages\django\db\models\options.py:584:        combined with filtering of field properties is the public API for
+.venv\Lib\site-packages\django\db\models\options.py:597:        combined with filtering of field properties is the public API for
+.venv\Lib\site-packages\django\db\models\options.py:617:        combined with filtering of field properties is the public API for
+.venv\Lib\site-packages\django\db\models\query.py:2:The main QuerySet implementation. This provides the public API for the ORM.
+.venv\Lib\site-packages\django\db\models\query.py:1344:    # PUBLIC METHODS THAT RETURN A QUERYSET SUBCLASS #
+.venv\Lib\site-packages\django\db\models\query.py:1479:    # PUBLIC METHODS THAT ALTER ATTRIBUTES AND RETURN A NEW QUERYSET #
+.venv\Lib\site-packages\django\db\models\query.py:1813:    # PUBLIC INTROSPECTION ATTRIBUTES #
+.venv\Lib\site-packages\django\db\models\query.py:2605:        # instance, so we access an internal instead of using public interface
+.venv\Lib\site-packages\django\db\models\sql\compiler.py:141:            # when we have public API way of forcing the GROUP BY clause.
+.venv\Lib\site-packages\django\db\models\sql\subqueries.py:83:        query. This is the entry point for the public update() method on
+.venv\Lib\site-packages\django\template\response.py:38:        # _request should not be considered part of the public API.
+.venv\Lib\site-packages\django\template\__init__.py:54:# Public exceptions
+.venv\Lib\site-packages\django\test\utils.py:848:    This isn't meant as a public API, but helps reduce some repetitive code in
+.venv\Lib\site-packages\django\utils\cache.py:77:    if "private" in cc and "public" in kwargs:
+.venv\Lib\site-packages\django\utils\cache.py:79:    elif "public" in cc and "private" in kwargs:
+.venv\Lib\site-packages\django\utils\cache.py:80:        del cc["public"]
+.venv\Lib\site-packages\et_xmlfile\incremental_tree.py:28:# Secret Labs AB or the author not be used in advertising or publicity
+.venv\Lib\site-packages\PIL\BlpImagePlugin.py:5:The contents of this file are hereby released in the public domain (CC0)
+.venv\Lib\site-packages\PIL\BlpImagePlugin.py:7:  https://creativecommons.org/publicdomain/zero/1.0/
+.venv\Lib\site-packages\PIL\DdsImagePlugin.py:8:The contents of this file are hereby released in the public domain (CC0)
+.venv\Lib\site-packages\PIL\DdsImagePlugin.py:10:https://creativecommons.org/publicdomain/zero/1.0/
+.venv\Lib\site-packages\PIL\EpsImagePlugin.py:392:            # https://web.archive.org/web/20160528181353/http://partners.adobe.com/public/developer/en/ps/5002.EPSF_Spec.pdf
+.venv\Lib\site-packages\PIL\FtexImagePlugin.py:5:The contents of this file are hereby released in the public domain (CC0)
+.venv\Lib\site-packages\PIL\FtexImagePlugin.py:7:  https://creativecommons.org/publicdomain/zero/1.0/
+.venv\Lib\site-packages\PIL\Image.py:93:    # Also note that Image.core is not a publicly documented interface,
+.venv\Lib\site-packages\PIL\ImageCms.py:100:        0.0.1 alpha     first public release, Dec. 26, 2002
+.venv\Lib\site-packages\PIL\ImageFilter.py:179:    <https://www.mia.uni-saarland.de/Publications/gwosdek-ssvm11.pdf>
+.venv\Lib\site-packages\pip\_internal\metadata\base.py:602:        directly. Use the public ``iter_distribution()`` instead, which
+.venv\Lib\site-packages\pip\_internal\metadata\importlib\_compat.py:44:    expose the attribute as public. But pip's code base is old and not as clean,
+.venv\Lib\site-packages\pip\_internal\network\cache.py:64:        # class for backwards-compatibility and to avoid using a non-public
+.venv\Lib\site-packages\pip\_internal\resolution\resolvelib\provider.py:105:        """Public view of user-specified constraints.
+.venv\Lib\site-packages\pip\_vendor\cachecontrol\controller.py:100:            "public": (None, False),
+.venv\Lib\site-packages\pip\_vendor\cachecontrol\heuristics.py:76:            headers["cache-control"] = "public"
+.venv\Lib\site-packages\pip\_vendor\cachecontrol\heuristics.py:90:        return {"expires": datetime_to_header(expires), "cache-control": "public"}
+.venv\Lib\site-packages\pip\_vendor\cachecontrol\heuristics.py:130:        if "cache-control" in headers and headers["cache-control"] != "public":
+.venv\Lib\site-packages\pip\_vendor\dependency_groups\_implementation.py:65:    parsing requirements. There are only two public methods for exploring the data:
+.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:529:        The underlying mappings are stored in a list.  That list is public and can
+.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:417:    # Public API follows
+.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1070:                logger.exception('Exception during event publication')
+.venv\Lib\site-packages\pip\_vendor\distro\distro.py:723:        Public instance attributes:
+.venv\Lib\site-packages\pip\_vendor\packaging\licenses\__init__.py:29:# `LicenseRef-Public-Domain` and `LicenseRef-Proprietary`.
+.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:393:                prospective.public, strip_trailing_zero=False
+.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:424:                prospective = Version(prospective.public)
+.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:435:        return Version(prospective.public) <= Version(spec)
+.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:441:        return Version(prospective.public) >= Version(spec)
+.venv\Lib\site-packages\pip\_vendor\packaging\version.py:346:    def public(self) -> str:
+.venv\Lib\site-packages\pip\_vendor\packaging\version.py:347:        """The public portion of the version.
+.venv\Lib\site-packages\pip\_vendor\packaging\version.py:349:        >>> Version("1.2.3").public
+.venv\Lib\site-packages\pip\_vendor\packaging\version.py:351:        >>> Version("1.2.3+abc").public
+.venv\Lib\site-packages\pip\_vendor\packaging\version.py:353:        >>> Version("1!1.2.3dev1+abc").public
+.venv\Lib\site-packages\pip\_vendor\packaging\version.py:369:        The "base version" is the public version of the project without any pre or post
+.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:3145:        """Delegate all unrecognized public attributes to .metadata provider"""
+.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:941:            (r'(public|readonly|extern|api|inline)\b', Keyword.Reserved),
+.venv\Lib\site-packages\pip\_vendor\pygments\util.py:188:    eg: 'html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'
+.venv\Lib\site-packages\pip\_vendor\resolvelib\resolvers\resolution.py:576:        is a tuple subclass with three public members:
+.venv\Lib\site-packages\pip\_vendor\rich\_emoji_codes.py:60:    "central_african_republic": "🇨🇫",
+.venv\Lib\site-packages\pip\_vendor\rich\_emoji_codes.py:85:    "dominican_republic": "🇩🇴",
+.venv\Lib\site-packages\pip\_vendor\rich\_emoji_codes.py:3043:    "flag_for_central_african_republic": "🇨🇫",
+.venv\Lib\site-packages\pip\_vendor\rich\_emoji_codes.py:3061:    "flag_for_czech_republic": "🇨🇿",
+.venv\Lib\site-packages\pip\_vendor\rich\_emoji_codes.py:3067:    "flag_for_dominican_republic": "🇩🇴",
+.venv\Lib\site-packages\pip\_vendor\truststore\_api.py:305:# Python 3.13+ makes get_unverified_chain() a public API that only returns DER
+.venv\Lib\site-packages\pip\_vendor\truststore\_api.py:306:# encoded certificates. We detect whether we need to call public_bytes() for 3.10->3.12
+.venv\Lib\site-packages\pip\_vendor\truststore\_api.py:313:            cert if isinstance(cert, bytes) else cert.public_bytes(_ssl.ENCODING_DER)
+.venv\Lib\site-packages\pip\_vendor\truststore\_api.py:321:        return [cert.public_bytes(_ssl.ENCODING_DER) for cert in unverified_chain]
+.venv\Lib\site-packages\pip\_vendor\truststore\__init__.py:9:# This API only became public in Python 3.13 but was available in CPython and PyPy since 3.10.
+.venv\Lib\site-packages\pip\_vendor\urllib3\contrib\appengine.py:308:# Alias methods from _appengine_environ to maintain public API interface.
+.venv\Lib\site-packages\pkg_resources\_vendor\packaging\specifiers.py:435:            prospective = Version(prospective.public)
+.venv\Lib\site-packages\pkg_resources\_vendor\packaging\specifiers.py:465:                prospective = Version(prospective.public)
+.venv\Lib\site-packages\pkg_resources\_vendor\packaging\specifiers.py:479:        return Version(prospective.public) <= Version(spec)
+.venv\Lib\site-packages\pkg_resources\_vendor\packaging\specifiers.py:489:        return Version(prospective.public) >= Version(spec)
+.venv\Lib\site-packages\pkg_resources\_vendor\packaging\version.py:124:    def public(self) -> str:
+.venv\Lib\site-packages\pkg_resources\_vendor\packaging\version.py:352:    def public(self) -> str:
+.venv\Lib\site-packages\pkg_resources\__init__.py:2832:        """Delegate all unrecognized public attributes to .metadata provider"""
+.venv\Lib\site-packages\psycopg\pq\_debug.py:5:the public interface and are subject to change at any moment.
+.venv\Lib\site-packages\psycopg\transaction.py:75:        # un-entered state is outside the public interface.
+.venv\Lib\site-packages\psycopg\_oids.py:4:This is an internal module. Types are publicly exposed by
+.venv\Lib\site-packages\psycopg\_py_transformer.py:5:the right implementation (Python or C). The public place where the object
+.venv\Lib\site-packages\setuptools\config\_validate_pyproject\formats.py:139:        self.__name__ = "trove_classifier"  # Emulate a public function
+.venv\Lib\site-packages\setuptools\_vendor\packaging\specifiers.py:435:            prospective = Version(prospective.public)
+.venv\Lib\site-packages\setuptools\_vendor\packaging\specifiers.py:465:                prospective = Version(prospective.public)
+.venv\Lib\site-packages\setuptools\_vendor\packaging\specifiers.py:479:        return Version(prospective.public) <= Version(spec)
+.venv\Lib\site-packages\setuptools\_vendor\packaging\specifiers.py:489:        return Version(prospective.public) >= Version(spec)
+.venv\Lib\site-packages\setuptools\_vendor\packaging\version.py:124:    def public(self) -> str:
+.venv\Lib\site-packages\setuptools\_vendor\packaging\version.py:352:    def public(self) -> str:
+.venv\Lib\site-packages\setuptools\_vendor\typing_extensions.py:1129:    # Not exported and not a public API, but needed for get_origin() and get_args()
+.venv\Lib\site-packages\setuptools\__init__.py:234:    The function `convert_path` is considered internal and not part of the public API.
+.venv\Lib\site-packages\spark_parser\bin\parser_coverage.py:5:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\spark_parser\bin\parser_coverage.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\spark_parser\bin\parser_coverage.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\sqlparse\keywords.py:455:    'PUBLIC': tokens.Keyword,
+.venv\Lib\site-packages\tablib\_vendor\dbfpy\fields.py:185:        This method shouldn't be used publicly. It's called from the
+.venv\Lib\site-packages\tablib\_vendor\dbfpy\record.py:166:            This isn't a public method, it's better to
+.venv\Lib\site-packages\tablib\_vendor\dbfpy\record.py:167:            use 'store' instead publicly.
+.venv\Lib\site-packages\uncompyle6\bin\pydisassemble.py:7:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\bin\pydisassemble.py:14:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\bin\pydisassemble.py:16:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\code_fns.py:7:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\code_fns.py:14:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\code_fns.py:16:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\linenumbers.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\linenumbers.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\linenumbers.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\main.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\main.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\main.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parser.py:7:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parser.py:14:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parser.py:16:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\parse2.py:6:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\parse2.py:13:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\parse2.py:15:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\parse3.py:7:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\parse3.py:14:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\parse3.py:16:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\parse34.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\parse34.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\parse34.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\parse36.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\parse36.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\parse36.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\parse37.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\parse37.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\parse37.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\parse38.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\parse38.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\parse38.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\and_check.py:3:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\iflaststmt.py:3:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\iflaststmt.py:10:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\iflaststmt.py:12:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\joined_str_check.py:3:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\joined_str_check.py:10:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\joined_str_check.py:12:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\whilestmt.py:3:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\whilestmt.py:10:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\whilestmt.py:12:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\whilestmt38.py:3:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\whilestmt38.py:10:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\parsers\reducecheck\whilestmt38.py:12:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanner.py:7:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanner.py:14:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanner.py:16:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner2.py:6:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner2.py:13:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner2.py:15:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner26.py:6:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner26.py:13:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner26.py:15:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner3.py:6:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner3.py:13:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner3.py:15:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner33.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner33.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner33.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner34.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner34.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner34.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner35.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner35.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner35.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner37.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner37.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner37.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner37base.py:6:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner37base.py:13:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner37base.py:15:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner38.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner38.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner38.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\scanner39.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\scanner39.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\scanner39.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\scanners\tok.py:6:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\scanners\tok.py:13:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\scanners\tok.py:15:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\aligner.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\aligner.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\aligner.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\consts.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\consts.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\consts.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize14.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize14.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize14.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize25.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize25.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize25.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize26_27.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize26_27.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize26_27.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize3.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize3.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize3.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize35.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize35.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize35.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize36.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize36.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize36.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize37.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize37.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize37.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\customize38.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\customize38.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\customize38.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\fragments.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\fragments.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\fragments.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\gencomp.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\gencomp.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\gencomp.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\helper.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\helper.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\helper.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\linemap.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\linemap.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\linemap.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\make_function1.py:5:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\make_function1.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\make_function1.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\make_function2.py:5:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\make_function2.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\make_function2.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\make_function3.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\make_function3.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\make_function3.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\make_function36.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\make_function36.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\make_function36.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\n_actions.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\n_actions.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\n_actions.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\parser_error.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\parser_error.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\parser_error.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\pysource.py:7:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\pysource.py:14:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\pysource.py:16:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\semantics\transform.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\semantics\transform.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\semantics\transform.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\show.py:4:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\show.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\show.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\verify.py:6:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\verify.py:13:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\verify.py:15:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\uncompyle6\version.py:2:#  it under the terms of the GNU General Public License as published by
+.venv\Lib\site-packages\uncompyle6\version.py:9:#  GNU General Public License for more details.
+.venv\Lib\site-packages\uncompyle6\version.py:11:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\urllib3\fields.py:256:        :meta public:
+.venv\Lib\site-packages\xdis\bytecode.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\bytecode.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\bytecode.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\base.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\base.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\base.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code13.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code13.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\code13.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code15.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code15.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\code15.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code20.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code20.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\code20.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code30.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code30.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\code30.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code310.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code310.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\code310.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code311.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code311.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\code311.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code38.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\code38.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\code38.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\__init__.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\codetype\__init__.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\codetype\__init__.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\cross_dis.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\cross_dis.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\cross_dis.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\cross_types.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\cross_types.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\cross_types.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\disasm.py:5:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\disasm.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\disasm.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\instruction.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\instruction.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\instruction.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\load.py:3:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\load.py:10:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\load.py:12:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\magics.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\magics.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\magics.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\marsh.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\marsh.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\marsh.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\base.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\base.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\base.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\format\basic.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\format\basic.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\format\basic.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\format\extended.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\format\extended.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\format\extended.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\format\__init__.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\format\__init__.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\format\__init__.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_10.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_10.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_10.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_11.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_11.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_11.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_12.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_12.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_12.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_13.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_13.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_13.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_14.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_14.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_14.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_15.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_15.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_15.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_16.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_16.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_16.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_1x.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_1x.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_1x.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_20.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_20.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_20.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_21.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_21.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_21.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_26.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_26.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_26.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_26pypy.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_26pypy.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_26pypy.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_27.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_27.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_27.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_2x.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_2x.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_2x.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_310.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_310.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_310.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_311.py:5:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_311.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_311.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_34.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_34.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_34.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_35.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_35.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_35.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_36.py:5:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_36.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_36.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_37.py:5:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_37.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_37.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_38.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_38.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_38.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_39.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_39.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_39.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_3x.py:5:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\opcode_3x.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\opcode_3x.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\__init__.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\opcodes\__init__.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\opcodes\__init__.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\op_imports.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\op_imports.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\op_imports.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\std.py:5:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\std.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\std.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\unmarshal.py:5:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\unmarshal.py:12:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\unmarshal.py:14:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\verify.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\verify.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\verify.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\version_info.py:5:  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\version_info.py:12:  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\version_info.py:14:  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\wordcode.py:4:#  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\wordcode.py:11:#  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\wordcode.py:13:#  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\__init__.py:6:  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\__init__.py:13:  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\__init__.py:15:  You should have received a copy of the GNU General Public License
+.venv\Lib\site-packages\xdis\__main__.py:6:  modify it under the terms of the GNU General Public License
+.venv\Lib\site-packages\xdis\__main__.py:13:  GNU General Public License for more details.
+.venv\Lib\site-packages\xdis\__main__.py:15:  You should have received a copy of the GNU General Public License
+config\settings.py:51:                "registry.context_processors.public_sidebar",
+registry\admin.py:30:    PublicPost,
+registry\admin.py:1135:# ✅ NEW: Banner + PublicPost admin (удирдлага)
+registry\admin.py:1160:@admin.register(PublicPost)
+registry\admin.py:1161:class PublicPostAdmin(RoleScopedAdmin):
+registry\admin_community.py:9:from .models import Banner, PublicPost
+registry\admin_community.py:53:    admin.site.unregister(PublicPost)
+registry\admin_community.py:67:@admin.register(PublicPost)
+registry\admin_community.py:68:class PublicPostAdmin(admin.ModelAdmin):
+registry\admin_meta_publish.py:36:        label="Optional image URL (public https)",
+registry\apps.py:9:        # ✅ Banner/PublicPost admin upload + unregister/register safe
+registry\community_views.py:6:from .models import Banner, PublicPost
+registry\community_views.py:14:        model = PublicPost
+registry\community_views.py:21:    posts = PublicPost.objects.filter(is_published=True).order_by("-created_at")[:50]
+registry\context_processors.py:3:def public_sidebar(request):
+registry\context_processors.py:23:        from .models import PublicPost
+registry\context_processors.py:25:            PublicPost.objects.filter(is_published=True)
+registry\management\commands\publish_meta_test.py:18:        parser.add_argument("--image-url", type=str, default="", help="Public HTTPS image URL for Instagram publishing")
+registry\management\commands\publish_meta_test.py:37:                raise CommandError("--ig requires --image-url (public HTTPS URL)")
+registry\meta_graph.py:51:    image_url нь заавал public HTTPS байх ёстой.
+registry\migrations\0027_banner_publicpost.py:34:            name='PublicPost',
+registry\migrations\0027_banner_publicpost.py:42:                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='public_posts', to=settings.AUTH_USER_MODEL, verbose_name='Нийтэлсэн хэрэглэгч')),
+registry\migrations\0028_banner_image.py:9:        ('registry', '0027_banner_publicpost'),
+registry\models.py:445:class PublicPost(models.Model):
+registry\models.py:449:        related_name="public_posts",
+registry\templatetags\admin_sidebar.py:2:from registry.models import Banner, PublicPost
+registry\templatetags\admin_sidebar.py:13:        PublicPost.objects.filter(is_published=True)
+registry\urls-LAPTOP-IRVG3NFT.py:4:from .views import home, dashboard, public_home
+registry\urls-LAPTOP-IRVG3NFT.py:9:    # ✅ Public нүүр (business.mn-төстэй)
+registry\urls-LAPTOP-IRVG3NFT.py:10:    path("public/", public_home, name="public-home"),
+registry\urls.py:4:from .views import home, dashboard, public_home
+registry\urls.py:9:    # ✅ Public нүүр
+registry\urls.py:10:    path("public/", public_home, name="public_home"),
+registry\views-LAPTOP-IRVG3NFT.py:9:# ✅ Banner + PublicPost models байгаа гэж үзээд импортлоно
+registry\views-LAPTOP-IRVG3NFT.py:11:from .models import Banner, PublicPost
+registry\views-LAPTOP-IRVG3NFT.py:20:def public_home(request):
+registry\views-LAPTOP-IRVG3NFT.py:22:    ✅ Business.mn-төстэй PUBLIC нүүр.
+registry\views-LAPTOP-IRVG3NFT.py:24:    - Демо маягаар Banner/PublicPost-оос уншина (байгаа бол)
+registry\views-LAPTOP-IRVG3NFT.py:27:    # Баннерууд (public дээр)
+registry\views-LAPTOP-IRVG3NFT.py:35:    # Постууд (public дээр)
+registry\views-LAPTOP-IRVG3NFT.py:37:        PublicPost.objects
+registry\views-LAPTOP-IRVG3NFT.py:53:    return render(request, "registry/public_home.html", context)
+registry\views-LAPTOP-IRVG3NFT.py:85:        PublicPost.objects
+registry\views-LAPTOP-IRVG3NFT.py:104:            PublicPost.objects.create(
+registry\views.py:8:from .models import Banner, PublicPost
+registry\views.py:17:def public_home(request):
+registry\views.py:39:        PublicPost.objects
+registry\views.py:56:            return redirect(f'{reverse("login")}?next=/public/')
+registry\views.py:67:            PublicPost.objects.create(
+registry\views.py:73:            return redirect("/public/")
+registry\views.py:86:    return render(request, "registry/public_home.html", context)
+registry\views.py:115:        PublicPost.objects
+registry\views.py:133:            PublicPost.objects.create(
+templates\admin\registry\meta_graph.py:60:      - image_url MUST be publicly reachable HTTPS URL (Instagram servers fetch it).

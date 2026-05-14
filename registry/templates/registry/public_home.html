@@ -1,0 +1,395 @@
+{% load static %}
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Барилгачдын нэгдсэн мэдээллийн бааз</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'registry/public_home.css' %}?v=12">
+</head>
+<body>
+
+{% if show_login %}
+  <div class="overlay">
+    <div class="modal">
+      <h3>Нэвтрэх</h3>
+      <p class="muted">Хэрэглэгчийн нэр, нууц үгээ оруулна уу.</p>
+      {% if login_form and login_form.errors %}
+        <div class="err">Нэвтрэх мэдээлэл буруу байна. Дахин шалгаад оролдоорой.</div>
+      {% endif %}
+      <form method="post" action="/login/">
+        {% csrf_token %}
+        <label for="id_username">Хэрэглэгчийн нэр</label>
+        <input id="id_username" name="username" autocomplete="username" required>
+        <label for="id_password">Нууц үг</label>
+        <input id="id_password" type="password" name="password" autocomplete="current-password" required>
+        <div class="row">
+          <button class="btn btn--primary" type="submit">Нэвтрэх</button>
+          <a class="btn btn--ghost" href="/register/">Шинээр бүртгүүлэх</a>
+          <a class="btn btn--ghost" href="/public/">Болих</a>
+        </div>
+      </form>
+      <div class="sep"><span>эсвэл</span></div>
+      <div class="row">
+        <a class="btn btn--ghost" href="/auth/facebook/">Facebook-ээр нэвтрэх</a>
+        <a class="btn btn--ghost" href="/auth/emongolia/">e-Mongolia-аар нэвтрэх</a>
+        <a class="btn btn--ghost" href="/auth/bank/">Банкны кодоор нэвтрэх</a>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<!-- ══════════════ TOPBAR ══════════════ -->
+<header class="topbar">
+  <div class="container topbar__inner">
+    <div class="brand">
+      <div class="brand__logo">
+        <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="22" width="24" height="3" rx="1" fill="#f0a500" opacity="0.9"/>
+          <rect x="7" y="12" width="16" height="10" rx="1" fill="none" stroke="#f0a500" stroke-width="1.5"/>
+          <path d="M5 12 L15 4 L25 12" stroke="#f0a500" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          <rect x="12" y="17" width="6" height="5" rx="0.5" fill="#f0a500" opacity="0.7"/>
+          <rect x="8.5" y="14" width="3.5" height="3" rx="0.5" fill="#f0a500" opacity="0.5"/>
+          <rect x="18" y="14" width="3.5" height="3" rx="0.5" fill="#f0a500" opacity="0.5"/>
+          <line x1="22" y1="4" x2="22" y2="12" stroke="#f0a500" stroke-width="1" opacity="0.6"/>
+          <line x1="18" y1="4" x2="26" y2="4" stroke="#f0a500" stroke-width="1" opacity="0.6"/>
+          <line x1="26" y1="4" x2="26" y2="8" stroke="#f0a500" stroke-width="1" opacity="0.5" stroke-dasharray="1,1"/>
+        </svg>
+        <div class="brand__logo-letter">БНБ</div>
+      </div>
+      <div class="brand__text">
+        <div class="brand__title">Барилгачдын нэгдсэн мэдээллийн бааз</div>
+        <div class="brand__sub">Монголын барилгын салбар</div>
+      </div>
+    </div>
+    <div class="topbar__actions">
+      {% if request.user.is_authenticated %}
+        <div class="greet">👋 {{ display_name }} танд энэ өдрийн мэнд</div>
+        <a class="btn btn--ghost" href="/profile/">Хувийн мэдээлэл</a>
+        <form method="post" action="/logout/" style="margin:0;">
+          {% csrf_token %}
+          <button class="btn btn--primary" type="submit">Гарах</button>
+        </form>
+      {% else %}
+        <a class="btn btn--ghost" href="/register/">Бүртгүүлэх</a>
+        <a class="btn btn--primary" href="/login/">Нэвтрэх</a>
+      {% endif %}
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a class="nav__item {% if tab == 'home' %}nav__item--active{% endif %}" href="/public/">Нүүр</a>
+      <div class="nav__dd">
+        <a class="nav__item nav__item--dd" href="/public/?tab=org">Байгууллагууд <span class="chev">▾</span></a>
+        <div class="nav__menu">
+          <a class="nav__menuitem" href="/public/?tab=org_companies">Компаниуд</a>
+          <a class="nav__menuitem" href="/public/?tab=org_government">Салбарын төрийн байгууллагууд</a>
+          <a class="nav__menuitem" href="/public/?tab=org_ngo">Салбарын төрийн бус байгууллагууд</a>
+        </div>
+      </div>
+      <div class="nav__dd">
+        <a class="nav__item nav__item--dd" href="/public/?tab=workers">Ажиллагсад <span class="chev">▾</span></a>
+        <div class="nav__menu">
+          <a class="nav__menuitem" href="/public/?tab=brigades">Барилгын бригадууд</a>
+          <a class="nav__menuitem" href="/public/?tab=workers_list">Ажиллагсадын мэдээлэл</a>
+        </div>
+      </div>
+      {% if request.user.is_authenticated %}
+      <div class="nav__dd">
+        <a class="nav__item nav__item--dd" href="/public/?tab=ads">Зар оруулах <span class="chev">▾</span></a>
+        <div class="nav__menu">
+          <a class="nav__menuitem" href="/public/?tab=ads_banner">Баннер сурталчилгаа</a>
+          <a class="nav__menuitem" href="/public/?tab=ads_post">Зар оруулах</a>
+        </div>
+      </div>
+      {% endif %}
+      <a class="nav__item {% if tab == 'contact' %}nav__item--active{% endif %}" href="/public/?tab=contact">Холбоо барих</a>
+      <div class="nav__spacer"></div>
+      <div class="search">
+        <input class="search__input" placeholder="Компани, ажилтан хайх..." />
+        <button class="search__btn" type="button">🔎</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+{% if tab != "contact" %}
+<!-- ══════════════ HERO SECTION ══════════════ -->
+<section class="hero-banner">
+  <div class="hero-inner">
+
+    <!-- ✅ ЗҮҮН 1/3: Видео эсвэл зураг — байнга харагдана -->
+    <div class="hero-left">
+      {% if hero_banner %}
+        {% with media=hero_banner.display_media_url %}
+          {% if hero_banner.media_type == "video" %}
+            {% if media %}
+              <video class="hero-media" autoplay muted loop playsinline>
+                <source src="{{ media }}" type="video/mp4">
+              </video>
+            {% else %}
+              <div class="hero-media-ph"><div class="hero-media-ph__icon">🎬</div><span>Admin → Hero баннерууд</span></div>
+            {% endif %}
+          {% else %}
+            {% if media %}
+              <img class="hero-media" src="{{ media }}" alt="{{ hero_banner.title|default:'Hero' }}">
+            {% else %}
+              <div class="hero-media-ph"><div class="hero-media-ph__icon">🏗️</div><span>Admin → Hero баннерууд</span></div>
+            {% endif %}
+          {% endif %}
+        {% endwith %}
+      {% else %}
+        <div class="hero-media-ph">
+          <div class="hero-media-ph__icon">📢</div>
+          <span>Hero баннер</span>
+          <small>Admin → Hero баннерууд</small>
+        </div>
+      {% endif %}
+      <div class="hero-left__label">СУРТАЛЧИЛГАА</div>
+    </div>
+
+    <!-- ✅ БАРУУН 2/3: Дэд баннер + урсдаг зар -->
+    <div class="hero-right">
+
+      <!-- Дэд баннер зураг — дээд хэсэг -->
+      <div class="hero-subbanner">
+        {% if sub_banner %}
+          {% with img=sub_banner.display_image_url %}
+            {% if img %}
+              <a {% if sub_banner.link_url %}href="{{ sub_banner.link_url }}" target="_blank" rel="noopener"{% endif %} class="hero-subbanner__link">
+                <img src="{{ img }}" alt="{{ sub_banner.title|default:'Дэд баннер' }}">
+              </a>
+            {% else %}
+              <div class="hero-subbanner__ph">
+                <span>Дэд баннер зураг</span>
+                <small>Admin → Дэд баннерууд</small>
+              </div>
+            {% endif %}
+          {% endwith %}
+        {% else %}
+          <div class="hero-subbanner__ph">
+            <span>Дэд баннер зураг</span>
+            <small>Admin → Дэд баннерууд (баруун дээд хэсэг)</small>
+          </div>
+        {% endif %}
+        <div class="hero-subbanner__label">ЗАРАА</div>
+      </div>
+
+      <!-- Урсдаг зар — доод хэсэг -->
+      <div class="hero-ticker">
+        <div class="hero-ticker__label">ЗАР</div>
+        <div class="hero-ticker__viewport">
+          <div class="hero-ticker__track">
+            {% for ad in slider_ads %}
+              <span class="hero-ticker__item" {% if ad.link_url %}onclick="window.open('{{ ad.link_url }}','_blank')"{% endif %}>{{ ad.title }}{% if ad.description %} — {{ ad.description }}{% endif %}</span>
+              <span class="hero-ticker__sep">◆</span>
+            {% empty %}
+              <span class="hero-ticker__item">Барилгачдын нэгдсэн мэдээллийн бааз — Монголын барилгын салбарын мэдээллийн нэгдсэн сан</span>
+              <span class="hero-ticker__sep">◆</span>
+              <span class="hero-ticker__item">Admin → Урсдаг зарууд дээр зар нэмж болно</span>
+              <span class="hero-ticker__sep">◆</span>
+            {% endfor %}
+            <!-- Хоёр дахь хуулбар — тасралтгүй гүйлтийн тулд -->
+            {% for ad in slider_ads %}
+              <span class="hero-ticker__item" {% if ad.link_url %}onclick="window.open('{{ ad.link_url }}','_blank')"{% endif %}>{{ ad.title }}{% if ad.description %} — {{ ad.description }}{% endif %}</span>
+              <span class="hero-ticker__sep">◆</span>
+            {% empty %}
+              <span class="hero-ticker__item">Барилгачдын нэгдсэн мэдээллийн бааз — Монголын барилгын салбарын мэдээллийн нэгдсэн сан</span>
+              <span class="hero-ticker__sep">◆</span>
+              <span class="hero-ticker__item">Admin → Урсдаг зарууд дээр зар нэмж болно</span>
+              <span class="hero-ticker__sep">◆</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ STATS BAR ══════════════ -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-bar__inner">
+      <div class="stat-item"><div class="stat-icon">🏢</div><div><div class="stat-label">Бүртгэлтэй компани</div><div class="stat-value">{{ total_companies|default:"—" }}</div></div></div>
+      <div class="stat-item"><div class="stat-icon">👷</div><div><div class="stat-label">Ажиллагсад</div><div class="stat-value">{{ total_workers|default:"—" }}</div></div></div>
+      <div class="stat-item"><div class="stat-icon">🏗️</div><div><div class="stat-label">Бригадууд</div><div class="stat-value">{{ total_brigades|default:"—" }}</div></div></div>
+      <div class="stat-item"><div class="stat-icon">🏛️</div><div><div class="stat-label">Байгууллагууд</div><div class="stat-value">{{ total_orgs|default:"—" }}</div></div></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main class="container page">
+  {% if tab == "contact" %}
+    <section class="contact-page">
+      <div class="contact-hero">
+        <div class="contact-hero__left">
+          <h1 class="contact-title">{{ contact.title }}</h1>
+          <p class="contact-subtitle">{{ contact.subtitle }}</p>
+          <div class="contact-actions">
+            <a class="btn btn--primary" href="mailto:{{ contact.email }}">И-мэйл илгээх</a>
+            <a class="btn btn--ghost" href="tel:{{ contact.phone }}">Залгах</a>
+          </div>
+        </div>
+        <div class="contact-hero__right">
+          <div class="contact-card">
+            <div class="contact-card__row"><div class="contact-ic">📞</div><div><div class="contact-label">Утас</div><div class="contact-value">{{ contact.phone }}</div></div></div>
+            <div class="contact-card__row"><div class="contact-ic">✉️</div><div><div class="contact-label">И-мэйл</div><div class="contact-value">{{ contact.email }}</div></div></div>
+            <div class="contact-card__row"><div class="contact-ic">📍</div><div><div class="contact-label">Хаяг</div><div class="contact-value">{{ contact.address }}</div></div></div>
+            <div class="contact-card__row"><div class="contact-ic">🕒</div><div><div class="contact-label">Ажлын цаг</div><div class="contact-value">{{ contact.hours }}</div></div></div>
+            <div class="contact-links">
+              <a href="{{ contact.facebook }}" target="_blank" rel="noopener">Facebook</a>
+              <span class="dot">•</span>
+              <a href="{{ contact.website }}" target="_blank" rel="noopener">Website</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-box">
+          <div class="contact-box__title">Санал хүсэлт илгээх</div>
+          <form class="contact-form" method="post" action="/public/?tab=contact">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="contact_message">
+            <input name="name" class="contact-input" placeholder="Нэр" required>
+            <input name="phone" class="contact-input" placeholder="Утас" required>
+            <input name="email" class="contact-input" placeholder="И-мэйл (заавал биш)">
+            <textarea name="message" class="contact-textarea" rows="5" placeholder="Зурвас..." required></textarea>
+            <button class="btn btn--primary" type="submit">Илгээх</button>
+          </form>
+          <div class="contact-note muted">* Энэ формыг дараагийн шатанд өгөгдлийн санд хадгалдаг болгоно.</div>
+        </div>
+        <div class="contact-box">
+          <div class="contact-box__title">Байршил</div>
+          <div class="map-placeholder"><div class="map-placeholder__inner">🗺️ Газрын зураг<div class="muted" style="margin-top:8px;">(Google Map iframe хийнэ)</div></div></div>
+        </div>
+      </div>
+    </section>
+
+  {% else %}
+    <div class="layout">
+      <section class="feed">
+        {% if banners %}
+          {% with hero=banners.0 %}{% with hero_img=hero.display_image_url %}
+            <div class="section-header"><h2>Онцлох баннер</h2><span class="muted">sort_order дарааллаар</span></div>
+            <article class="featured">
+              <div class="featured__img">
+                {% if hero_img %}<img class="featured__realimg" src="{{ hero_img }}" alt="{{ hero.title|default:'Banner' }}">
+                {% else %}<div class="img_placeholder"><span style="font-size:32px;">🏗️</span>БАННЕР</div>{% endif %}
+              </div>
+              <div class="featured__content">
+                <div class="meta"><span class="tag">Зар</span><span class="dot">•</span><span>Эрэмбэ: {{ hero.sort_order }}</span></div>
+                <h2 class="featured__title">{{ hero.title|default:"Баннер" }}</h2>
+                <p class="featured__body">Нүүр хуудсын гол баннер (Admin → Баннерууд)</p>
+                {% if hero.link_url %}<div class="author"><span>🔗</span><a href="{{ hero.link_url }}" target="_blank" rel="noopener">Холбоос руу орох</a></div>{% endif %}
+              </div>
+            </article>
+          {% endwith %}{% endwith %}
+        {% else %}
+          <div class="empty">Баннер алга байна.</div>
+        {% endif %}
+
+        <div class="section-title"><h2>Сүүлийн баннерууд</h2><span class="muted">sort_order дарааллаар</span></div>
+        <div class="grid">
+          {% for b in banners|slice:"1:10" %}
+            {% with img=b.display_image_url %}
+              <article class="card">
+                <div class="card__thumb">{% if img %}<img class="card__realimg" src="{{ img }}" alt="{{ b.title|default:'Banner' }}">{% else %}<div class="thumb_placeholder">📌 AD</div>{% endif %}</div>
+                <div class="card__content">
+                  <div class="meta"><span class="tag tag--gray">Зар</span><span class="dot">•</span><span>#{{ b.sort_order }}</span></div>
+                  <div class="card__title">{{ b.title|default:"Баннер" }}</div>
+                </div>
+              </article>
+            {% endwith %}
+          {% empty %}
+            <div class="empty">Нэмэлт баннер олдсонгүй.</div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <aside class="chat-pane">
+        <div class="chat-pane__top">
+          <div class="sidebar__box">
+            <div class="sidebar__title">Онцлох</div>
+            {% if featured_admin_post %}
+              <div class="featured-mini">
+                <div class="featured-mini__badge">ADMIN</div>
+                <div class="featured-mini__title">{{ featured_admin_post.title }}</div>
+                <div class="featured-mini__body">{{ featured_admin_post.body|truncatechars:160 }}</div>
+                <div class="featured-mini__meta">{{ featured_admin_post.created_at|date:"Y-m-d H:i" }}{% if featured_admin_post.author %} • {{ featured_admin_post.author }}{% endif %}</div>
+              </div>
+            {% elif banners %}
+              {% with b=banners.0 %}{% with img=b.display_image_url %}
+                <div class="featured-mini">
+                  <div class="featured-mini__badge">AD</div>
+                  <div class="featured-mini__row">
+                    <div class="featured-mini__img">{% if img %}<img src="{{ img }}" alt="">{% else %}<div class="featured-mini__img_fallback">AD</div>{% endif %}</div>
+                    <div><div class="featured-mini__title">{{ b.title|default:"Баннер" }}</div><div class="featured-mini__meta">Эрэмбэ: {{ b.sort_order }}</div></div>
+                  </div>
+                </div>
+              {% endwith %}{% endwith %}
+            {% else %}
+              <div class="empty">Онцлох мэдээлэл алга.</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="chat-pane__middle">
+          <div class="sidebar__box sidebar__box--flush">
+            <div class="sidebar__title">Чатууд</div>
+            <div class="chat-stream">
+              {% for p in chat_stream %}
+                <div class="chat-item">
+                  <div class="chat-item__title">{{ p.title }}</div>
+                  <div class="chat-item__body">{{ p.body|truncatechars:220 }}</div>
+                  <div class="chat-item__meta">{{ p.created_at|date:"Y-m-d H:i" }}{% if p.author %} • {{ p.author }}{% endif %}</div>
+                </div>
+              {% empty %}
+                <div class="empty">Одоогоор чат алга.</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <div class="chat-pane__bottom" data-chat-compose>
+          <div class="sidebar__box">
+            <div class="sidebar__title">
+              <span>Чат бичих</span>
+              <button type="button" class="compose-toggle" data-compose-toggle aria-expanded="false">Дэлгэх ▾</button>
+            </div>
+            {% if post_error %}<div class="form-error">{{ post_error }}</div>{% endif %}
+            {% if can_post %}
+              <div class="compose-body" data-compose-body hidden>
+                <form class="chat-form" method="post" action="/public/">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="new_post">
+                  <input class="chat-form__title" name="post_title" placeholder="Гарчиг (заавал биш)" />
+                  <textarea class="chat-form__body" name="post_body" rows="3" placeholder="Энд чат бичнэ үү..." required></textarea>
+                  <button class="btn btn--primary chat-form__btn" type="submit">Илгээх</button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </aside>
+    </div>
+  {% endif %}
+</main>
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>© {{ now|default:"2026" }} Барилгачдын нэгдсэн мэдээллийн бааз</div>
+    <div class="muted">Монголын барилгын салбар</div>
+  </div>
+</footer>
+
+<script src="{% static 'registry/public_home.js' %}?v=3"></script>
+</body>
+</html>

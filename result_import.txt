@@ -1,0 +1,34 @@
+templates\admin\base_site.html:77:    body{ padding-top: 0 !important; }
+templates\admin\base_site.html:104:    .cr-actionbar .cr-left .cr-template{
+templates\admin\base_site.html:119:      margin: 0 !important;
+templates\admin\base_site.html:120:      padding: 0 !important;
+templates\admin\base_site.html:121:      float: none !important;
+templates\admin\base_site.html:123:      display: inline-flex !important;
+templates\admin\base_site.html:129:      margin: 0 !important;
+templates\admin\base_site.html:130:      padding: 0 !important;
+templates\admin\base_site.html:139:    body.cr-right-collapsed .cr-admin-fixed { display: none !important; }
+templates\admin\base_site.html:147:      margin-right: 0 !important;
+templates\admin\base_site.html:148:      padding-right: 0 !important;
+templates\admin\base_site.html:213:      function findAnyTemplateMessageLi() {
+templates\admin\base_site.html:220:          if (text.indexOf("import template") !== -1) s += 5;
+templates\admin\base_site.html:221:          if (text.indexOf("template") !== -1) s += 2;
+templates\admin\base_site.html:252:          + '  <span class="cr-template">Import Template / Үйлдлүүд</span>'
+templates\admin\base_site.html:260:      function moveTemplateMessageIntoActionBar(bar) {
+templates\admin\base_site.html:263:        var leftTemplate = bar.querySelector(".cr-template");
+templates\admin\base_site.html:264:        if (!leftTemplate) return;
+templates\admin\base_site.html:266:        var li = findAnyTemplateMessageLi();
+templates\admin\base_site.html:269:        leftTemplate.innerHTML = li.innerHTML;
+templates\admin\base_site.html:272:        // ✅ Template линкүүд давхар байвал ганц болгоно (href-аар нь)
+templates\admin\base_site.html:274:          var links = Array.from(leftTemplate.querySelectorAll("a"));
+templates\admin\base_site.html:307:        // ✅ Link давхардлыг цэвэрлэнэ (import/export гэх мэт)
+templates\admin\base_site.html:323:        // ✅ Import/Export text-ээр нь ганц болгоно
+templates\admin\base_site.html:328:            if (t === "import" || t === "export") {
+templates\admin\base_site.html:357:        moveTemplateMessageIntoActionBar(bar);
+templates\admin\import_export\change_list.html:5:   ✅ import-export changelist override
+templates\admin\import_export\change_list.html:6:   - Import/Export товчийг хадгална
+templates\admin\import_export\change_list.html:11:  {# ✅ Import / Export линкүүд (import-export-ийн default) #}
+templates\admin\import_export\change_list.html:12:  {% if has_import_permission %}
+templates\admin\import_export\change_list.html:14:      <a href="import/" class="import_link">{% translate "Import" %}</a>
+templates\admin\registry\meta_graph.py:1:import os
+templates\admin\registry\meta_graph.py:2:import requests
+templates\admin\registry\meta_graph.py:59:    IMPORTANT:

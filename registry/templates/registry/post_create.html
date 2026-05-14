@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Шинэ пост</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    label { display:block; margin-top: 10px; font-weight: 600; }
+    input, textarea { width: 100%; padding: 10px; border:1px solid #ddd; border-radius:10px; }
+    textarea { min-height: 140px; }
+    button { margin-top: 14px; padding: 10px 12px; border:1px solid #ddd; border-radius:10px; background:#fff; cursor:pointer; }
+    a { text-decoration:none; }
+  </style>
+</head>
+<body>
+  <h2>Шинэ пост</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <label for="{{ form.title.id_for_label }}">Гарчиг</label>
+    {{ form.title }}
+
+    <label for="{{ form.body.id_for_label }}">Агуулга</label>
+    {{ form.body }}
+
+    <button type="submit">Нийтлэх</button>
+    <a href="{% url 'community:home' %}" style="margin-left:10px;">Буцах</a>
+  </form>
+</body>
+</html>

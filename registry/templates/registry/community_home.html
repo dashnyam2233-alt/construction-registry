@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Мэдээлэл солилцоо</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .banners { display:flex; gap:12px; flex-wrap:wrap; margin: 16px 0; }
+    .banner { border:1px solid #ddd; border-radius:10px; padding:10px; width: 280px; }
+    .banner img { max-width:100%; border-radius:8px; display:block; }
+    .posts { margin-top: 18px; }
+    .post { border:1px solid #eee; border-radius:10px; padding:12px; margin: 10px 0; }
+    .muted { color:#666; font-size: 12px; }
+    a.btn { display:inline-block; padding:10px 12px; border:1px solid #ddd; border-radius:10px; text-decoration:none; }
+  </style>
+</head>
+<body>
+
+  <div class="top">
+    <h2 style="margin:0;">Мэдээлэл солилцоо</h2>
+    <div>
+      <a class="btn" href="{% url 'community:post_create' %}">+ Шинэ пост</a>
+      <a class="btn" href="{% url 'dashboard' %}">Dashboard</a>
+      <a class="btn" href="/admin/">Admin</a>
+    </div>
+  </div>
+
+  <div class="banners">
+    {% for b in banners %}
+      <div class="banner">
+        {% if b.image_url %}
+          {% if b.link_url %}
+            <a href="{{ b.link_url }}" target="_blank" rel="noopener noreferrer">
+              <img src="{{ b.image_url }}" alt="{{ b.title|default:'Banner' }}">
+            </a>
+          {% else %}
+            <img src="{{ b.image_url }}" alt="{{ b.title|default:'Banner' }}">
+          {% endif %}
+        {% endif %}
+        {% if b.title %}
+          <div style="margin-top:8px;">{{ b.title }}</div>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="muted">Одоогоор баннер алга.</div>
+    {% endfor %}
+  </div>
+
+  <div class="posts">
+    <h3>Сүүлийн постууд</h3>
+
+    {% for p in posts %}
+      <div class="post">
+        <div style="font-weight:700;">{{ p.title }}</div>
+        <div class="muted">Нийтэлсэн: {{ p.author }} • {{ p.created_at }}</div>
+        {% if p.body %}
+          <div style="margin-top:8px; white-space:pre-wrap;">{{ p.body }}</div>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="muted">Одоогоор пост алга.</div>
+    {% endfor %}
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+/* CR changelist: collapsible FILTER panel (▲/▼)
+   NOTE: Main layout padding-right is controlled by JS inline styles (most reliable).
+*/
+
+body.change-list #changelist-filter{
+  position: fixed !important;
+  top: 92px !important;
+  right: 16px !important;
+  width: 360px !important;
+  max-height: calc(100vh - 110px) !important;
+  overflow: auto !important;
+  z-index: 80 !important;
+  background: #fff !important;
+  border: 1px solid rgba(0,0,0,.10) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.10) !important;
+  padding: 0 !important;
+}
+
+body.change-list #changelist-filter .cr-filter-head{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  font-weight: 900;
+}
+
+body.change-list #changelist-filter .cr-filter-toggle{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0,0,0,.14);
+  background: rgba(0,0,0,.04);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 6px 10px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+body.change-list #changelist-filter .cr-filter-body{
+  padding: 10px 12px;
+}
+
+body.change-list.cr-filter-collapsed #changelist-filter .cr-filter-body{
+  display: none !important;
+}
+
+body.change-list.cr-filter-collapsed #changelist-filter{
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Filter open үед давхардахаас сэргийлж таны right sidebar-г (cr-admin-fixed) түр нуух */
+body.change-list.cr-filter-open .cr-admin-fixed{
+  display: none !important;
+}
+
+/* Small screens: disable fixed filter, let Django default layout work */
+@media (max-width: 1200px){
+  body.change-list #changelist-filter{
+    position: static !important;
+    width: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+}

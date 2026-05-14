@@ -1,0 +1,25 @@
+{% extends "admin/registry/change_list.html" %}
+{% load i18n %}
+
+{# ==========================================================
+   ✅ import-export changelist override
+   - Import/Export товчийг хадгална
+   - Дараа нь таны admin/registry/change_list.html бүх UI ажиллана
+   ========================================================== #}
+
+{% block object-tools-items %}
+  {# ✅ Import / Export линкүүд (import-export-ийн default) #}
+  {% if has_import_permission %}
+    <li>
+      <a href="import/" class="import_link">{% translate "Import" %}</a>
+    </li>
+  {% endif %}
+  {% if has_export_permission %}
+    <li>
+      <a href="export/" class="export_link">{% translate "Export" %}</a>
+    </li>
+  {% endif %}
+
+  {# ✅ Таны admin/registry/change_list.html дээрх нэмэлтүүд (Нэгдсэн хайлт г.м) #}
+  {{ block.super }}
+{% endblock %}

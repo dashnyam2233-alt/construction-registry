@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Нэвтрэх</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f6f7fb;margin:0;}
+    .wrap{min-height:100vh;display:grid;place-items:center;padding:24px;}
+    .card{width:min(420px,92vw);background:#fff;border:1px solid #eaecf0;border-radius:16px;box-shadow:0 10px 25px rgba(16,24,40,.08);padding:18px;}
+    h1{margin:0 0 4px;font-size:20px}
+    .muted{color:#667085;font-size:13px;margin:0 0 14px}
+    label{display:block;font-weight:700;font-size:13px;margin:10px 0 6px}
+    input{width:100%;padding:10px 12px;border:1px solid #eaecf0;border-radius:12px;outline:none}
+    .btn{display:inline-flex;justify-content:center;align-items:center;width:100%;padding:10px 12px;border-radius:12px;text-decoration:none;font-weight:800;border:1px solid transparent;cursor:pointer}
+    .btn-primary{background:#2563eb;color:#fff;border-color:rgba(37,99,235,.35)}
+    .btn-ghost{background:#fff;color:#101828;border-color:#eaecf0}
+    .row{display:grid;gap:10px;margin-top:12px}
+    .err{background:#fff5f5;border:1px solid #fecaca;color:#991b1b;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}
+    .help{margin-top:12px;color:#667085;font-size:12px;line-height:1.45}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Нэвтрэх</h1>
+      <p class="muted">Хэрэглэгчийн нэр, нууц үгээ оруулна уу.</p>
+
+      {% if form.errors %}
+        <div class="err">
+          Нэвтрэх мэдээлэл буруу байна. Дахин шалгаад оролдоорой.
+        </div>
+      {% endif %}
+
+      <form method="post" action="">
+        {% csrf_token %}
+
+        {# Django LoginView-ийн form #}
+        <label for="id_username">Хэрэглэгчийн нэр</label>
+        {{ form.username }}
+
+        <label for="id_password">Нууц үг</label>
+        {{ form.password }}
+
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <div class="row">
+          <button class="btn btn-primary" type="submit">Нэвтрэх</button>
+
+          {# ✅ Dashboard биш — "Шинээр бүртгүүлэх" #}
+          <a class="btn btn-ghost" href="/register/">Шинээр бүртгүүлэх</a>
+        </div>
+      </form>
+
+      <div class=

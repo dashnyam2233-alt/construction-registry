@@ -1,0 +1,54 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script>
+    const SUB_MAP = {{ COMPANY_ACTIVITY_SUB_MAP|safe }};
+
+    function clearOptions(sel) { while (sel.options.length > 0) sel.remove(0); }
+    function addOption(sel, value, label) {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = label;
+      sel.appendChild(opt);
+    }
+
+    function rebuildCompanySub() {
+      const mainSel = document.getElementById("id_activity_direction");
+      const subSel  = document.getElementById("id_activity_sub_direction");
+      if (!mainSel || !subSel) return;
+
+      const main = mainSel.value || "";
+      const prev = subSel.value || "";
+
+      clearOptions(subSel);
+      addOption(subSel, "", "---------");
+
+      const items = SUB_MAP[main] || [];
+      items.forEach(function(txt){
+        addOption(subSel, txt, txt);
+      });
+
+      if (items.length === 0) {
+        subSel.closest(".form-row").style.display = "none";
+        subSel.value = "";
+      } else {
+        subSel.closest(".form-row").style.display = "";
+        // өмнөх сонголтыг буцаах
+        if (prev) {
+          for (let i = 0; i < subSel.options.length; i++) {
+            if (subSel.options[i].value === prev) { subSel.value = prev; break; }
+          }
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){
+      const mainSel = document.getElementById("id_activity_direction");
+      if (mainSel) {
+        mainSel.addEventListener("change", rebuildCompanySub);
+        rebuildCompanySub();
+      }
+    });
+  </script>
+{% endblock %}

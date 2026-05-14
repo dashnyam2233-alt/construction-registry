@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <title>Хэрэглэгчийн хэсэг</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; background:#fafafa; }
+    .layout { display:flex; gap:16px; align-items:flex-start; }
+    .main { flex:1; min-width:0; background:#fff; border:1px solid #ddd; border-radius:12px; padding:16px; }
+    .side { width:360px; position: sticky; top: 16px; }
+    .box { background:#fff; border:1px solid #ddd; border-radius:12px; padding:12px; margin-bottom:12px; }
+    .box h3 { margin:0 0 10px 0; font-size:16px; }
+    .muted { color:#666; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .pill { padding:4px 10px; border:1px solid #ddd; border-radius:999px; background:#fff; }
+    button { padding:8px 12px; cursor:pointer; }
+    input[type="text"], textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:8px; }
+    textarea { min-height:80px; resize:vertical; }
+    hr { margin: 18px 0; border:0; border-top:1px solid #eee; }
+
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f5f5f5; text-align: left; }
+
+    .banner-card { border:1px solid #eee; border-radius:10px; overflow:hidden; margin-bottom:10px; }
+    .banner-card img { width:100%; height:auto; display:block; }
+    .banner-cap { padding:8px 10px; font-size:13px; }
+    .post { border-top:1px solid #eee; padding:10px 0; }
+    .post:first-child { border-top:0; padding-top:0; }
+    .post-title { font-weight:700; font-size:13px; }
+    .post-meta { color:#777; font-size:12px; margin:4px 0 6px; }
+    .post-body { white-space:pre-wrap; font-size:13px; }
+    .danger { color:#b00020; }
+    details > summary { cursor:pointer; }
+    .details-box { margin-top: 8px; padding: 10px; border: 1px dashed #ccc; border-radius: 8px; background: #fafafa; }
+    .tag { display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius:999px; margin-right:6px; }
+    .big { font-size: 22px; font-weight: 700; }
+    .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin: 12px 0; }
+    .card { border:1px solid #ddd; border-radius:10px; padding:12px; background:#fff; }
+    .card h4 { margin:0 0 8px 0; }
+    .kv { display:grid; grid-template-columns:120px 1fr; gap:6px 10px; }
+    .kv div { padding:2px 0; }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- ===================== -->
+    <!-- ЗҮҮН: Үндсэн хэсэг -->
+    <!-- ===================== -->
+    <div class="main">
+      <h2>Хэрэглэгчийн хэсэг</h2>
+
+      <div class="row">
+        <div>Сайн байна уу, <b>{{ request.user.username }}</b></div>
+
+        <div class="pill">
+          Компани:
+          {% if company %}
+            <b>{{ company.name }}</b>
+          {% else %}
+            <span class="muted">Оноогдоогүй</span>
+          {% endif %}
+        </div>
+
+        <div style="margin-left:auto;">
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Гарах</button>
+          </form>
+        </div>
+      </div>
+
+      <hr>
+
+      {% if not company %}
+        <p class="danger">
+          Танай хэрэглэгчид компани оноогдоогүй байна. Админ хэрэглэгчээр орж <b>UserCompanyProfile</b> дээр company оноож өгнө үү.
+        </p>
+      {% else %}
+
+        <div class="cards">
+          <div class="card">
+            <h4>Товч үзүүлэлт</h4>
+            <div class="row">
+              <div>
+                <div class="big">{{ company_workers_total }}</div>
+                <div class="muted">Нийт ажилтан</div>
+              </div>
+              <div style="margin-left:18px;">
+                <div class="big">{{ brigades_count }}</div>
+                <div class="muted">Нийт бригад</div>
+              </div>
+            </div>
+            <hr>
+            <div class="muted">
+              Таны эрх:
+              {% if show_sensitive %}<span class="tag">ADMIN_FULL</span>{% else %}<span class="tag">VIEWER</span>{% endif %}
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>Компанийн мэдээлэл</h4>
+            <div class="kv">
+              <div class="muted">Нэр</div><div><b>{{ company.name }}</b></div>
+              <div class="muted">РД</div><div>{{ company.register_no|default:"-" }}</div>
+
+              {% if show_sensitive %}
+                <div class="muted">Утас</div><div>{{ company.phone|default:"-" }}</div>
+                <div class="muted">Имэйл</div><div>{{ company.email|default:"-" }}</div>
+                <div class="muted">Хаяг</div><div>{{ company.address|default:"-" }}</div>
+                <div class="muted">Вэб</div><div>{{ company.website|default:"-" }}</div>
+              {% else %}
+                <div class="muted">Утас</div><div class="muted">Нууц</div>
+                <div class="muted">Имэйл</div><div class="muted">Нууц</div>
+                <div class="muted">Хаяг</div><div class="muted">Нууц</div>
+                <div class="muted">Вэб</div><div class="muted">Нууц</div>
+              {% endif %}
+
+              <div class="muted">Чиглэл</div><div>{{ company.get_activity_direction_display|default:"-" }}</div>
+              <div class="muted">Дэд</div><div>{{ company.activity_sub_direction|default:"-" }}</div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Миний компанийн бригадууд</h3>
+        {% if brigades %}
+          <table>
+            <thead>
+              <tr>
+                <th>Нэр</th>
+                <th>Үйл ажиллагаа</th>
+                <th>Ахлагч</th>
+                <th>Гишүүд</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for b in brigades %}
+                <tr>
+                  <td><b>{{ b.name }}</b></td>
+                  <td>{{ b.get_activity_directions_display|default:"-" }}</td>
+                  <td>{{ b.leader_worker|default:"-" }}</td>
+                  <td>{{ b.member_count }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p class="muted" style="margin-top:10px;">Жагсаалтад хамгийн ихдээ 200 мөр харуулж байна.</p>
+        {% else %}
+          <p class="muted">Бригад олдсонгүй.</p>
+        {% endif %}
+
+        <hr>
+
+        <h3>Миний компанийн ажилчид</h3>
+        <form method="get" class="row" style="margin-bottom: 12px;">
+          <input type="text" name="q" value="{{ q }}" placeholder="Хайх (овог, нэр, регистр, утас, имэйл)">
+          <button type="submit">Хайх</button>
+          <a href="{% url 'dashboard' %}">Цэвэрлэх</a>
+          <span class="muted">Олдсон: {{ workers_count }}</span>
+        </form>
+
+        {% if workers %}
+          <table>
+            <thead>
+              <tr>
+                <th>Овог</th>
+                <th>Эцэг/эх</th>
+                <th>Нэр</th>
+                <th>Регистр</th>
+                {% if show_sensitive %}
+                  <th>Утас</th>
+                  <th>Имэйл</th>
+                {% endif %}
+                <th>Албан тушаал</th>
+                <th>Дэлгэрэнгүй</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for w in workers %}
+                <tr>
+                  <td>{{ w.last_name }}</td>
+                  <td>{{ w.parent_name }}</td>
+                  <td><b>{{ w.first_name }}</b></td>
+                  <td>{{ w.register_no }}</td>
+
+                  {% if show_sensitive %}
+                    <td>{{ w.phone }}</td>
+                    <td>{{ w.email }}</td>
+                  {% endif %}
+
+                  <td>{{ w.get_responsible_role_display }}</td>
+
+                  <td style="min-width:240px;">
+                    <details>
+                      <summary>Харах</summary>
+                      <div class="details-box">
+                        <div class="kv">
+                          <div class="muted">Овог нэр</div>
+                          <div>{{ w.last_name }} {{ w.parent_name }} <b>{{ w.first_name }}</b></div>
+
+                          <div class="muted">Хүйс</div>
+                          <div>{{ w.get_gender_display|default:"-" }}</div>
+
+                          <div class="muted">Төрсөн</div>
+                          <div>
+                            {% if w.birth_date %}{{ w.birth_date }}{% else %}-{% endif %}
+                            /
+                            {{ w.get_birth_place_city_display|default:"-" }} {{ w.birth_place_sub|default:"" }}
+                          </div>
+
+                          <div class="muted">Мэргэжил</div>
+                          <div>{{ w.get_profession_display|default:"-" }}</div>
+
+                          {% if show_sensitive %}
+                            <div class="muted">Утас</div><div>{{ w.phone|default:"-" }}</div>
+                            <div class="muted">Имэйл</div><div>{{ w.email|default:"-" }}</div>
+                            <div class="muted">Хаяг</div><div>{{ w.address|default:"-" }}</div>
+                          {% else %}
+                            <div class="muted">Утас</div><div class="muted">Нууц</div>
+                            <div class="muted">Имэйл</div><div class="muted">Нууц</div>
+                            <div class="muted">Хаяг</div><div class="muted">Нууц</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </details>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <p class="muted" style="margin-top:10px;">
+            Жагсаалтад хамгийн ихдээ 200 мөр харуулж байна.
+          </p>
+        {% else %}
+          <p class="muted">Ажилтан олдсонгүй.</p>
+        {% endif %}
+
+      {% endif %}
+    </div>
+
+    <!-- ===================== -->
+    <!-- БАРУУН: Баннер + Чат -->
+    <!-- ===================== -->
+    <aside class="side">
+
+      <div class="box">
+        <h3>Баннер</h3>
+
+        {% if banners %}
+          {% for b in banners %}
+            <div class="banner-card">
+              {% if b.link_url %}
+                <a href="{{ b.link_url }}" target="_blank" rel="noopener noreferrer">
+                  <img src="{{ b.image_url }}" alt="{{ b.title|default:'banner' }}">
+                </a>
+              {% else %}
+                <img src="{{ b.image_url }}" alt="{{ b.title|default:'banner' }}">
+              {% endif %}
+              <div class="banner-cap">
+                <b>{{ b.title|default:"" }}</b>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="muted">Идэвхтэй баннер байхгүй.</div>
+        {% endif %}
+
+        <div style="margin-top:10px;">
+          <a href="/admin/registry/banner/" class="muted">Баннер удирдах (Admin)</a>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>Чат / Пост</h3>
+
+        <!-- ✅ Шинэ пост -->
+        <form method="post" style="margin-bottom:10px;">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="new_post">
+          <div style="margin-bottom:8px;">
+            <input type="text" name="post_title" placeholder="Гарчиг (заавал биш)">
+          </div>
+          <div style="margin-bottom:8px;">
+            <textarea name="post_body" placeholder="Энд постоо бичнэ үү..."></textarea>
+          </div>
+          {% if post_error %}
+            <div class="danger" style="margin-bottom:8px;">{{ post_error }}</div>
+          {% endif %}
+          <button type="submit">Пост оруулах</button>
+        </form>
+
+        <!-- ✅ Постууд -->
+        {% if posts %}
+          {% for p in posts %}
+            <div class="post">
+              <div class="post-title">{{ p.title|default:"(Гарчиггүй)" }}</div>
+              <div class="post-meta">
+                {% if p.author %}{{ p.author.username }}{% else %}user{% endif %}
+                • {{ p.created_at }}
+              </div>
+              <div class="post-body">{{ p.body }}</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="muted">Одоогоор пост алга.</div>
+        {% endif %}
+      </div>
+
+    </aside>
+
+  </div>
+
+</body>
+</html>

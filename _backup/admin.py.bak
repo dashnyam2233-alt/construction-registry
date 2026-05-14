@@ -1,0 +1,438 @@
+from django.contrib import admin, messages
+from django import forms
+from django.core.mail import send_mail
+from django.db.models import Count, Q
+
+from .models import (
+    GovernmentOrganization,
+    NonGovernmentOrganization,
+    Company,
+    Worker,
+    FamilyMember,
+    AdminGroup,
+    CITY_CHOICES,
+    UB_DISTRICT_CHOICES,
+    COMPANY_ACTIVITY_DIRECTION_CHOICES,
+)
+
+from .birth_soums import BIRTH_SOUMS
+
+
+def send_email_action(modeladmin, request, queryset):
+    to_emails = [e for e in queryset.values_list("email", flat=True) if e]
+    if not to_emails:
+        messages.warning(request, "Имэйл хаягтай мөр сонгоогүй байна.")
+        return
+    send_mail("Мэдээлэл", "Танд мэдээлэл хүргэж байна.", None, to_emails, fail_silently=False)
+    messages.success(request, f"Имэйл илгээлээ. ({len(to_emails)})")
+
+
+send_email_action.short_description = "Имэйл илгээх (console)"
+
+
+TEXT_FIELD_TYPES = {"CharField", "TextField", "EmailField", "URLField", "SlugField"}
+
+
+def term_variants(term: str):
+    t = (term or "").strip()
+    if not t:
+        return []
+    variants = [t]
+    cleaned = "".join(ch for ch in t if ch.isalnum() or ch.isspace())
+    cleaned = " ".join(cleaned.split()).strip()
+    if cleaned and cleaned != t:
+        variants.append(cleaned)
+    for x in [t, cleaned]:
+        if not x:
+            continue
+        variants += [x.lower(), x.upper(), x.capitalize(), x.title()]
+    uniq, seen = [], set()
+    for x in variants:
+        x = (x or "").strip()
+        if not x:
+            continue
+        if x in seen:
+            continue
+        seen.add(x)
+        uniq.append(x)
+    return uniq
+
+
+def contains_any(field_lookup: str, term: str):
+    q = Q()
+    for v in term_variants(term):
+        q |= Q(**{f"{field_lookup}__contains": v})
+    return q
+
+
+def global_search_q(model, term: str):
+    q = Q()
+    for f in model._meta.get_fields():
+        if not getattr(f, "concrete", False):
+            continue
+        if getattr(f, "is_relation", False):
+            continue
+        try:
+            internal = f.get_internal_type()
+        except Exception:
+            continue
+        if internal in TEXT_FIELD_TYPES:
+            q |= contains_any(f.name, term)
+
+    field_names = {ff.name for ff in model._meta.fields}
+    if "company" in field_names:
+        q |= contains_any("company__name", term)
+    if "worker" in field_names:
+        q |= contains_any("worker__first_name", term) | contains_any("worker__last_name", term)
+
+    return q
+
+
+class GlobalContainsSearchAdmin(admin.ModelAdmin):
+    search_fields = ("id",)
+
+    def get_search_results(self, request, queryset, search_term):
+        term = (search_term or "").strip()
+        if not term:
+            return queryset, False
+        q = global_search_q(queryset.model, term)
+        if q == Q():
+            return queryset.none(), False
+        return queryset.filter(q).distinct(), True
+
+
+def build_location_choices():
+    out = [("", "---------")]
+    for code, label in CITY_CHOICES:
+        if code == "UB":
+            continue
+        out.append((code, label))
+    for d_code, d_label in UB_DISTRICT_CHOICES:
+        if d_code:
+            out.append((f"UB|{d_code}", f"Улаанбаатар - {d_label}"))
+    return out
+
+
+LOCATION_CHOICES = build_location_choices()
+
+
+class LocationMixinForm(forms.ModelForm):
+    location = forms.ChoiceField(label="Хаяг", required=False, choices=LOCATION_CHOICES)
+
+    def _init_location(self):
+        city = (getattr(self.instance, "city", "") or "").strip()
+        district = (getattr(self.instance, "district", "") or "").strip()
+
+        if city == "UB" and district:
+            self.fields["location"].initial = f"UB|{district}"
+        elif city:
+            self.fields["location"].initial = city
+        else:
+            self.fields["location"].initial = ""
+
+        if "city" in self.fields:
+            self.fields["city"].required = False
+            self.fields["city"].widget = forms.HiddenInput()
+        if "district" in self.fields:
+            self.fields["district"].required = False
+            self.fields["district"].widget = forms.HiddenInput()
+
+    def _apply_location_to_instance(self):
+        val = (self.cleaned_data.get("location") or "").strip()
+        if not val:
+            self.instance.city = ""
+            self.instance.district = ""
+            return
+        if val.startswith("UB|"):
+            self.instance.city = "UB"
+            self.instance.district = val.split("|", 1)[1]
+        else:
+            self.instance.city = val
+            self.instance.district = ""
+
+
+# =========================
+# Company - sub options dict
+# =========================
+COMPANY_ACTIVITY_SUB_MAP = {
+    "CONSTRUCTION": [
+        "Барилга угсралтын үйл ажиллагаа",
+        "Барилгын засвар, шинэчлэл",
+        "Барилгын дотор заслын ажил",
+    ],
+    "ELECTRIC": [
+        "Барилгын цахилгаан угсралтын ажил",
+        "Гадна цахилгаан хангамжийн угсралт",
+    ],
+    "PLUMBING": [
+        "Барилгын ус хангамж, ариутгах татуургын угсралт",
+        "Гадна ус хангамж, ариутгах татуургын шугам угсралт",
+    ],
+    "HEAT_SUPPLY": [
+        "Гадна дулаан хангамжийн шугам сүлжээ угсралт",
+    ],
+    "HVAC": [
+        "Холбоо, дохиолол, автоматжуулалтын системийн угсралт",
+    ],
+    "COMM_ALARM": [
+        "Галын дохиолол, унтраах системийн угсралт",
+        "Хяналтын камер, хамгаалалтын системийн угсралт",
+    ],
+    "ENG_NETWORK": [
+        "Инженерийн шугам сүлжээний угсралт",
+        "Гадна инженерийн төв магистрал шугам сүлжээний угсралт",
+        "Гадна төв магистрал шугам",
+    ],
+    "EXTERNAL_ROAD": [
+        "Гадна зам, талбайн тохижилт",
+        "Гадна тохижилт, ногоон байгууламж",
+        "Хашаа, хашлага барих ажил",
+    ],
+}
+
+
+class CompanyAdminForm(LocationMixinForm):
+    activity_direction = forms.ChoiceField(
+        label="Үйл ажиллагааны чиглэл",
+        required=False,
+        choices=[("", "---------")] + list(COMPANY_ACTIVITY_DIRECTION_CHOICES),
+        widget=forms.Select(),
+    )
+    activity_sub_direction = forms.ChoiceField(
+        label="Дэд сонголт",
+        required=False,
+        choices=[("", "---------")],
+        widget=forms.Select(),
+    )
+
+    class Meta:
+        model = Company
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._init_location()
+
+        # хуучин activity_type-г form дээр нуух (хадгалалт хэвийн)
+        if "activity_type" in self.fields:
+            self.fields["activity_type"].widget = forms.HiddenInput()
+            self.fields["activity_type"].required = False
+
+        # дэд сонголтын choices (POST эсвэл instance-аас)
+        selected = (self.data.get("activity_direction") or getattr(self.instance, "activity_direction", "") or "").strip()
+        subs = COMPANY_ACTIVITY_SUB_MAP.get(selected, [])
+        self.fields["activity_sub_direction"].choices = [("", "---------")] + [(x, x) for x in subs]
+
+    def clean(self):
+        cleaned = super().clean()
+        main = (cleaned.get("activity_direction") or "").strip()
+        sub = (cleaned.get("activity_sub_direction") or "").strip()
+
+        # main солигдоход sub буруу байвал цэвэрлэнэ
+        if sub and sub not in COMPANY_ACTIVITY_SUB_MAP.get(main, []):
+            cleaned["activity_sub_direction"] = ""
+
+        # хуучин activity_type автоматаар тохируулна (хуучин код эвдэхгүй)
+        if main == "DESIGN":
+            cleaned["activity_type"] = Company.ActivityType.DESIGN
+        elif main in ("CONSTRUCTION", "ELECTRIC", "PLUMBING", "HEAT_SUPPLY", "HVAC", "COMM_ALARM", "ENG_NETWORK", "EXTERNAL_ROAD"):
+            cleaned["activity_type"] = Company.ActivityType.CONSTRUCTION
+        elif main in ("MATERIAL_PROD", "MATERIAL_TRADE"):
+            cleaned["activity_type"] = Company.ActivityType.SUPPLY
+        elif main == "SUPERVISION":
+            cleaned["activity_type"] = Company.ActivityType.CONSULTING
+        else:
+            cleaned["activity_type"] = Company.ActivityType.OTHER
+
+        return cleaned
+
+    def save(self, commit=True):
+        self._apply_location_to_instance()
+        return super().save(commit=commit)
+
+
+@admin.register(Company)
+class CompanyAdmin(GlobalContainsSearchAdmin):
+    form = CompanyAdminForm
+    actions = [send_email_action]
+
+    list_display = ("name", "activity_type", "register_no", "phone", "email")
+    list_filter = ("activity_type", "city", "district")
+    ordering = ("name",)
+
+    fields = (
+        "name",
+        "register_no",
+
+        # ✅ шинэ 2 dropdown
+        "activity_direction",
+        "activity_sub_direction",
+
+        # (хуучин activity_type нуусан байгаа)
+        "location",
+        "address",
+        "phone",
+        "email",
+        "website",
+        "note",
+    )
+
+    change_form_template = "admin/registry/company/change_form.html"
+
+    def changeform_view(self, request, object_id=None, form_url="", extra_context=None):
+        import json
+        extra_context = extra_context or {}
+        extra_context["COMPANY_ACTIVITY_SUB_MAP"] = json.dumps(COMPANY_ACTIVITY_SUB_MAP, ensure_ascii=False)
+        return super().changeform_view(request, object_id, form_url, extra_context=extra_context)
+
+
+# =================================================
+# Worker (өмнөх хөгжүүлэлт чинь хэвээр)
+# =================================================
+def build_birth_sub_choices(city_code: str):
+    out = [("", "---------")]
+    if not city_code:
+        return out
+    if city_code == "UB":
+        district_label = dict(UB_DISTRICT_CHOICES)
+        for d_code in BIRTH_SOUMS.get("UB", []):
+            out.append((d_code, district_label.get(d_code, d_code)))
+        return out
+    for name in BIRTH_SOUMS.get(city_code, []):
+        out.append((name, name))
+    return out
+
+
+class WorkerAdminForm(LocationMixinForm):
+    birth_place_city = forms.ChoiceField(
+        label="Төрсөн газар - Аймаг/Хот",
+        required=False,
+        choices=[("", "---------")] + list(CITY_CHOICES),
+        widget=forms.Select(),
+    )
+    birth_place_sub = forms.ChoiceField(
+        label="Төрсөн газар - Сум/Дүүрэг",
+        required=False,
+        choices=[("", "---------")],
+        widget=forms.Select(),
+    )
+
+    class Meta:
+        model = Worker
+        fields = "__all__"
+        widgets = {
+            "birth_date": forms.DateInput(attrs={"type": "date"}),
+            "start_work_date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._init_location()
+        selected_city = (self.data.get("birth_place_city") or getattr(self.instance, "birth_place_city", "") or "").strip()
+        self.fields["birth_place_sub"].choices = build_birth_sub_choices(selected_city)
+
+    def clean(self):
+        cleaned = super().clean()
+        role = (cleaned.get("responsible_role") or "").strip()
+        specialty = (cleaned.get("engineer_specialty") or "").strip()
+        if role == "ENGINEER" and not specialty:
+            self.add_error("engineer_specialty", "Инженер сонгосон тул 'Инженерийн төрөл' заавал сонгоно.")
+        if role != "ENGINEER":
+            cleaned["engineer_specialty"] = ""
+            self.instance.engineer_specialty = ""
+        return cleaned
+
+    def save(self, commit=True):
+        self._apply_location_to_instance()
+        return super().save(commit=commit)
+
+
+class BirthPlaceSubCountFilter(admin.SimpleListFilter):
+    title = "Төрсөн сум/дүүрэг (тоо)"
+    parameter_name = "birth_sub_count"
+
+    def lookups(self, request, modeladmin):
+        qs = Worker.objects.all()
+        city = request.GET.get("birth_place_city") or ""
+        if city:
+            qs = qs.filter(birth_place_city=city)
+        counts = (
+            qs.exclude(birth_place_sub="")
+            .values("birth_place_sub")
+            .annotate(c=Count("id"))
+            .order_by("-c", "birth_place_sub")
+        )
+        return [(row["birth_place_sub"], f'{row["birth_place_sub"]} ({row["c"]})') for row in counts]
+
+    def queryset(self, request, queryset):
+        val = request.GET.get(self.parameter_name)
+        if val:
+            return queryset.filter(birth_place_sub=val)
+        return queryset
+
+
+@admin.register(Worker)
+class WorkerAdmin(GlobalContainsSearchAdmin):
+    form = WorkerAdminForm
+    actions = [send_email_action]
+
+    list_display = ("last_name", "first_name", "profession", "company", "phone", "email", "birth_place_city", "birth_place_sub")
+    ordering = ("first_name", "last_name")
+    autocomplete_fields = ("company",)
+
+    list_filter = ("birth_place_city", BirthPlaceSubCountFilter, "profession", "company", "city", "district")
+
+    fields = (
+        "last_name",
+        "first_name",
+        "profession",
+        "company",
+        "responsible_role",
+        "engineer_specialty",
+        "register_no",
+        "phone",
+        "email",
+        "facebook_url",
+        "instagram_url",
+        "viber",
+        "location",
+        "address",
+        "birth_place_city",
+        "birth_place_sub",
+        "birth_date",
+        "start_work_date",
+        "note",
+    )
+
+    change_form_template = "admin/registry/worker/change_form.html"
+
+    def changeform_view(self, request, object_id=None, form_url="", extra_context=None):
+        import json
+        extra_context = extra_context or {}
+        extra_context["BIRTH_SOUMS"] = json.dumps(BIRTH_SOUMS, ensure_ascii=False)
+        return super().changeform_view(request, object_id, form_url, extra_context=extra_context)
+
+
+@admin.register(GovernmentOrganization)
+class GovernmentOrganizationAdmin(GlobalContainsSearchAdmin):
+    list_display = ("name", "register_no", "phone", "email", "website")
+    ordering = ("name",)
+
+
+@admin.register(NonGovernmentOrganization)
+class NonGovernmentOrganizationAdmin(GlobalContainsSearchAdmin):
+    list_display = ("name", "register_no", "phone", "email", "website")
+    ordering = ("name",)
+
+
+@admin.register(FamilyMember)
+class FamilyMemberAdmin(GlobalContainsSearchAdmin):
+    list_display = ("full_name", "relation_type", "worker", "birth_date", "phone")
+    ordering = ("worker", "full_name")
+    autocomplete_fields = ("worker",)
+
+
+@admin.register(AdminGroup)
+class AdminGroupAdmin(GlobalContainsSearchAdmin):
+    list_display = ("name",)
+    ordering = ("name",)

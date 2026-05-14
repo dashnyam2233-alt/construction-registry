@@ -1,0 +1,411 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load admin_sidebar %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'registry/admin/admin_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'registry/admin/admin_sidebar.css' %}">
+
+  {# ✅ changelist дээрх нэг мөр hint / title hide (CSS) #}
+  <link rel="stylesheet" href="{% static 'registry/admin/changelist_patch.css' %}?v=2">
+
+  <style>
+    :root{
+      --cr-header-h: 56px;
+      --cr-bc-h: 34px;
+      --cr-top-stack: calc(var(--cr-header-h) + var(--cr-bc-h));
+    }
+
+    #header{
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 40000;
+      background: #2f6477;
+      box-shadow: 0 2px 10px rgba(0,0,0,.12);
+    }
+
+    .breadcrumbs{
+      position: fixed;
+      top: var(--cr-header-h);
+      left: 0; right: 0;
+      z-index: 35000;
+      background: #2f6477;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+      padding-right: 90px;
+    }
+
+    .cr-bc-chat-toggle{
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.10);
+      color: #fff;
+
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .cr-bc-chat-toggle:hover{
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.5);
+    }
+    .cr-bc-chat-toggle .cr-ico{
+      font-size: 14px;
+      transform: translateY(-1px);
+    }
+    .cr-bc-chat-toggle .cr-lbl{
+      font-size: 11px;
+      opacity: .95;
+      letter-spacing: .2px;
+    }
+
+    #container{ padding-top: var(--cr-top-stack); }
+    #content{ padding-top: 12px; }
+    body{ padding-top: 0 !important; }
+
+    .cr-actionbar{
+      margin: 10px 0 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #ddffdd;
+      border: 1px solid #bfe9bf;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .cr-actionbar .cr-left{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+    .cr-actionbar .cr-left .cr-label{
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .cr-actionbar .cr-left .cr-template{
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cr-actionbar .cr-right{
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      margin-left: 6px;
+    }
+
+    .cr-actionbar .cr-right .object-tools{
+      margin: 0 !important;
+      padding: 0 !important;
+      float: none !important;
+
+      display: inline-flex !important;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .cr-actionbar .cr-right .object-tools li{
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none;
+    }
+    .cr-actionbar .cr-right .object-tools a{
+      border-radius: 999px;
+    }
+
+    .cr-actionbar .cr-left img{ max-height: 18px; }
+
+    body.cr-right-collapsed .cr-admin-fixed { display: none !important; }
+    body.cr-right-collapsed #content,
+    body.cr-right-collapsed .content,
+    body.cr-right-collapsed #container,
+    body.cr-right-collapsed .main,
+    body.cr-right-collapsed .main-content,
+    body.cr-right-collapsed .content-wrapper,
+    body.cr-right-collapsed .cr-admin-main {
+      margin-right: 0 !important;
+      padding-right: 0 !important;
+    }
+  </style>
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'registry/admin/admin_menu.js' %}" defer></script>
+  <script src="{% static 'registry/admin/admin_search_fix.js' %}" defer></script>
+
+  {# ✅ changelist дээрх нэг мөр hint / title hide (JS) #}
+  <script src="{% static 'registry/admin/changelist_patch.js' %}?v=2" defer></script>
+
+  <script>
+    (function () {
+      function ready(fn) {
+        if (document.readyState !== "loading") fn();
+        else document.addEventListener("DOMContentLoaded", fn);
+      }
+
+      function storeKey() { return "cr_admin_right_sidebar_hidden"; }
+
+      function getHidden() {
+        try { return localStorage.getItem(storeKey()) === "1"; }
+        catch (e) { return false; }
+      }
+
+      function applyHidden(hidden) {
+        document.body.classList.toggle("cr-right-collapsed", hidden);
+        try { localStorage.setItem(storeKey(), hidden ? "1" : "0"); } catch (e) {}
+
+        var btn = document.getElementById("cr-bc-chat-toggle");
+        if (btn) {
+          var ico = btn.querySelector(".cr-ico");
+          if (ico) ico.textContent = hidden ? "❮❮" : "❯❯";
+          btn.setAttribute("aria-label", hidden ? "Чатыг харуулах" : "Чатыг нуух");
+          btn.title = hidden ? "Чатыг харуулах" : "Чатыг нуух";
+        }
+      }
+
+      function syncTopStackVars() {
+        var header = document.getElementById("header");
+        var bc = document.querySelector(".breadcrumbs");
+
+        var hh = header ? (header.getBoundingClientRect().height || header.offsetHeight || 56) : 56;
+        var bh = bc ? (bc.getBoundingClientRect().height || bc.offsetHeight || 34) : 34;
+
+        document.documentElement.style.setProperty("--cr-header-h", Math.round(hh) + "px");
+        document.documentElement.style.setProperty("--cr-bc-h", Math.round(bh) + "px");
+      }
+
+      function ensureBreadcrumbChatToggle() {
+        var bc = document.querySelector(".breadcrumbs");
+        if (!bc) return null;
+
+        var btn = document.getElementById("cr-bc-chat-toggle");
+        if (btn) return btn;
+
+        btn = document.createElement("button");
+        btn.type = "button";
+        btn.id = "cr-bc-chat-toggle";
+        btn.className = "cr-bc-chat-toggle";
+        btn.innerHTML = '<span class="cr-ico" aria-hidden="true">❯❯</span><span class="cr-lbl">чат</span>';
+
+        bc.appendChild(btn);
+        return btn;
+      }
+
+      function findAnyTemplateMessageLi() {
+        var items = document.querySelectorAll(".messagelist li, ul.messagelist li, .messagelist > li");
+        if (!items || !items.length) return null;
+
+        function score(text) {
+          text = (text || "").toLowerCase();
+          var s = 0;
+          if (text.indexOf("import template") !== -1) s += 5;
+          if (text.indexOf("template") !== -1) s += 2;
+          if (text.indexOf("excel") !== -1) s += 2;
+          if (text.indexOf("татах") !== -1) s += 2;
+          if (text.indexOf("энд дар") !== -1) s += 2;
+          if (text.indexOf("монгол") !== -1) s += 1;
+          return s;
+        }
+
+        var best = null, bestScore = 0;
+        for (var i = 0; i < items.length; i++) {
+          var t = items[i].textContent || "";
+          var sc = score(t);
+          if (sc > bestScore) { bestScore = sc; best = items[i]; }
+        }
+        return bestScore >= 4 ? best : null;
+      }
+
+      function ensureGlobalActionBar() {
+        var content = document.getElementById("content");
+        if (!content) return null;
+
+        var existing = document.getElementById("cr-actionbar");
+        if (existing) return existing;
+
+        var bar = document.createElement("div");
+        bar.id = "cr-actionbar";
+        bar.className = "cr-actionbar";
+
+        bar.innerHTML = ''
+          + '<div class="cr-left">'
+          + '  <span class="cr-label">📥</span>'
+          + '  <span class="cr-template">Хурдан үйлдлүүд</span>'
+          + '</div>'
+          + '<div class="cr-right"></div>';
+
+        content.insertBefore(bar, content.firstChild);
+        return bar;
+      }
+
+      function moveTemplateMessageIntoActionBar(bar) {
+        if (!bar) return;
+
+        var leftTemplate = bar.querySelector(".cr-template");
+        if (!leftTemplate) return;
+
+        var li = findAnyTemplateMessageLi();
+        if (!li) return;
+
+        leftTemplate.innerHTML = li.innerHTML;
+        try { li.remove(); } catch(e) { li.parentNode && li.parentNode.removeChild(li); }
+
+        // ✅ Template линкүүд давхар байвал ганц болгоно (href-аар нь)
+        try {
+          var links = Array.from(leftTemplate.querySelectorAll("a"));
+          if (links.length > 1) {
+            var seen = new Set();
+            links.forEach(function(a){
+              var href = (a.getAttribute("href") || "").split("#")[0].split("?")[0].trim().toLowerCase();
+              var key = href || (a.textContent || "").trim().toLowerCase();
+
+              if (seen.has(key) || seen.size >= 1) {
+                a.remove();
+              } else {
+                seen.add(key);
+              }
+            });
+          }
+        } catch (e) {}
+      }
+
+      function moveObjectToolsIntoActionBar(bar) {
+        if (!bar) return;
+        var right = bar.querySelector(".cr-right");
+        if (!right) return;
+
+        var allTools = Array.from(document.querySelectorAll(".object-tools"));
+        if (!allTools.length) return;
+
+        right.appendChild(allTools[0]);
+        for (var i = 1; i < allTools.length; i++) {
+          try { allTools[i].remove(); } catch(e) { allTools[i].parentNode && allTools[i].parentNode.removeChild(allTools[i]); }
+        }
+
+        var tools = right.querySelector(".object-tools");
+        if (!tools) return;
+
+        // ✅ Link давхардлыг цэвэрлэнэ (import/export гэх мэт)
+        var seen = new Set();
+        Array.from(tools.querySelectorAll("a")).forEach(function(a){
+          var text = (a.textContent || "").trim().toLowerCase();
+          var href = (a.getAttribute("href") || "").trim().toLowerCase();
+          var key = text + "||" + href;
+
+          if (seen.has(key)) {
+            var li = a.closest("li");
+            if (li) li.remove();
+            else a.remove();
+          } else {
+            seen.add(key);
+          }
+        });
+
+        // ✅ Import/Export text-ээр нь ганц болгоно
+        try {
+          var seenIE = new Set();
+          Array.from(tools.querySelectorAll("a")).forEach(function(a){
+            var t = (a.textContent || "").trim().toLowerCase();
+            if (t === "import" || t === "export") {
+              if (seenIE.has(t)) {
+                var li2 = a.closest("li");
+                if (li2) li2.remove();
+                else a.remove();
+              } else {
+                seenIE.add(t);
+              }
+            }
+          });
+        } catch (e) {}
+      }
+
+      ready(function () {
+        if (window.location.pathname.indexOf("/admin/login") === 0) return;
+
+        syncTopStackVars();
+        window.addEventListener("resize", syncTopStackVars);
+
+        var chatBtn = ensureBreadcrumbChatToggle();
+        if (chatBtn) {
+          applyHidden(getHidden());
+          chatBtn.addEventListener("click", function () {
+            var nowHidden = !document.body.classList.contains("cr-right-collapsed");
+            applyHidden(nowHidden);
+          });
+        }
+
+        var bar = ensureGlobalActionBar();
+        moveTemplateMessageIntoActionBar(bar);
+        moveObjectToolsIntoActionBar(bar);
+      });
+    })();
+  </script>
+{% endblock %}
+
+{% block footer %}
+  {{ block.super }}
+
+  {% if request.user.is_authenticated and not request.path|slice:":12" == "/admin/login" %}
+    <aside class="cr-admin-fixed" id="cr-admin-right-sidebar">
+
+      <div style="
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+        background: #ffffff;
+        padding: 10px 12px;
+        border-bottom: 1px solid #e6e6e6;
+      ">
+        <a href="/admin/global-search/" style="
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:8px;
+          padding:10px 12px;
+          border:1px solid #0d6efd;
+          color:#0d6efd;
+          background:#f7fbff;
+          text-decoration:none;
+          border-radius:10px;
+          font-weight:700;
+          line-height:1;
+        ">
+          <span aria-hidden="true">🔎</span>
+          <span>Нэгдсэн хайлт</span>
+        </a>
+
+        <div style="margin-top:6px; font-size:12px; opacity:.75; text-align:center;">
+          Бүх хэсгээр нэг дор хайна
+        </div>
+      </div>
+
+      {% registry_admin_sidebar %}
+
+    </aside>
+  {% endif %}
+{% endblock %}

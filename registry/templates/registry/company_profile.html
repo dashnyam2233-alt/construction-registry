@@ -1,0 +1,397 @@
+{% load static %}
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ company.name }} — БНБ Систем</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:    #0e0f13;
+      --navy:   #131620;
+      --slate:  #1c1f2e;
+      --card:   #22263a;
+      --card2:  #282d42;
+      --glass:  rgba(28,31,46,0.85);
+      --text:   #eef0f6;
+      --text2:  #9197b3;
+      --text3:  #565d7c;
+      --amber:  #f5a623;
+      --amber2: #ffc04d;
+      --amber-g: rgba(245,166,35,0.12);
+      --amber-b: rgba(245,166,35,0.22);
+      --blue:   #3b82f6;
+      --teal:   #14b8a6;
+      --line:   rgba(255,255,255,0.06);
+      --line2:  rgba(255,255,255,0.1);
+      --r:      10px;
+      --font:   'Plus Jakarta Sans', sans-serif;
+      --font-d: 'Bebas Neue', sans-serif;
+      --font-m: 'JetBrains Mono', monospace;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      --shadow2: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--ink);color:var(--text);font-family:var(--font);line-height:1.6;overflow-x:hidden}
+    img{display:block;max-width:100%}
+    a{color:var(--amber);text-decoration:none}
+
+    /* === TOPBAR === */
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(14,15,19,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--line)}
+    .tb-logo{display:flex;align-items:center;gap:10px}
+    .tb-logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1a1208,#2a1e08);border:1.5px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:16px}
+    .tb-logo-text{font-family:var(--font-d);font-size:19px;letter-spacing:1px;color:var(--text)}
+    .tb-logo-text span{color:var(--amber)}
+    .tb-nav{display:flex;align-items:center;gap:8px}
+    .tb-btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;border:1px solid var(--line2);color:var(--text2);cursor:pointer;transition:all.15s;background:transparent;font-family:var(--font)}
+    .tb-btn:hover{border-color:var(--amber);color:var(--amber)}
+    .tb-btn-a{background:var(--amber);color:#0e0f13;border-color:var(--amber);font-weight:700}
+    .tb-btn-a:hover{background:var(--amber2);border-color:var(--amber2);color:#0e0f13}
+
+    /* === HERO === */
+    .hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:flex-end;padding-top:64px;overflow:hidden}
+
+    /* Animated gradient background */
+    .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0e0f13 0%,#131828 35%,#0f1a14 65%,#0e0f13 100%)}
+    .hero-mesh{position:absolute;inset:0;background:
+      radial-gradient(ellipse 80% 60% at 20% 80%,rgba(245,166,35,.12) 0%,transparent 55%),
+      radial-gradient(ellipse 60% 50% at 85% 20%,rgba(59,130,246,.08) 0%,transparent 50%),
+      radial-gradient(ellipse 40% 40% at 60% 70%,rgba(20,184,166,.06) 0%,transparent 45%)}
+    .hero-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,255,255,.025) 79px,rgba(255,255,255,.025) 80px),repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,255,255,.025) 79px,rgba(255,255,255,.025) 80px)}
+    .hero-cover{position:absolute;inset:0}
+    .hero-cover img{width:100%;height:100%;object-fit:cover;opacity:.15;filter:saturate(.4) brightness(.8);mix-blend-mode:luminosity}
+    .hero-fade{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,15,19,1) 0%,rgba(14,15,19,.7) 40%,rgba(14,15,19,.15) 100%)}
+
+    /* Decorative amber stripe */
+    .hero-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--amber) 20%,var(--amber2) 50%,var(--amber) 80%,transparent 100%)}
+
+    .hero-body{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 60px 80px;width:100%}
+    .hero-crumb{font-family:var(--font-m);font-size:11px;color:var(--text3);letter-spacing:.8px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+    .hero-crumb a{color:var(--text3);transition:color.15s}.hero-crumb a:hover{color:var(--amber)}
+
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:11px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;border:1px solid var(--amber-b);padding:5px 14px;border-radius:999px;background:var(--amber-g);margin-bottom:18px}
+    .hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber);animation:blink 2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+
+    .hero-name{font-family:var(--font-d);font-size:clamp(52px,8vw,100px);line-height:.92;letter-spacing:2px;color:var(--text);margin-bottom:18px;text-shadow:0 4px 40px rgba(0,0,0,.5)}
+
+    .hero-meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:36px}
+    .hero-meta-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--line2);padding:6px 14px;border-radius:999px;font-size:13px;color:var(--text2)}
+
+    .hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+    .hbtn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all.2s;letter-spacing:.3px;border:none}
+    .hbtn-p{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#0e0f13;box-shadow:0 4px 20px rgba(245,166,35,.35)}
+    .hbtn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,166,35,.45)}
+    .hbtn-o{background:rgba(255,255,255,.06);border:1px solid var(--line2);color:var(--text)}
+    .hbtn-o:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-g)}
+
+    /* === STATS === */
+    .stats-wrap{background:var(--navy);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .stats-in{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+    .stat{padding:30px 28px;border-right:1px solid var(--line);position:relative;overflow:hidden;cursor:default;transition:background.2s}
+    .stat:last-child{border-right:0}
+    .stat:hover{background:rgba(245,166,35,.04)}
+    .stat-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:120px;height:80px;background:radial-gradient(circle,rgba(245,166,35,.15),transparent 70%);opacity:0;transition:opacity.3s}
+    .stat:hover .stat-glow{opacity:1}
+    .stat-v{font-family:var(--font-d);font-size:52px;color:var(--amber);line-height:1;margin-bottom:4px;letter-spacing:1px}
+    .stat-l{font-family:var(--font-m);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px}
+
+    /* === LAYOUT === */
+    .layout{max-width:1240px;margin:0 auto;padding:72px 60px;display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:start}
+
+    /* === SECTION === */
+    .sec{margin-bottom:56px}
+    .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+    .sec-accent{width:4px;height:28px;border-radius:2px;background:linear-gradient(to bottom,var(--amber),var(--amber2));flex-shrink:0}
+    .sec-title{font-family:var(--font-d);font-size:28px;letter-spacing:1px;color:var(--text)}
+    .sec-cnt{margin-left:auto;font-family:var(--font-m);font-size:11px;color:var(--text3);background:var(--slate);border:1px solid var(--line2);padding:4px 10px;border-radius:999px}
+
+    /* === ABOUT === */
+    .about-box{background:var(--navy);border:1px solid var(--line2);border-radius:var(--r);padding:24px 28px;position:relative;overflow:hidden}
+    .about-box::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(to bottom,var(--amber),transparent)}
+    .about-txt{font-size:15px;color:var(--text2);line-height:1.85}
+
+    /* === WORKERS === */
+    .workers{display:flex;flex-direction:column;gap:3px}
+    .wk{display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--navy);border:1px solid var(--line);border-radius:8px;transition:all.15s;position:relative;overflow:hidden}
+    .wk::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,166,35,.04),transparent);opacity:0;transition:opacity.2s}
+    .wk:hover{border-color:var(--line2);background:var(--slate);transform:translateX(3px)}
+    .wk:hover::after{opacity:1}
+    .wk-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--slate),var(--card));border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;z-index:1}
+    .wk-info{flex:1;min-width:0;position:relative;z-index:1}
+    .wk-name{font-weight:700;font-size:14px;color:var(--text)}
+    .wk-role{font-size:12px;color:var(--text3);font-family:var(--font-m);margin-top:2px}
+    .wk-ph{font-family:var(--font-m);font-size:13px;color:var(--amber);font-weight:500;position:relative;z-index:1}
+    .wk-ph:hover{color:var(--amber2)}
+
+    /* Lock */
+    .lock{background:linear-gradient(135deg,var(--navy),var(--slate));border:1px dashed var(--amber-b);border-radius:var(--r);padding:36px;text-align:center;margin-top:8px;position:relative;overflow:hidden}
+    .lock::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(245,166,35,.08),transparent 70%)}
+    .lock-ico{font-size:32px;margin-bottom:12px;filter:grayscale(0.3)}
+    .lock-t{font-family:var(--font-d);font-size:22px;color:var(--text);margin-bottom:8px;letter-spacing:.5px}
+    .lock-s{font-size:13px;color:var(--text3);margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto}
+    .lock-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--amber),var(--amber2));color:#0e0f13;padding:11px 28px;border-radius:8px;font-weight:700;font-size:14px;box-shadow:0 4px 16px rgba(245,166,35,.3)}
+    .lock-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(245,166,35,.4)}
+
+    /* Brigades */
+    .brig-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .brig{background:var(--navy);border:1px solid var(--line);border-radius:8px;padding:16px 18px;transition:all.15s;position:relative;overflow:hidden}
+    .brig::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--amber),var(--teal));border-radius:0 0 0 8px;opacity:0;transition:opacity.2s}
+    .brig:hover{border-color:var(--line2);background:var(--slate)}
+    .brig:hover::before{opacity:1}
+    .brig-n{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
+    .brig-d{font-size:11px;color:var(--text3);font-family:var(--font-m)}
+
+    /* === SIDEBAR === */
+    .sbar{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px}
+
+    /* Logo */
+    .logo-c{background:linear-gradient(160deg,var(--navy),var(--slate));border:1px solid var(--line2);border-radius:12px;padding:28px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .logo-c::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(245,166,35,.1),transparent 70%)}
+    .logo-wrap{width:90px;height:90px;border-radius:16px;overflow:hidden;margin:0 auto 16px;border:2px solid var(--amber-b);box-shadow:0 0 0 4px var(--amber-g);position:relative}
+    .logo-wrap img{width:100%;height:100%;object-fit:cover}
+    .logo-def{width:100%;height:100%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:38px}
+    .logo-name{font-family:var(--font-d);font-size:22px;letter-spacing:.5px;color:var(--text);margin-bottom:12px;line-height:1.2}
+    .badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+    .badge{font-family:var(--font-m);font-size:10px;letter-spacing:.8px;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--amber-b);color:var(--amber);background:var(--amber-g)}
+
+    /* Contact */
+    .ct-c{background:var(--navy);border:1px solid var(--line2);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+    .ct-head{padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
+    .ct-head::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal)}
+    .ct-row{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);transition:background.14s}
+    .ct-row:last-child{border-bottom:0}
+    .ct-row:hover{background:var(--slate)}
+    .ct-ic{width:32px;height:32px;flex-shrink:0;background:var(--slate);border:1px solid var(--line2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .ct-lbl{font-family:var(--font-m);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+    .ct-val{font-size:13px;font-weight:600;color:var(--text)}
+    .ct-val a{color:var(--amber)}.ct-val a:hover{color:var(--amber2)}
+
+    /* CTA */
+    .cta{background:linear-gradient(135deg,var(--navy),var(--slate));border:1px solid var(--amber-b);border-radius:12px;padding:24px;text-align:center;position:relative;overflow:hidden}
+    .cta::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,166,35,.05),transparent)}
+    .cta-t{font-family:var(--font-d);font-size:20px;color:var(--text);margin-bottom:8px;position:relative}
+    .cta-s{font-size:12px;color:var(--text3);margin-bottom:16px;position:relative}
+    .cta-btn{display:block;background:linear-gradient(135deg,var(--amber),var(--amber2));color:#0e0f13;padding:11px 20px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:10px;position:relative;box-shadow:0 4px 14px rgba(245,166,35,.3)}
+    .cta-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,.4)}
+    .cta-sub{font-size:11px;color:var(--text3);position:relative}
+    .cta-sub a{color:var(--amber)}
+
+    /* Owner */
+    .owner-b{background:var(--amber-g);border:1px solid var(--amber-b);border-radius:8px;padding:12px 18px;display:flex;align-items:center;gap:10px;margin-bottom:20px;font-size:13px;color:var(--text2)}
+    .owner-btn{margin-left:auto;background:var(--amber);color:#0e0f13;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700}
+    .owner-btn:hover{background:var(--amber2)}
+
+    /* Responsive */
+    @media(max-width:1040px){.layout{grid-template-columns:1fr;padding:56px 32px;gap:40px}.sbar{position:static}.hero-body{padding:0 32px 70px}.stats-in{grid-template-columns:repeat(2,1fr)}.brig-grid{grid-template-columns:1fr}}
+    @media(max-width:640px){.topbar{padding:0 16px}.hero-body{padding:0 16px 56px}.layout{padding:40px 16px}.hero-name{font-size:46px}.stats-in{grid-template-columns:1fr 1fr}.tb-logo-text{font-size:16px}}
+
+    /* Animations */
+    @keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+    .au{opacity:0;animation:slideUp .6s ease forwards}
+    .au:nth-child(1){animation-delay:.08s}.au:nth-child(2){animation-delay:.18s}.au:nth-child(3){animation-delay:.28s}.au:nth-child(4){animation-delay:.38s}.au:nth-child(5){animation-delay:.48s}
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="/public/" class="tb-logo">
+    <div class="tb-logo-icon">🏗️</div>
+    <div class="tb-logo-text">БНБ <span>СИСТЕМ</span></div>
+  </a>
+  <nav class="tb-nav">
+    {% if request.user.is_authenticated %}
+      <span style="font-size:12px;color:var(--text3);font-family:var(--font-m)">{{ display_name }}</span>
+      {% if is_owner %}<a href="/admin/registry/company/{{ company.pk }}/change/" class="tb-btn">⚙️ Засах</a>{% endif %}
+      <form method="post" action="/logout/" style="margin:0">{% csrf_token %}
+        <button class="tb-btn tb-btn-a" type="submit">Гарах</button>
+      </form>
+    {% else %}
+      <a href="/login/" class="tb-btn">Нэвтрэх</a>
+      <a href="/public/" class="tb-btn tb-btn-a">Нүүр</a>
+    {% endif %}
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-mesh"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-cover">
+    {% if company.cover %}<img src="{{ company.cover.url }}" alt="">{% endif %}
+  </div>
+  <div class="hero-fade"></div>
+  <div class="hero-stripe"></div>
+
+  <div class="hero-body">
+    <div class="hero-crumb au">
+      <a href="/public/">БНБ СИСТЕМ</a> <span>›</span>
+      <a href="/public/">КОМПАНИУД</a> <span>›</span>
+      <span style="color:var(--amber)">{{ company.name|upper }}</span>
+    </div>
+    <div class="hero-badge au">
+      {% if company.get_activity_type_display %}{{ company.get_activity_type_display }}{% else %}Барилгын компани{% endif %}
+    </div>
+    <h1 class="hero-name au">{{ company.name }}</h1>
+    <div class="hero-meta au">
+      {% if company.city %}
+      <span class="hero-meta-chip">📍 {{ company.get_city_display }}</span>
+      {% endif %}
+      {% if company.register_no %}
+      <span class="hero-meta-chip" style="font-family:var(--font-m);font-size:12px">РД: {{ company.register_no }}</span>
+      {% endif %}
+      {% if company.established_year %}
+      <span class="hero-meta-chip">📅 {{ company.established_year }} оноос</span>
+      {% endif %}
+      <span class="hero-meta-chip">👷 {{ workers_total }} ажиллагсад</span>
+    </div>
+    <div class="hero-btns au">
+      {% if company.phone %}
+      <a href="tel:{{ company.phone }}" class="hbtn hbtn-p">📞 {{ company.phone }}</a>
+      {% endif %}
+      {% if company.email %}
+      <a href="mailto:{{ company.email }}" class="hbtn hbtn-o">✉️ Имэйл</a>
+      {% endif %}
+      {% if company.website %}
+      <a href="{{ company.website }}" target="_blank" class="hbtn hbtn-o">🌐 Вэбсайт</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-wrap">
+  <div class="stats-in">
+    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ workers_total }}</div><div class="stat-l">Ажиллагсад</div></div>
+    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ brigades_total }}</div><div class="stat-l">Бригадууд</div></div>
+    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ company.employee_count|default:"—" }}</div><div class="stat-l">Нийт ажилчид</div></div>
+    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ company.established_year|default:"—" }}</div><div class="stat-l">Үүссэн он</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="layout">
+  <div>
+    {% if is_owner %}
+    <div class="owner-b">✏️ Та энэ компанийн эзэн хэрэглэгч.
+      <a href="/admin/registry/company/{{ company.pk }}/change/" class="owner-btn">Засах</a>
+    </div>
+    {% endif %}
+
+    {% if company.description %}
+    <div class="sec">
+      <div class="sec-head"><div class="sec-accent"></div><h2 class="sec-title">КОМПАНИЙН ТУХАЙ</h2></div>
+      <div class="about-box"><p class="about-txt">{{ company.description|linebreaksbr }}</p></div>
+    </div>
+    {% endif %}
+
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-accent"></div>
+        <h2 class="sec-title">АЖИЛЛАГСАД</h2>
+        <span class="sec-cnt">{{ workers_total }} ХҮН</span>
+      </div>
+      <div class="workers">
+        {% for w in workers %}
+        <div class="wk">
+          <div class="wk-av">👤</div>
+          <div class="wk-info">
+            <div class="wk-name">{{ w }}</div>
+            <div class="wk-role">{% if w.responsible_role %}{{ w.get_responsible_role_display }}{% endif %}{% if w.engineer_specialty %} · {{ w.get_engineer_specialty_display }}{% endif %}</div>
+          </div>
+          {% if is_auth and w.phone %}<a href="tel:{{ w.phone }}" class="wk-ph">{{ w.phone }}</a>{% endif %}
+        </div>
+        {% empty %}
+        <div style="color:var(--text3);font-size:13px;padding:20px 0;text-align:center">Ажиллагсадын мэдээлэл оруулаагүй.</div>
+        {% endfor %}
+        {% if not is_auth and workers_total > 3 %}
+        <div class="lock">
+          <div class="lock-ico">🔐</div>
+          <div class="lock-t">БҮРЭН МЭДЭЭЛЭЛ</div>
+          <div class="lock-s">Нийт <strong style="color:var(--amber)">{{ workers_total }}</strong> ажилтны утас, имэйл болон дэлгэрэнгүй мэдээллийг харахын тулд нэвтэрнэ үү.</div>
+          <a href="/login/" class="lock-btn">🔓 Нэвтрэх →</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if brigades_total > 0 %}
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-accent"></div>
+        <h2 class="sec-title">БАРИЛГЫН БРИГАДУУД</h2>
+        <span class="sec-cnt">{{ brigades_total }}</span>
+      </div>
+      <div class="brig-grid">
+        {% for b in brigades %}
+        <div class="brig">
+          <div class="brig-n">{{ b.name }}</div>
+          {% if b.activity_directions_csv %}<div class="brig-d">{{ b.get_activity_directions_display }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sbar">
+    <div class="logo-c">
+      <div class="logo-wrap">
+        {% if company.display_logo_url %}<img src="{{ company.display_logo_url }}" alt="">
+        {% else %}<div class="logo-def">🏢</div>{% endif %}
+      </div>
+      <div class="logo-name">{{ company.name }}</div>
+      <div class="badges">
+        {% if company.get_activity_type_display %}<span class="badge">{{ company.get_activity_type_display }}</span>{% endif %}
+        {% if company.get_activity_direction_display %}<span class="badge">{{ company.get_activity_direction_display }}</span>{% endif %}
+        {% if company.city %}<span class="badge">{{ company.get_city_display }}</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="ct-c">
+      <div class="ct-head">Холбоо барих</div>
+      {% if company.phone %}
+      <div class="ct-row"><div class="ct-ic">📞</div><div><div class="ct-lbl">Утас</div><div class="ct-val"><a href="tel:{{ company.phone }}">{{ company.phone }}</a></div></div></div>
+      {% endif %}
+      {% if company.email %}
+      <div class="ct-row"><div class="ct-ic">✉️</div><div><div class="ct-lbl">Имэйл</div><div class="ct-val">{{ company.email }}</div></div></div>
+      {% endif %}
+      {% if company.address %}
+      <div class="ct-row"><div class="ct-ic">📍</div><div><div class="ct-lbl">Хаяг</div><div class="ct-val">{{ company.address }}</div></div></div>
+      {% endif %}
+      {% if company.website %}
+      <div class="ct-row"><div class="ct-ic">🌐</div><div><div class="ct-lbl">Вэбсайт</div><div class="ct-val"><a href="{{ company.website }}" target="_blank">{{ company.website }}</a></div></div></div>
+      {% endif %}
+      {% if company.facebook_url %}
+      <div class="ct-row"><div class="ct-ic">📘</div><div><div class="ct-lbl">Facebook</div><div class="ct-val"><a href="{{ company.facebook_url }}" target="_blank">Facebook хуудас</a></div></div></div>
+      {% endif %}
+      {% if not company.phone and not company.email %}
+      <div style="padding:16px 18px;color:var(--text3);font-size:13px;font-family:var(--font-m)">Мэдээлэл оруулаагүй.</div>
+      {% endif %}
+    </div>
+
+    {% if not is_auth %}
+    <div class="cta">
+      <div class="cta-t">БҮРЭН МЭДЭЭЛЭЛ</div>
+      <div class="cta-s">Нэвтэрснээр ажиллагсадын утас, имэйл болон дэлгэрэнгүй мэдээллийг харна.</div>
+      <a href="/login/" class="cta-btn">🔓 Нэвтрэх →</a>
+      <div class="cta-sub">Бүртгэлгүй бол <a href="/register/">бүртгүүлнэ үү</a></div>
+    </div>
+    {% endif %}
+  </aside>
+</div>
+
+<div style="border-top:1px solid var(--line);padding:24px 60px;max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text3);font-family:var(--font-m)">
+  <span>© 2026 БНБ СИСТЕМ — БАРИЛГАЧДЫН НЭГДСЭН МЭДЭЭЛЛИЙН БААЗ</span>
+  <a href="/public/" style="color:var(--text3);transition:color.15s" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--text3)'">← НҮҮР ХУУДАС</a>
+</div>
+
+</body>
+</html>

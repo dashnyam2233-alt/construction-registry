@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+  <div class="content">
+    <h1>{{ title }}</h1>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <fieldset class="module aligned">
+        <div class="form-row">
+          {{ form.profession.errors }}
+          <div>
+            <label>{{ form.profession.label }}:</label>
+            {{ form.profession }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          {{ form.birth_decade.errors }}
+          <div>
+            <label>{{ form.birth_decade.label }}:</label>
+            {{ form.birth_decade }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          {{ form.exp_range.errors }}
+          <div>
+            <label>{{ form.exp_range.label }}:</label>
+            {{ form.exp_range }}
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="submit-row">
+        <input type="submit" class="default" value="Apply" />
+        <a class="button cancel-link" href="{% url 'admin:registry_worker_changelist' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

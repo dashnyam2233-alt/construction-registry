@@ -1,0 +1,43 @@
+<div class="cr-box">
+  <div class="cr-box__title">Зар (Banner)</div>
+
+  <div class="cr-list">
+    {% for b in sidebar_banners %}
+      {% with img=b.display_image_url %}
+        <div class="cr-item">
+          <div class="cr-thumb">
+            {% if img %}
+              <img src="{{ img }}" alt="{{ b.title|default:'Banner' }}">
+            {% else %}
+              <div class="cr-thumb__fallback">AD</div>
+            {% endif %}
+          </div>
+          <div class="cr-item__text">
+            <div class="cr-item__title">{{ b.title|default:"Зар" }}</div>
+            <div class="cr-item__meta">Эрэмбэ: {{ b.sort_order }}</div>
+          </div>
+        </div>
+      {% endwith %}
+    {% empty %}
+      <div class="cr-empty">Зар алга байна.</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="cr-box">
+  <div class="cr-box__title">Чатууд (PublicPost)</div>
+
+  <div class="cr-chatlist">
+    {% for p in sidebar_posts %}
+      <div class="cr-chat">
+        <div class="cr-chat__title">{{ p.title }}</div>
+        <div class="cr-chat__meta">
+          <span>{{ p.created_at|date:"Y-m-d H:i" }}</span>
+          {% if p.author %}<span> • {{ p.author }}</span>{% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="cr-empty">Чат алга байна.</div>
+    {% endfor %}
+  </div>
+</div>

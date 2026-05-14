@@ -1,0 +1,45 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  {% if company_web_url %}
+  <li>
+    <a href="{{ company_web_url }}" target="_blank"
+       style="display:inline-flex;align-items:center;gap:6px;
+              background:#f0a500;color:#0d1117;
+              padding:6px 14px;border-radius:6px;
+              font-size:13px;font-weight:700;text-decoration:none;">
+      🌐 Web хуудас харах
+    </a>
+  </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+// ── Үйл ажиллагааны дэд сонголт автоматаар солигдох ──
+var SUB_MAP = {{ COMPANY_ACTIVITY_SUB_MAP|safe }};
+document.addEventListener('DOMContentLoaded', function () {
+  var mainSel = document.getElementById('id_activity_direction');
+  var subSel  = document.getElementById('id_activity_sub_direction');
+  if (!mainSel || !subSel) return;
+
+  function updateSubs() {
+    var main = mainSel.value;
+    var subs = SUB_MAP[main] || [];
+    var cur  = subSel.value;
+    subSel.innerHTML = '<option value="">---------</option>';
+    subs.forEach(function (s) {
+      var opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      if (s === cur) opt.selected = true;
+      subSel.appendChild(opt);
+    });
+  }
+  mainSel.addEventListener('change', updateSubs);
+  updateSubs();
+});
+</script>
+{% endblock %}

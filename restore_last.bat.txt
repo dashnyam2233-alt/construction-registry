@@ -1,0 +1,40 @@
+@echo off
+setlocal
+
+if not exist "_backups" (
+  echo ❌ No _backups folder found.
+  exit /b 1
+)
+
+for /f "delims=" %%d in ('dir /b /ad /o-d _backups') do (
+  set "LAST=%%d"
+  goto :found
+)
+
+:found
+if "%LAST%"=="" (
+  echo ❌ No backups found in _backups
+  exit /b 1
+)
+
+set "SRC=_backups\%LAST%"
+
+if not exist "%SRC%\registry" (
+  echo ❌ Backup is missing registry folder: %SRC%
+  exit /b 1
+)
+if not exist "%SRC%\config" (
+  echo ❌ Backup is missing config folder: %SRC%
+  exit /b 1
+)
+
+xcopy "%SRC%\registry" "registry\" /E /I /H /Y >nul
+xcopy "%SRC%\config" "config\" /E /I /H /Y >nul
+
+if exist "%SRC%\db.sqlite3" copy /Y "%SRC%\db.sqlite3" "db.sqlite3" >nul
+if exist "%SRC%\manage.py"  copy /Y "%SRC%\manage.py"  "manage.py"  >nul
+
+echo.
+echo ✅ Restored from: %SRC%
+echo.
+endlocal

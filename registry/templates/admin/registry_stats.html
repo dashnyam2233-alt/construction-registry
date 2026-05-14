@@ -1,0 +1,59 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+  <div style="max-width: 1100px;">
+    <h1>{{ title }}</h1>
+
+    <h2>Компани (төрлөөр)</h2>
+    <table class="adminlist">
+      <thead><tr><th>Төрөл</th><th>Нийт</th></tr></thead>
+      <tbody>
+        {% for r in company_by_type %}
+          <tr><td>{{ r.activity_type }}</td><td>{{ r.total }}</td></tr>
+        {% empty %}
+          <tr><td colspan="2">Өгөгдөл алга</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Ажилтан (мэргэжлээр)</h2>
+    <table class="adminlist">
+      <thead><tr><th>Мэргэжил</th><th>Нийт</th></tr></thead>
+      <tbody>
+        {% for r in worker_by_prof %}
+          <tr><td>{{ r.profession }}</td><td>{{ r.total }}</td></tr>
+        {% empty %}
+          <tr><td colspan="2">Өгөгдөл алга</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Компани төрөл × Мэргэжил</h2>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th>Компани төрөл</th>
+          {% for p in professions %}
+            <th>{{ p }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td><b>{{ row.activity_type }}</b></td>
+            {% for c in row.counts %}
+              <td>{{ c }}</td>
+            {% endfor %}
+          </tr>
+        {% empty %}
+          <tr><td colspan="99">Өгөгдөл алга</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p style="margin-top: 16px;">
+      <a href="/admin/">Admin</a> |
+      <a href="/admin/meta-publish/">Meta Publish</a>
+    </p>
+  </div>
+{% endblock %}

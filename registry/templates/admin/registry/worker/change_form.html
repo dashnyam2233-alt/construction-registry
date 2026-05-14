@@ -1,0 +1,142 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script>
+    const BIRTH_SOUMS = {{ BIRTH_SOUMS|safe }};
+    const UB_LABEL = {
+      "BGD": "Баянгол",
+      "BZD": "Баянзүрх",
+      "CHD": "Чингэлтэй",
+      "SHD": "Сонгинохайрхан",
+      "SBD": "Сүхбаатар",
+      "HUD": "Хан-Уул",
+      "ND":  "Налайх",
+      "BD":  "Багануур",
+      "BHD": "Багахангай",
+    };
+
+    function clearOptions(sel) { while (sel.options.length > 0) sel.remove(0); }
+    function addOption(sel, value, label) {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = label;
+      sel.appendChild(opt);
+    }
+
+    function rebuildSoums() {
+      const citySel = document.getElementById("id_birth_place_city");
+      const subSel  = document.getElementById("id_birth_place_sub");
+      if (!citySel || !subSel) return;
+
+      const city = citySel.value || "";
+      const prev = subSel.value || "";
+
+      clearOptions(subSel);
+      addOption(subSel, "", "---------");
+
+      if (!city) return;
+
+      if (city === "UB") {
+        (BIRTH_SOUMS["UB"] || []).forEach(function(code){
+          addOption(subSel, code, UB_LABEL[code] || code);
+        });
+      } else {
+        (BIRTH_SOUMS[city] || []).forEach(function(name){
+          addOption(subSel, name, name);
+        });
+      }
+
+      if (prev) {
+        for (let i = 0; i < subSel.options.length; i++) {
+          if (subSel.options[i].value === prev) { subSel.value = prev; break; }
+        }
+      }
+    }
+
+    function getRow(fieldName) {
+      const el = document.getElementById("id_" + fieldName);
+      if (!el) return null;
+      return el.closest(".form-row") || el.closest(".form-group") || el.parentElement;
+    }
+
+    // ✅ ШИНЭ ЛОГИК:
+    // - profession === "engineer" БОЛ: engineer_specialty-г харуулна
+    // - responsible_role === "ENGINEER" БОЛ: engineer_specialty-г харуулна
+    // - profession инженер болсон үед role-г автоматаар ENGINEER болгоно
+    function toggleEngineerSpecialty() {
+      const roleSel = document.getElementById("id_responsible_role");
+      const profSel = document.getElementById("id_profession");
+      const row = getRow("engineer_specialty");
+      const specialtySel = document.getElementById("id_engineer_specialty");
+      if (!row) return;
+
+      const roleVal = roleSel ? (roleSel.value || "") : "";
+      const profVal = profSel ? (profSel.value || "") : "";
+
+      const isEngineer = (roleVal === "ENGINEER") || (profVal === "engineer");
+
+      if (isEngineer) {
+        row.style.display = "";
+
+        // profession инженер сонгогдсон бол role-г ENGINEER болгож тааруулна
+        if (profVal === "engineer" && roleSel && roleVal !== "ENGINEER") {
+          roleSel.value = "ENGINEER";
+        }
+      } else {
+        row.style.display = "none";
+        if (specialtySel) specialtySel.value = "";
+      }
+    }
+
+    // ✅ NEW: "Бусад" үед нэмэлт нүд гаргах
+    // - profession === "other" => profession_other харуулна
+    // - responsible_role === "OTHER" => responsible_role_other харуулна
+    function toggleOtherFields() {
+      const profSel = document.getElementById("id_profession");
+      const profOther = document.getElementById("id_profession_other");
+      const roleSel = document.getElementById("id_responsible_role");
+      const roleOther = document.getElementById("id_responsible_role_other");
+
+      const profRow = getRow("profession_other");
+      const roleRow = getRow("responsible_role_other");
+
+      // Хэрвээ model дээр энэ 2 талбар хараахан үүсээгүй бол JS зүгээр л юу ч хийхгүй
+      const profVal = profSel ? (profSel.value || "") : "";
+      const roleVal = roleSel ? (roleSel.value || "") : "";
+
+      const profIsOther = (profVal === "other");
+      const roleIsOther = (roleVal === "OTHER");
+
+      if (profRow) profRow.style.display = profIsOther ? "" : "none";
+      if (roleRow) roleRow.style.display = roleIsOther ? "" : "none";
+
+      // optional: browser required (server талд clean() бас шалгана)
+      if (profOther) profOther.required = !!profIsOther;
+      if (roleOther) roleOther.required = !!roleIsOther;
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){
+      const citySel = document.getElementById("id_birth_place_city");
+      if (citySel) {
+        citySel.addEventListener("change", rebuildSoums);
+        rebuildSoums();
+      }
+
+      const roleSel = document.getElementById("id_responsible_role");
+      if (roleSel) {
+        roleSel.addEventListener("change", toggleEngineerSpecialty);
+        roleSel.addEventListener("change", toggleOtherFields);
+      }
+
+      const profSel = document.getElementById("id_profession");
+      if (profSel) {
+        profSel.addEventListener("change", toggleEngineerSpecialty);
+        profSel.addEventListener("change", toggleOtherFields);
+      }
+
+      toggleEngineerSpecialty();
+      toggleOtherFields();
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,37 @@
+// registry/static/registry/public_home.js
+
+(function () {
+  function qs(sel, root) { return (root || document).querySelector(sel); }
+  function qsa(sel, root) { return Array.from((root || document).querySelectorAll(sel)); }
+
+  function initCompose() {
+    const wrap = qs('[data-chat-compose]');
+    if (!wrap) return;
+
+    const btn = qs('[data-compose-toggle]', wrap);
+    const body = qs('[data-compose-body]', wrap);
+    if (!btn || !body) return;
+
+    // default: collapsed
+    body.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+    btn.textContent = 'Дэлгэх ▾';
+
+    btn.addEventListener('click', function () {
+      const isOpen = !body.hidden;
+      body.hidden = isOpen; // toggle
+      btn.setAttribute('aria-expanded', String(!isOpen));
+      btn.textContent = isOpen ? 'Дэлгэх ▾' : 'Эвхэх ▴';
+
+      if (!isOpen) {
+        // focus textarea when opened
+        const ta = qs('textarea', body);
+        if (ta) ta.focus();
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initCompose();
+  });
+})();

@@ -1,0 +1,436 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Мессеж илгээх{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+<style>
+.ms{max-width:1140px;margin:20px auto}
+.ms-card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px}
+.ms-card h2{margin:0 0 14px;font-size:14px;color:#333;padding-bottom:8px;border-bottom:2px solid #f0a500;display:flex;align-items:center;gap:8px}
+/* Channel */
+.ch-grid{display:flex;gap:8px;flex-wrap:wrap}
+.ch-btn{display:flex;align-items:center;gap:7px;border:2px solid #ddd;border-radius:8px;padding:8px 14px;cursor:pointer;background:#fff;font-size:13px;font-weight:600;color:#555;transition:all.14s}
+.ch-btn:hover,.ch-btn.active{border-color:#f0a500;color:#c47f00;background:#fff8e6}
+.ch-btn input{display:none}
+.ch-icon{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:5px;flex-shrink:0}
+.ch-icon svg{width:16px;height:16px}
+.ch-icon--email{background:#fff8e6}
+.ch-icon--sms{background:#f0fff4}
+.ch-icon--telegram{background:#e8f4fd}
+.ch-icon--facebook{background:#e8f0fe}
+.ch-icon--viber{background:#f3f0ff}
+/* Send ALL button */
+.send-all-bar{background:linear-gradient(135deg,#fff8e6,#fffbf0);border:2px solid #f0a500;border-radius:8px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.send-all-info{flex:1;min-width:200px}
+.send-all-title{font-size:14px;font-weight:700;color:#333;margin-bottom:4px}
+.send-all-sub{font-size:12px;color:#888}
+.send-all-counts{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.sac{background:#f0a500;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px}
+.send-all-btn{background:#f0a500;color:#fff;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.send-all-btn:hover{background:#d99400}
+/* Tabs */
+.tab-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.tab{padding:7px 13px;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;background:#fff;color:#555;transition:all.12s;display:flex;align-items:center;gap:5px}
+.tab:hover{border-color:#f0a500;color:#f0a500}
+.tab.active{background:#f0a500;color:#fff;border-color:#f0a500}
+.tab-cnt{background:rgba(255,255,255,.3);border-radius:999px;padding:1px 6px;font-size:11px}
+.tab.active .tab-cnt{background:rgba(255,255,255,.3)}
+.tab:not(.active) .tab-cnt{background:#f0f0f0;color:#888}
+/* Filter */
+.filter-box{background:#fffbf0;border:1px solid #f5e0a0;border-radius:8px;padding:14px 16px;margin-bottom:14px}
+.filter-title{font-size:12px;font-weight:700;color:#b07800;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px}
+.filter-row:last-child{margin-bottom:0}
+.fg{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1}
+.fg label{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.3px}
+.fg select,.fg input[type=text]{border:1px solid #ddd;border-radius:6px;padding:7px 9px;font-size:13px;outline:none;width:100%;background:#fff}
+.fg select:focus,.fg input:focus{border-color:#f0a500}
+.fg-ck{display:flex;align-items:center;gap:5px;font-size:13px;color:#555;cursor:pointer;white-space:nowrap;padding-bottom:2px}
+.fg-ck input{accent-color:#f0a500;width:14px;height:14px;cursor:pointer}
+.fbtns{display:flex;gap:7px;align-items:flex-end;flex-shrink:0}
+.fbtn{background:#f0a500;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;height:34px}
+.fbtn:hover{background:#d99400}
+.fbtn-c{background:#fff;color:#888;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;cursor:pointer;height:34px;text-decoration:none;display:inline-flex;align-items:center}
+.fbtn-c:hover{border-color:#f0a500;color:#f0a500}
+.filter-result{font-size:12px;color:#888;margin-top:8px;padding-top:8px;border-top:1px solid #f0e0a0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filter-result strong{color:#f0a500}
+.ftag{background:#fff8e6;border:1px solid #f5d080;color:#b07800;font-size:11px;padding:2px 8px;border-radius:999px}
+/* List */
+.rlist{max-height:320px;overflow-y:auto;border:1px solid #eee;border-radius:6px}
+.rhead{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f9f9f9;border-bottom:1px solid #eee;font-size:13px;font-weight:700;position:sticky;top:0;z-index:1}
+.rhead-cnt{margin-left:auto;color:#bbb;font-size:11px;font-weight:400}
+.ritem{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #f5f5f5;font-size:13px;transition:background.1s}
+.ritem:last-child{border-bottom:0}
+.ritem:hover{background:#fafafa}
+.rname{font-weight:600;color:#333;flex:1;min-width:0}
+.rtag{font-size:10px;background:#f0f4ff;border:1px solid #dde4ff;color:#5566bb;padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.rtag-g{background:#f0fff4;border-color:#bbf0cc;color:#166534}
+.raddr{color:#999;font-size:12px;white-space:nowrap;flex-shrink:0}
+/* Form */
+.fgrp{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fgrp label{font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.3px}
+.fgrp input,.fgrp textarea{border:1px solid #ccc;border-radius:6px;padding:9px 12px;font-size:14px;outline:none;font-family:inherit}
+.fgrp input:focus,.fgrp textarea:focus{border-color:#f0a500;box-shadow:0 0 0 3px rgba(240,165,0,.12)}
+.fgrp textarea{resize:vertical;min-height:110px}
+.send-btn{width:100%;background:#f0a500;color:#fff;border:none;border-radius:8px;padding:13px;font-size:15px;font-weight:700;cursor:pointer}
+.send-btn:hover{background:#d99400}
+.cbadge{background:#f0a500;color:#fff;font-size:11px;font-weight:900;padding:2px 8px;border-radius:999px;margin-left:6px}
+/* Results */
+.res-ok{background:#f0fff4;border:1px solid #86efac;color:#166534;border-radius:6px;padding:7px 12px;margin-bottom:4px;font-size:13px}
+.res-fail{background:#fff0f0;border:1px solid #fca5a5;color:#991b1b;border-radius:6px;padding:7px 12px;margin-bottom:4px;font-size:13px}
+/* Log */
+.log-t{width:100%;border-collapse:collapse;font-size:13px}
+.log-t th{background:#f5f5f5;padding:9px 12px;text-align:left;font-weight:700;color:#555;border-bottom:2px solid #eee}
+.log-t td{padding:8px 12px;border-bottom:1px solid #f0f0f0}
+.log-t tr:hover td{background:#fafafa}
+.s-sent{color:#166534;font-weight:700}
+.s-failed{color:#991b1b;font-weight:700}
+#chHint{font-size:12px;color:#888;margin-top:8px;min-height:16px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ms">
+<h1 style="margin-bottom:16px;font-size:22px;color:#222">📨 Мессеж илгээх</h1>
+
+{% if results %}
+<div class="ms-card">
+  <h2>📊 Илгээлтийн үр дүн — Амжилттай: <span style="color:#166534">{{ success_count }}</span> / Амжилтгүй: <span style="color:#991b1b">{{ fail_count }}</span></h2>
+  {% for r in results %}
+  <div class="{% if r.ok %}res-ok{% else %}res-fail{% endif %}">
+    {% if r.ok %}✅{% else %}❌{% endif %} <strong>{{ r.name }}</strong> ({{ r.address }}){% if not r.ok %} — {{ r.error }}{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<form method="post" id="mForm">
+{% csrf_token %}
+<input type="hidden" name="action" value="send">
+<input type="hidden" name="send_all" id="sendAllFlag" value="0">
+
+<!-- 1. Суваг -->
+<div class="ms-card">
+  <h2>1️⃣ Илгээх суваг</h2>
+  <div class="ch-grid">
+    {% for cv, cl in channels %}
+    <label class="ch-btn {% if selected_channel == cv %}active{% endif %}" onclick="selCh('{{cv}}',this)">
+      <input type="radio" name="channel" value="{{cv}}" {% if selected_channel == cv %}checked{% endif %}>
+      {% if cv == "email" %}<span class="ch-icon ch-icon--email"><svg viewBox="0 0 24 24" fill="#f0a500"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+      {% elif cv == "sms" %}<span class="ch-icon ch-icon--sms"><svg viewBox="0 0 24 24" fill="#16a34a"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg></span>
+      {% elif cv == "telegram" %}<span class="ch-icon ch-icon--telegram"><svg viewBox="0 0 24 24" fill="#229ED9"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></span>
+      {% elif cv == "facebook" %}<span class="ch-icon ch-icon--facebook"><svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg></span>
+      {% elif cv == "viber" %}<span class="ch-icon ch-icon--viber"><svg viewBox="0 0 24 24" fill="#7360F2"><path d="M11.4 0C6.39.24 2.12 3.32.64 7.86-.17 10.3-.2 12.87.56 15.3c.63 2.01 1.8 3.8 3.37 5.18v3.24c0 .14.04.27.1.38.18.3.56.4.87.22l3.1-1.84c1.3.36 2.64.54 3.98.54.42 0 .85-.02 1.27-.06 5.44-.5 9.76-4.72 10.38-10.15.13-1.13.13-2.27 0-3.4C22.87 4.07 17.66-.36 11.4 0zm5.2 16.06c-.6.63-1.35 1-2.15 1.08-.14.01-.28.02-.43.02-1.04 0-2.04-.36-2.87-.81-.2-.11-.39-.23-.58-.36a14.8 14.8 0 0 1-4.36-5.07c-.46-.9-.77-1.87-.77-2.88 0-.8.28-1.56.82-2.14.48-.51 1.12-.78 1.8-.78h.26c.15 0 .3.03.44.1.18.07.32.21.4.38l1.37 3.08c.1.22.07.47-.07.67l-.73 1c-.13.18-.15.42-.05.62.36.73.87 1.37 1.5 1.88.55.45 1.17.8 1.84 1.02.2.07.42.02.57-.13l.9-.96c.16-.17.38-.24.6-.18l3.1.9c.18.05.33.17.41.34.09.17.1.37.03.55-.2.53-.52 1.02-.84 1.37z"/></svg></span>
+      {% endif %}
+      {{cl}}
+    </label>
+    {% endfor %}
+  </div>
+  <div id="chHint"></div>
+</div>
+
+<!-- БҮГДЭД ИЛГЭЭХ -->
+<div class="send-all-bar">
+  <div class="send-all-info">
+    <div class="send-all-title">🚀 Бүгдэд нэгэн зэрэг илгээх</div>
+    <div class="send-all-sub">Системд бүртгэлтэй бүх хүн байгууллагад илгээнэ</div>
+    <div class="send-all-counts">
+      <span class="sac">🏢 {{ total_companies }} компани</span>
+      <span class="sac">👷 {{ total_workers }} ажиллагсад</span>
+      <span class="sac">👨‍👩‍👧 {{ total_family }} хамаарал</span>
+      <span class="sac">🏗️ {{ total_brigades }} бригад</span>
+    </div>
+  </div>
+  <button type="button" class="send-all-btn" onclick="sendAll()">📨 Бүгдэд илгээх</button>
+</div>
+
+<!-- 2. Хүлээн авагч -->
+<div class="ms-card">
+  <h2>2️⃣ Сонгож илгээх <span class="cbadge" id="selCnt">0</span></h2>
+
+  <div class="tab-row">
+    <div class="tab {% if target == 'companies' or not target %}active{% endif %}" onclick="swTab('companies',this)">
+      🏢 Компаниуд <span class="tab-cnt">{{companies|length}}</span>
+    </div>
+    <div class="tab {% if target == 'workers' %}active{% endif %}" onclick="swTab('workers',this)">
+      👷 Ажиллагсад <span class="tab-cnt">{{workers|length}}</span>
+    </div>
+    <div class="tab {% if target == 'family' %}active{% endif %}" onclick="swTab('family',this)">
+      👨‍👩‍👧 Хамааралтай <span class="tab-cnt">{{family_members|length}}</span>
+    </div>
+    <div class="tab {% if target == 'brigades' %}active{% endif %}" onclick="swTab('brigades',this)">
+      🏗️ Бригадууд <span class="tab-cnt">{{brigades|length}}</span>
+    </div>
+    <div class="tab {% if target == 'bm' %}active{% endif %}" onclick="swTab('bm',this)">
+      👥 Бригадын гишүүд <span class="tab-cnt">{{brigade_members|length}}</span>
+    </div>
+  </div>
+  <input type="hidden" name="target_type" id="ttype" value="{{target|default:'companies'}}">
+
+  <!-- FILTER -->
+  <div class="filter-box">
+    <div class="filter-title">🔍 Бүлэглэж шүүх</div>
+    <div class="filter-row">
+      <div class="fg">
+        <label>Аймаг / Хот</label>
+        <select name="filter_city" id="fCity" onchange="onCityChange()">
+          <option value="">— Бүгд —</option>
+          {% for code, label in city_choices %}
+          <option value="{{code}}" {% if filter_city == code %}selected{% endif %}>{{label}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="fg" id="districtWrap" style="{% if filter_city != 'UB' %}display:none{% endif %}">
+        <label>Дүүрэг (УБ)</label>
+        <select name="filter_district" id="fDistrict">
+          <option value="">— Бүгд —</option>
+          {% for code, label in district_choices %}
+          <option value="{{code}}" {% if filter_district == code %}selected{% endif %}>{{label}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="fg">
+        <label>Үйл ажиллагааны чиглэл</label>
+        <select name="filter_direction" id="fDir">
+          <option value="">— Бүгд —</option>
+          {% for code, label in direction_choices %}
+          <option value="{{code}}" {% if filter_direction == code %}selected{% endif %}>{{label}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="fg">
+        <label>Үйл ажиллагааны төрөл</label>
+        <select name="filter_act_type" id="fType">
+          <option value="">— Бүгд —</option>
+          {% for code, label in act_type_choices %}
+          <option value="{{code}}" {% if filter_act_type == code %}selected{% endif %}>{{label}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="fg">
+        <label>Нэрээр хайх</label>
+        <input type="text" name="filter_search" id="fSearch" value="{{filter_search}}" placeholder="Компани / ажилтны нэр..." onkeydown="if(event.key==='Enter'){event.preventDefault();applyFilter()}">
+      </div>
+      <div class="fg" style="flex:0 0 auto">
+        <label>Нэмэлт</label>
+        <div style="display:flex;gap:12px;padding-top:6px">
+          <label class="fg-ck"><input type="checkbox" name="filter_has_email" value="1" {% if filter_has_email %}checked{% endif %}> Email бүртгэлтэй</label>
+          <label class="fg-ck"><input type="checkbox" name="filter_has_phone" value="1" {% if filter_has_phone %}checked{% endif %}> Утас бүртгэлтэй</label>
+        </div>
+      </div>
+      <div class="fbtns">
+        <button type="button" class="fbtn" onclick="applyFilter()">🔍 Шүүх</button>
+        <a href="/admin/registry/messagelog/" class="fbtn-c">✕ Цэвэрлэх</a>
+      </div>
+    </div>
+    {% if filter_city or filter_district or filter_direction or filter_act_type or filter_search or filter_has_email or filter_has_phone %}
+    <div class="filter-result">
+      Үр дүн: <strong>{{companies|length}}</strong> компани · <strong>{{workers|length}}</strong> ажиллагсад · <strong>{{family_members|length}}</strong> хамаарал
+      {% if filter_city %}<span class="ftag">📍 {{filter_city}}</span>{% endif %}
+      {% if filter_district %}<span class="ftag">🏙️ {{filter_district}}</span>{% endif %}
+      {% if filter_direction %}<span class="ftag">⚙️ {{filter_direction}}</span>{% endif %}
+      {% if filter_search %}<span class="ftag">🔤 {{filter_search}}</span>{% endif %}
+      {% if filter_has_email %}<span class="ftag">✉️ Email</span>{% endif %}
+      {% if filter_has_phone %}<span class="ftag">📱 Утас</span>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Компани -->
+  <div id="tab-companies">
+    <div class="rlist">
+      <div class="rhead"><input type="checkbox" onchange="selAll('company',this)"> Бүгдийг сонгох <span class="rhead-cnt">{{companies|length}} компани</span></div>
+      {% for c in companies %}
+      <div class="ritem">
+        <input type="checkbox" name="company_ids" value="{{c.id}}" class="chk-company" onchange="upCnt()">
+        <div class="rname">{{c.name}}</div>
+        {% if c.city %}<span class="rtag">{{c.get_city_display}}</span>{% endif %}
+        {% if c.get_activity_direction_display %}<span class="rtag" style="background:#fff4e6;border-color:#ffe0a0;color:#885500">{{c.get_activity_direction_display|truncatechars:18}}</span>{% endif %}
+        <div class="raddr">{{c.email|default:"—"}} | {{c.phone|default:"—"}}</div>
+      </div>
+      {% empty %}<div style="padding:14px;color:#aaa;text-align:center;font-size:13px">Шүүлтэнд тохирох компани олдсонгүй</div>{% endfor %}
+    </div>
+  </div>
+
+  <!-- Ажиллагсад -->
+  <div id="tab-workers" style="display:none">
+    <div class="rlist">
+      <div class="rhead"><input type="checkbox" onchange="selAll('worker',this)"> Бүгдийг сонгох <span class="rhead-cnt">{{workers|length}} ажиллагсад</span></div>
+      {% for w in workers %}
+      <div class="ritem">
+        <input type="checkbox" name="worker_ids" value="{{w.id}}" class="chk-worker" onchange="upCnt()">
+        <div class="rname">{{w}}</div>
+        {% if w.company %}<span class="rtag">{{w.company.name|truncatechars:18}}</span>{% endif %}
+        {% if w.responsible_role %}<span class="rtag rtag-g">{{w.get_responsible_role_display}}</span>{% endif %}
+        <div class="raddr">{{w.email|default:"—"}} | {{w.phone|default:"—"}}</div>
+      </div>
+      {% empty %}<div style="padding:14px;color:#aaa;text-align:center;font-size:13px">Шүүлтэнд тохирох ажиллагсад олдсонгүй</div>{% endfor %}
+    </div>
+  </div>
+
+  <!-- Хамаарал -->
+  <div id="tab-family" style="display:none">
+    <div class="rlist">
+      <div class="rhead"><input type="checkbox" onchange="selAll('family',this)"> Бүгдийг сонгох <span class="rhead-cnt">{{family_members|length}} хамааралтай этгээд</span></div>
+      {% for f in family_members %}
+      <div class="ritem">
+        <input type="checkbox" name="family_ids" value="{{f.id}}" class="chk-family" onchange="upCnt()">
+        <div class="rname">{{f.last_name}} {{f.first_name}}</div>
+        {% if f.relation_type %}<span class="rtag">{{f.get_relation_type_display}}</span>{% endif %}
+        {% if f.worker %}<span class="rtag rtag-g">{{f.worker|truncatechars:15}}</span>{% endif %}
+        <div class="raddr">{{f.email|default:"—"}} | {{f.phone|default:"—"}}</div>
+      </div>
+      {% empty %}<div style="padding:14px;color:#aaa;text-align:center;font-size:13px">Хамааралтай этгээд олдсонгүй</div>{% endfor %}
+    </div>
+  </div>
+
+  <!-- Бригадууд -->
+  <div id="tab-brigades" style="display:none">
+    <div class="rlist">
+      <div class="rhead"><input type="checkbox" onchange="selAll('brigade',this)"> Бүгдийг сонгох <span class="rhead-cnt">{{brigades|length}} бригад</span></div>
+      {% for b in brigades %}
+      <div class="ritem">
+        <input type="checkbox" name="brigade_ids" value="{{b.id}}" class="chk-brigade" onchange="upCnt()">
+        <div class="rname">{{b.name}}</div>
+        <div class="raddr">{{b.get_activity_directions_display|truncatechars:40}}</div>
+      </div>
+      {% empty %}<div style="padding:14px;color:#aaa;text-align:center;font-size:13px">Бригад олдсонгүй</div>{% endfor %}
+    </div>
+  </div>
+
+  <!-- Бригадын гишүүд -->
+  <div id="tab-bm" style="display:none">
+    <div class="rlist">
+      <div class="rhead"><input type="checkbox" onchange="selAll('bm',this)"> Бүгдийг сонгох <span class="rhead-cnt">{{brigade_members|length}} гишүүн</span></div>
+      {% for bm in brigade_members %}
+      <div class="ritem">
+        <input type="checkbox" name="bm_ids" value="{{bm.id}}" class="chk-bm" onchange="upCnt()">
+        <div class="rname">{{bm.worker}}</div>
+        {% if bm.brigade %}<span class="rtag">{{bm.brigade.name|truncatechars:18}}</span>{% endif %}
+        <div class="raddr">{{bm.worker.phone|default:"—"}}</div>
+      </div>
+      {% empty %}<div style="padding:14px;color:#aaa;text-align:center;font-size:13px">Бригадын гишүүн олдсонгүй</div>{% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- 3. Мессеж -->
+<div class="ms-card">
+  <h2>3️⃣ Мессеж бичих</h2>
+  <div class="fgrp">
+    <label>Гарчиг (Email-д заавал)</label>
+    <input type="text" name="subject" value="{{form_subject}}" placeholder="Мессежийн гарчиг...">
+  </div>
+  <div class="fgrp">
+    <label>Агуулга *</label>
+    <textarea name="body" required placeholder="Мессежийн агуулга...">{{form_body}}</textarea>
+  </div>
+  <div style="font-size:12px;color:#aaa;background:#f9f9f9;padding:8px 12px;border-radius:6px">
+    💡 <b>{name}</b> — хүлээн авагчийн нэр · <b>{company}</b> — компанийн нэр
+  </div>
+</div>
+
+<!-- 4. Илгээх -->
+<div class="ms-card">
+  <h2>4️⃣ Илгээх</h2>
+  <div style="font-size:13px;color:#666;margin-bottom:12px;background:#f9f9f9;padding:10px 14px;border-radius:6px;border-left:3px solid #f0a500">
+    <span id="selCnt2" style="font-size:20px;font-weight:900;color:#f0a500">0</span> хүлээн авагчид
+    <strong id="chName">Email</strong> сувгаар илгээнэ.
+  </div>
+  <button type="submit" class="send-btn">📨 Сонгосон хүмүүст илгээх</button>
+</div>
+</form>
+
+<!-- Түүх -->
+<div class="ms-card">
+  <h2>📋 Илгээлтийн түүх <span style="font-size:12px;font-weight:400;color:#aaa">(сүүлийн 30)</span></h2>
+  {% if logs %}
+  <div style="overflow-x:auto">
+  <table class="log-t">
+    <thead><tr><th>Огноо</th><th>Суваг</th><th>Хүлээн авагч</th><th>Хаяг</th><th>Гарчиг/Агуулга</th><th>Төлөв</th><th>Илгээсэн</th></tr></thead>
+    <tbody>
+    {% for l in logs %}
+    <tr>
+      <td style="white-space:nowrap;font-size:12px">{{l.created_at|date:"Y-m-d H:i"}}</td>
+      <td>{{l.get_channel_display}}</td>
+      <td style="font-weight:600">{{l.recipient_name}}</td>
+      <td style="font-size:12px;color:#888">{{l.recipient_address}}</td>
+      <td>{{l.subject|default:l.body|truncatechars:45}}</td>
+      <td class="s-{{l.status}}">{{l.get_status_display}}</td>
+      <td style="font-size:12px;color:#aaa">{{l.sent_by|default:"-"}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <div style="color:#aaa;font-size:13px">Илгээлтийн түүх алга.</div>
+  {% endif %}
+</div>
+</div>
+
+<script>
+var hints={email:'Email хаяг ашиглан илгээнэ.',sms:'Утасны дугаар ашиглан SMS илгээнэ.',telegram:'Telegram chat_id ашиглан илгээнэ.',facebook:'Facebook PSID ашиглан илгээнэ.',viber:'Viber ID ашиглан илгээнэ.'};
+var chLabels={email:'Email',sms:'SMS (Утас)',telegram:'Telegram',facebook:'Facebook Messenger',viber:'Viber'};
+
+function selCh(v,el){
+  document.querySelectorAll('.ch-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('chHint').textContent=hints[v]||'';
+  document.getElementById('chName').textContent=chLabels[v]||v;
+}
+function swTab(t,el){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('ttype').value=t;
+  ['companies','workers','family','brigades','bm'].forEach(x=>{
+    document.getElementById('tab-'+x).style.display=x===t?'':'none';
+  });
+  upCnt();
+}
+function selAll(t,cb){
+  document.querySelectorAll('.chk-'+t).forEach(c=>{c.checked=cb.checked});
+  upCnt();
+}
+function upCnt(){
+  var n=document.querySelectorAll('.chk-company:checked,.chk-worker:checked,.chk-family:checked,.chk-brigade:checked,.chk-bm:checked').length;
+  document.getElementById('selCnt').textContent=n;
+  document.getElementById('selCnt2').textContent=n;
+}
+function onCityChange(){
+  var v=document.getElementById('fCity').value;
+  document.getElementById('districtWrap').style.display=v==='UB'?'':'none';
+  if(v!=='UB'){var dd=document.getElementById('fDistrict');if(dd)dd.value='';}
+  applyFilter();
+}
+function applyFilter(){
+  var p=new URLSearchParams();
+  p.set('filter_city',document.getElementById('fCity').value);
+  var dd=document.getElementById('fDistrict');if(dd)p.set('filter_district',dd.value);
+  p.set('filter_direction',document.getElementById('fDir').value);
+  p.set('filter_act_type',document.getElementById('fType').value);
+  p.set('filter_search',document.getElementById('fSearch').value);
+  var em=document.querySelector('[name=filter_has_email]');
+  var ph=document.querySelector('[name=filter_has_phone]');
+  if(em&&em.checked)p.set('filter_has_email','1');
+  if(ph&&ph.checked)p.set('filter_has_phone','1');
+  window.location.href='/admin/registry/messagelog/?'+p.toString();
+}
+function sendAll(){
+  if(!confirm('Системд бүртгэлтэй БҮГДЭД илгээх үү? Энэ үйлдлийг буцаах боломжгүй.')) return;
+  document.getElementById('sendAllFlag').value='1';
+  document.getElementById('mForm').submit();
+}
+
+// Init
+var curT='{{target|default:"companies"}}';
+['companies','workers','family','brigades','bm'].forEach(x=>{
+  document.getElementById('tab-'+x).style.display=x===curT?'':'none';
+});
+var curCh='{{selected_channel|default:"email"}}';
+document.getElementById('chHint').textContent=hints[curCh]||'';
+document.getElementById('chName').textContent=chLabels[curCh]||'Email';
+upCnt();
+</script>
+{% endblock %}
