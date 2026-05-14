@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
+    "django.contrib.postgres",
     "import_export",
     "rest_framework",
     "apps.registry.apps.RegistryConfig",
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.core",
     "apps.messaging",
+    "apps.api",
 ]
 
 MIDDLEWARE = [
@@ -72,11 +73,14 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "construction_db",
+        "USER": "postgres",
+        "PASSWORD": "Surxii0618*",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
-
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
