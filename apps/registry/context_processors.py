@@ -11,7 +11,7 @@ def public_sidebar(request):
     posts = []
 
     try:
-        from .models import Banner
+        from apps.public.models import Banner
         banners = list(
             Banner.objects.filter(is_active=True)
             .order_by("sort_order", "-created_at", "-id")[:5]
@@ -20,7 +20,7 @@ def public_sidebar(request):
         banners = []
 
     try:
-        from .models import PublicPost
+        from apps.public.models import PublicPost
         posts = list(
             PublicPost.objects.filter(is_published=True)
             .select_related("author")

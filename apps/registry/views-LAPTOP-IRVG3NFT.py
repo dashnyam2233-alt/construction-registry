@@ -8,7 +8,7 @@ from .models import Worker, UserCompanyProfile, Brigade
 
 # ✅ Banner + PublicPost models байгаа гэж үзээд импортлоно
 # (Танайд model нэр өөр байвал энд алдаа гарна — тэр үед model нэрийг нь хэлээрэй.)
-from .models import Banner, PublicPost
+from apps.public.models import Banner, PublicPost
 
 
 def home(request):

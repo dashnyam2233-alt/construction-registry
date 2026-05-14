@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 
 from .models import UserCompanyProfile, Company, Worker, Brigade
-from .models import Banner, PublicPost, HeroBanner, SliderAd, SubBanner
+from apps.public.models import Banner, PublicPost, HeroBanner, SliderAd, SubBanner
 
 
 def home(request):

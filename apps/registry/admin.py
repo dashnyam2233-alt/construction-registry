@@ -33,9 +33,10 @@ from .models import (
     GovernmentOrganization, NonGovernmentOrganization, Company, Worker,
     FamilyMember, AdminGroup, Brigade, BrigadeMember, UserCompanyProfile,
     CITY_CHOICES, UB_DISTRICT_CHOICES, COMPANY_ACTIVITY_DIRECTION_CHOICES,
-    Banner, PublicPost, HeroBanner, SliderAd, SubBanner, normalize_search_text,
+    normalize_search_text,
     SiteConfig, MessageLog,
 )
+from apps.public.models import Banner, PublicPost, HeroBanner, SliderAd, SubBanner
 from .birth_soums import BIRTH_SOUMS
 
 ROLE_ADMIN = "ADMIN_FULL"

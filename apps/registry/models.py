@@ -177,7 +177,6 @@ class Company(SearchNormalizedMixin, models.Model):
             if not base:
                 base = f"company-{self.pk or 'new'}"
             slug = base[:80]
-            # Давхардвал дугаар нэмнэ
             from django.db import models as _m
             qs = Company.objects.filter(slug=slug)
             if self.pk:
@@ -411,150 +410,6 @@ class UserCompanyProfile(SearchNormalizedMixin, models.Model):
         return " ".join([u_username, u_email, c_name or "", c_reg or ""])
 
 
-class PublicPost(SearchNormalizedMixin, models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="public_posts", verbose_name="Нийтэлсэн хэрэглэгч")
-    title = models.CharField("Гарчиг", max_length=200)
-    body = models.TextField("Агуулга", blank=True, default="")
-    created_at = models.DateTimeField("Үүссэн огноо", auto_now_add=True)
-    updated_at = models.DateTimeField("Шинэчилсэн огноо", auto_now=True)
-    is_published = models.BooleanField("Нийтлэх эсэх", default=True)
-
-    class Meta:
-        verbose_name = "Нээлттэй пост"
-        verbose_name_plural = "Нээлттэй постууд"
-        ordering = ("-created_at",)
-
-    def __str__(self): return self.title or f"Post #{self.pk}"
-
-    def get_search_source_text(self):
-        a_username = getattr(self.author, "username", "") or ""
-        a_email = getattr(self.author, "email", "") or ""
-        return " ".join([self.title or "", self.body or "", a_username, a_email])
-
-
-class Banner(SearchNormalizedMixin, models.Model):
-    title = models.CharField("Нэр/тайлбар", max_length=200, blank=True, default="")
-    image = models.ImageField("Зураг (File)", upload_to="banners/", null=True, blank=True)
-    image_url = models.CharField("Зургийн URL", max_length=500, blank=True, default="")
-    link_url = models.CharField("Дарахад орох холбоос (URL)", max_length=500, blank=True, default="")
-    sort_order = models.IntegerField("Эрэмбэ", default=0)
-    is_active = models.BooleanField("Идэвхтэй эсэх", default=True)
-    created_at = models.DateTimeField("Үүссэн огноо", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Баннер"
-        verbose_name_plural = "Баннерууд"
-        ordering = ("-is_active", "sort_order", "-created_at")
-
-    def __str__(self): return self.title or f"Banner #{self.pk}"
-
-    @property
-    def display_image_url(self):
-        if self.image:
-            try: return self.image.url
-            except Exception: return ""
-        return (self.image_url or "").strip()
-
-    def get_search_source_text(self):
-        return " ".join([self.title or "", self.image_url or "", self.link_url or ""])
-
-
-class HeroBanner(models.Model):
-    class MediaType(models.TextChoices):
-        IMAGE = "image", "Зураг"
-        VIDEO = "video", "Видео"
-
-    title = models.CharField("Гарчиг", max_length=200, blank=True, default="")
-    subtitle = models.TextField("Дэд гарчиг / тайлбар", blank=True, default="")
-    media_type = models.CharField("Медиа төрөл", max_length=10, choices=MediaType.choices, default=MediaType.IMAGE)
-    image = models.ImageField("Зураг (upload)", upload_to="hero/", null=True, blank=True)
-    image_url = models.CharField("Зургийн URL", max_length=500, blank=True, default="")
-    video = models.FileField("Видео (upload)", upload_to="hero_video/", null=True, blank=True)
-    video_url = models.CharField("Видео URL (YouTube/MP4)", max_length=500, blank=True, default="")
-    btn1_text = models.CharField("Товч 1 текст", max_length=100, blank=True, default="")
-    btn1_url = models.CharField("Товч 1 холбоос", max_length=500, blank=True, default="")
-    btn2_text = models.CharField("Товч 2 текст", max_length=100, blank=True, default="")
-    btn2_url = models.CharField("Товч 2 холбоос", max_length=500, blank=True, default="")
-    is_active = models.BooleanField("Идэвхтэй эсэх", default=True)
-    sort_order = models.IntegerField("Эрэмбэ", default=0)
-    created_at = models.DateTimeField("Үүссэн огноо", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Hero баннер (зүүн 1/3 зураг/видео)"
-        verbose_name_plural = "Hero баннерууд (зүүн 1/3 зураг/видео)"
-        ordering = ("sort_order", "-created_at")
-
-    def __str__(self): return self.title or f"HeroBanner #{self.pk}"
-
-    @property
-    def display_media_url(self):
-        if self.media_type == self.MediaType.VIDEO:
-            if self.video:
-                try: return self.video.url
-                except Exception: return ""
-            return (self.video_url or "").strip()
-        else:
-            if self.image:
-                try: return self.image.url
-                except Exception: return ""
-            return (self.image_url or "").strip()
-
-
-class SliderAd(models.Model):
-    title = models.CharField("Гарчиг", max_length=200)
-    description = models.CharField("Богино тайлбар", max_length=300, blank=True, default="")
-    image = models.ImageField("Зураг (upload)", upload_to="slider_ads/", null=True, blank=True)
-    image_url = models.CharField("Зургийн URL", max_length=500, blank=True, default="")
-    link_url = models.CharField("Холбоос (дарахад орох)", max_length=500, blank=True, default="")
-    is_active = models.BooleanField("Идэвхтэй эсэх", default=True)
-    sort_order = models.IntegerField("Эрэмбэ", default=0)
-    created_at = models.DateTimeField("Үүссэн огноо", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Урсдаг зар"
-        verbose_name_plural = "Урсдаг зарууд"
-        ordering = ("sort_order", "-created_at")
-
-    def __str__(self): return self.title or f"SliderAd #{self.pk}"
-
-    @property
-    def display_image_url(self):
-        if self.image:
-            try: return self.image.url
-            except Exception: return ""
-        return (self.image_url or "").strip()
-
-
-# =====================================================
-# ✅ ШИНЭ: SubBanner — баруун дэд баннер зураг
-# =====================================================
-class SubBanner(models.Model):
-    title = models.CharField("Нэр/тайлбар", max_length=200, blank=True, default="")
-    image = models.ImageField("Зураг (upload)", upload_to="sub_banners/", null=True, blank=True)
-    image_url = models.CharField("Зургийн URL", max_length=500, blank=True, default="")
-    link_url = models.CharField("Холбоос (дарахад орох)", max_length=500, blank=True, default="")
-    is_active = models.BooleanField("Идэвхтэй эсэх", default=True)
-    sort_order = models.IntegerField("Эрэмбэ", default=0)
-    created_at = models.DateTimeField("Үүссэн огноо", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Дэд баннер (баруун дээд хэсэг)"
-        verbose_name_plural = "Дэд баннерууд (баруун дээд хэсэг)"
-        ordering = ("sort_order", "-created_at")
-
-    def __str__(self): return self.title or f"SubBanner #{self.pk}"
-
-    @property
-    def display_image_url(self):
-        if self.image:
-            try: return self.image.url
-            except Exception: return ""
-        return (self.image_url or "").strip()
-
-
-# =====================================================
-# ✅ MessageLog — илгээсэн мессежийн бүртгэл
-# =====================================================
 class MessageLog(models.Model):
     CHANNEL_CHOICES = [
         ("email",    "Email"),
@@ -576,7 +431,7 @@ class MessageLog(models.Model):
     ]
 
     sent_by = models.ForeignKey(
-        "auth.User", on_delete=models.SET_NULL, null=True, blank=True,
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
         related_name="sent_messages", verbose_name="Илгээсэн хэрэглэгч",
     )
     channel = models.CharField("Суваг", max_length=20, choices=CHANNEL_CHOICES)
@@ -598,39 +453,29 @@ class MessageLog(models.Model):
         return f"[{self.get_channel_display()}] {self.recipient_name} — {self.subject or self.body[:50]}"
 
 
-# =====================================================
-# ✅ SiteConfig — сайтын тохиргоо (admin-аас засна)
-# =====================================================
 class SiteConfig(models.Model):
     """Нэг л бичлэгтэй — системийн тохиргоо"""
 
-    # ── Илгээгчийн мэдээлэл ──
     sender_name = models.CharField("Илгээгчийн нэр", max_length=100, default="БНБ Систем")
     sender_email = models.EmailField("Илгээгчийн Email", blank=True, default="")
     sender_phone = models.CharField("Илгээгчийн утас", max_length=50, blank=True, default="")
 
-    # ── Email (SMTP) ──
     email_host = models.CharField("SMTP сервер", max_length=255, default="smtp.gmail.com")
     email_port = models.IntegerField("SMTP порт", default=587)
     email_use_tls = models.BooleanField("TLS ашиглах", default=True)
     email_host_user = models.CharField("SMTP хэрэглэгч (email)", max_length=255, blank=True, default="")
     email_host_password = models.CharField("SMTP нууц үг / App Password", max_length=255, blank=True, default="")
 
-    # ── SMS ──
     sms_gateway_url = models.CharField("SMS Gateway URL", max_length=500, blank=True, default="")
     sms_gateway_token = models.CharField("SMS Gateway Token", max_length=500, blank=True, default="")
     sms_sender_name = models.CharField("SMS илгээгчийн нэр", max_length=50, default="BNB")
 
-    # ── Telegram ──
     telegram_bot_token = models.CharField("Telegram Bot Token", max_length=300, blank=True, default="")
 
-    # ── Facebook ──
     facebook_page_token = models.CharField("Facebook Page Access Token", max_length=500, blank=True, default="")
 
-    # ── Viber ──
     viber_auth_token = models.CharField("Viber Auth Token", max_length=300, blank=True, default="")
 
-    # ── Сайтын мэдээлэл ──
     site_name = models.CharField("Сайтын нэр", max_length=100, default="Барилгачдын нэгдсэн мэдээллийн бааз")
     site_phone = models.CharField("Сайтын утас", max_length=100, blank=True, default="")
     site_email = models.EmailField("Сайтын email", blank=True, default="")
@@ -648,6 +493,5 @@ class SiteConfig(models.Model):
 
     @classmethod
     def get(cls):
-        """Тохиргоог авна, байхгүй бол үүсгэнэ"""
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj

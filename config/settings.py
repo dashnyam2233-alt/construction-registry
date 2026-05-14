@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "import_export",
 
     "apps.registry.apps.RegistryConfig",
+    "apps.public",
 ]
 
 MIDDLEWARE = [

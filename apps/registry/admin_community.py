@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.core.files.storage import default_storage
 
-from .models import Banner, PublicPost
+from apps.public.models import Banner, PublicPost
 
 
 # =========================

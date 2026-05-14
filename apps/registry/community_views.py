@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
-from .models import Banner, PublicPost
+from apps.public.models import Banner, PublicPost
 
 
 LOGIN_URL = reverse_lazy("login")
