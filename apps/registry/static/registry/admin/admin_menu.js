@@ -7,38 +7,38 @@
       icon: '🏢',
       label: 'БАЙГУУЛЛАГА',
       items: [
-        { url: '/admin/registry/company/',                   label: 'Компаниуд' },
-        { url: '/admin/registry/governmentorganization/',    label: 'Төрийн байгууллагууд' },
-        { url: '/admin/registry/nongovernmentorganization/', label: 'ТББ байгууллагууд' },
+        { url: '/admin/core/company/',                   label: 'Компаниуд' },
+        { url: '/admin/core/governmentorganization/',    label: 'Төрийн байгууллагууд' },
+        { url: '/admin/core/nongovernmentorganization/', label: 'ТББ байгууллагууд' },
       ]
     },
     {
       icon: '👷',
       label: 'АЖИЛЛАГСАД',
       items: [
-        { url: '/admin/registry/worker/',        label: 'Ажиллагсад' },
-        { url: '/admin/registry/familymember/',  label: 'Ажилтны хамаарал' },
-        { url: '/admin/registry/brigade/',       label: 'Бригадууд' },
-        { url: '/admin/registry/brigademember/', label: 'Бригадын гишүүд' },
+        { url: '/admin/core/worker/',        label: 'Ажиллагсад' },
+        { url: '/admin/core/familymember/',  label: 'Ажилтны хамаарал' },
+        { url: '/admin/core/brigade/',       label: 'Бригадууд' },
+        { url: '/admin/core/brigademember/', label: 'Бригадын гишүүд' },
       ]
     },
     {
       icon: '📢',
       label: 'МАРКЕТИНГ',
       items: [
-        { url: '/admin/registry/messagelog/',  label: '📨 Мессеж илгээх', highlight: true },
-        { url: '/admin/registry/herobanner/',  label: 'Hero баннер' },
-        { url: '/admin/registry/subbanner/',   label: 'Дэд баннер' },
-        { url: '/admin/registry/sliderad/',    label: 'Урсдаг зарууд' },
-        { url: '/admin/registry/banner/',      label: 'Баннерууд' },
-        { url: '/admin/registry/publicpost/',  label: 'Нээлттэй постууд' },
+        { url: '/admin/messaging/messagelog/',  label: '📨 Мессеж илгээх', highlight: true },
+        { url: '/admin/public/herobanner/',  label: 'Hero баннер' },
+        { url: '/admin/public/subbanner/',   label: 'Дэд баннер' },
+        { url: '/admin/public/sliderad/',    label: 'Урсдаг зарууд' },
+        { url: '/admin/public/banner/',      label: 'Баннерууд' },
+        { url: '/admin/public/publicpost/',  label: 'Нээлттэй постууд' },
       ]
     },
     {
       icon: '👤',
       label: 'ХЭРЭГЛЭГЧ',
       items: [
-        { url: '/admin/registry/usercompanyprofile/', label: 'Хэрэглэгчийн компани' },
+        { url: '/admin/accounts/usercompanyprofile/', label: 'Хэрэглэгчийн компани' },
         { url: '/admin/auth/user/',                   label: 'Хэрэглэгчид' },
         { url: '/admin/auth/group/',                  label: 'Бүлгүүд' },
       ]
@@ -47,7 +47,7 @@
       icon: '⚙️',
       label: 'ТОХИРГОО',
       items: [
-        { url: '/admin/registry/siteconfig/', label: 'Системийн тохиргоо' },
+        { url: '/admin/messaging/siteconfig/', label: 'Системийн тохиргоо' },
       ]
     },
   ];
