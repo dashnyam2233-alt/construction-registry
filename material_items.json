@@ -1,0 +1,69 @@
+{
+  "foundation": {
+    "rebar": "Арматур төмөр материал",
+    "metal_structure": "Металь хийц",
+    "concrete": "Бетон зуурмаг",
+    "insulation": "Дулаан дуу тусгаарлах материал",
+    "roof_material": "Дээврийн материал",
+    "formwork": "Хэв хашмал",
+    "brick_block": "Тоосго блок",
+    "wood": "Модон материал",
+    "door_window": "Цонх хаалга",
+    "glass": "Шилэн хийц",
+    "cement_lime": "Цемент шохой",
+    "sand_gravel": "Элс хайрга дайрга",
+    "facade": "Гадна фасад"
+  },
+  "interior": {
+    "paint": "Будаг эмульс",
+    "dry_mix": "Хуурай хольц",
+    "wallpaper": "Обой хуулга",
+    "parquet": "Паркет ламинат",
+    "floor_accessories": "Шал дагалдах",
+    "tile_stone": "Плита чулуу",
+    "decoration": "Гоёл чимэглэл",
+    "curtain": "Хөшиг тюль"
+  },
+  "outdoor": {
+    "paving": "Замын хавтан болон бродюр",
+    "fence_gate": "Хашаа гадна хаалга",
+    "playground": "Хүүхдийн тоглоом талбай",
+    "landscaping": "Мод зүлэгжүүлэлт",
+    "cleaning": "Цэвэрлэгээ түүний тоног төхөөрөмж"
+  },
+  "plumbing": {
+    "pipe_fitting": "Шугам хоолой холбох хэрэгсэл",
+    "heating": "Халаах хэрэгсэл",
+    "sanitary": "Угаалтуур суултуур ванн",
+    "ventilation": "Агааржуулалт хөргөлт"
+  },
+  "electrical": {
+    "wire_cable": "Цахилгааны утас кабель",
+    "electrical_fitting": "Цахилгаан холбох хэрэгсэл",
+    "lighting": "Гэрэл гэрэлтүүлэг",
+    "generator_meter": "Цахилгааны үүсгүүр тоолуур",
+    "switch_socket": "Унтраалга залгуур",
+    "signal": "Холбоо дохиолол",
+    "fire_alarm": "Галын дохиолол",
+    "domophone": "Домофон ухаалаг цоож",
+    "internet_tv": "Интернэт ТВ"
+  },
+  "machinery": {
+    "machine": "Машин механизм",
+    "construction_equipment": "Барилгын тоног төхөөрөмж",
+    "tools": "Барилгын багаж хэрэгсэл",
+    "elevator": "Лифт угсардаг шат"
+  },
+  "furniture": {
+    "office": "Албан тасалгаа",
+    "household": "Гэр ахуй"
+  },
+  "software": {
+    "software_item": "Программ хангамж",
+    "book": "Ном сэтгүүл",
+    "manual": "Гарын авлага"
+  },
+  "safety": {
+    "safety_equipment": "ХАБЭА хэрэгсэл"
+  }
+}

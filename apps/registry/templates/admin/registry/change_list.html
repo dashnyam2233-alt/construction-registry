@@ -2,5 +2,8 @@
 {% load i18n admin_urls static %}
 
 {% block object-tools-items %}
-    {{ block.super }}
+  {{ block.super }}
+  <li>
+    <a href="#" id="cr-filter-toggle" class="cr-filter-btn">▼ Шүүлтүүр</a>
+  </li>
 {% endblock %}

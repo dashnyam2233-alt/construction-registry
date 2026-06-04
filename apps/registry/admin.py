@@ -452,6 +452,7 @@ class CompanyAdminForm(LocationMixinForm):
 
 @admin.register(Company)
 class CompanyAdmin(RoleScopedAdmin):
+    change_list_template = "admin/core/change_list.html"
     form = CompanyAdminForm
     actions = [send_email_action, export_selected_companies_mn_xlsx]
     resource_class = CompanyResource

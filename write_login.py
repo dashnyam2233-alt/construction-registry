@@ -1,0 +1,70 @@
+content = """<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Нэвтрэх</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,sans-serif;background:#f0f4f8;min-height:100vh;display:grid;place-items:center;padding:24px;}
+    .card{width:min(400px,94vw);background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;}
+    .logo{text-align:center;margin-bottom:24px;}
+    .logo-icon{width:52px;height:52px;background:#2f6477;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
+    .logo-icon svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2;}
+    .logo h1{font-size:17px;font-weight:600;color:#1a202c;margin-bottom:4px;}
+    .logo p{font-size:13px;color:#718096;}
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:12px;font-weight:600;color:#4a5568;margin-bottom:5px;}
+    .field input{width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1a202c;outline:none;}
+    .field input:focus{border-color:#2f6477;}
+    .btn-main{width:100%;padding:10px;background:#2f6477;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
+    .divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+    .divider span{font-size:12px;color:#a0aec0;white-space:nowrap;}
+    .divider hr{flex:1;border:none;border-top:1px solid #e2e8f0;}
+    .btn-social{width:100%;padding:9px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#2d3748;cursor:pointer;display:flex;align-items:center;gap:10px;margin-bottom:8px;text-decoration:none;}
+    .badge{background:#e8f7ef;color:#1a6e3c;font-size:11px;padding:2px 7px;border-radius:20px;margin-left:auto;}
+    .footer{display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid #e2e8f0;}
+    .footer a{font-size:12px;color:#2f6477;text-decoration:none;}
+    .err{background:#fff5f5;border:1px solid #fed7d7;color:#c53030;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:14px;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21v-6h6v6"/></svg>
+      </div>
+      <h1>Барилгачдын нэгдсэн бүртгэл</h1>
+      <p>Нэвтрэх мэдээллээ оруулна уу</p>
+    </div>
+    {% if form.errors %}
+      <div class="err">Нэвтрэх мэдээлэл буруу байна. Дахин шалгаарай.</div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      <div class="field">
+        <label for="id_username">Хэрэглэгчийн нэр эсвэл и-мэйл</label>
+        <input type="text" name="username" id="id_username" placeholder="username" autofocus>
+      </div>
+      <div class="field">
+        <label for="id_password">Нууц үг</label>
+        <input type="password" name="password" id="id_password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn-main">Нэвтрэх</button>
+    </form>
+    <div class="divider"><hr><span>эсвэл</span><hr></div>
+    <a href="/auth/facebook/" class="btn-social">Facebook-ээр нэвтрэх</a>
+    <a href="/auth/emongolia/" class="btn-social">e-Mongolia-аар нэвтрэх <span class="badge">Албан ёсны</span></a>
+    <a href="/auth/bank/" class="btn-social">Банкны кодоор нэвтрэх</a>
+    <div class="footer">
+      <a href="#">Нууц үг мартсан?</a>
+      <a href="/register/">Шинээр бүртгүүлэх</a>
+    </div>
+  </div>
+</body>
+</html>"""
+
+with open("apps/registry/templates/registration/login.html", "w", encoding="utf-8") as f:
+    f.write(content)
+print("OK")

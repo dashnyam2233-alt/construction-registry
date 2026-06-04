@@ -1,0 +1,1002 @@
+path = r"apps\registry\templates\registry\budget_calculator.html"
+
+content = '''{% load static humanize %}
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Төсөв Тооцоолох — БНБ</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,sans-serif;background:#f1f5f9;}
+    a{text-decoration:none;color:inherit;}
+    .nav{background:#1e3a4a;height:52px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:1000;}
+    .logo-t{color:#fff;font-size:13px;font-weight:700;}
+    .nav-r{margin-left:auto;display:flex;gap:8px;}
+    .nb{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;border:1px solid #2d4f63;color:#cbd5e1;background:transparent;}
+    .hero{background:linear-gradient(135deg,#1e3a4a,#2f6477);padding:24px 20px;text-align:center;}
+    .hero-t{color:#fff;font-size:20px;font-weight:700;margin-bottom:6px;}
+    .hero-s{color:#94a3b8;font-size:13px;}
+    .wrap{max-width:700px;margin:24px auto;padding:0 20px 40px;}
+
+    /* Progress */
+    .progress{display:flex;align-items:center;margin-bottom:20px;}
+    .step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:2px solid #e2e8f0;background:#fff;color:#94a3b8;cursor:pointer;transition:all 0.2s;}
+    .step-dot.active{background:#f59e0b;border-color:#f59e0b;color:#1e3a4a;}
+    .step-dot.done{background:#22c55e;border-color:#22c55e;color:#fff;}
+    .step-line{flex:1;height:2px;background:#e2e8f0;}
+    .step-line.done{background:#22c55e;}
+
+    /* Card */
+    .card{background:#fff;border:0.5px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:16px;}
+    .step-title{font-size:16px;font-weight:700;color:#1e293b;margin-bottom:4px;}
+    .step-desc{font-size:12px;color:#64748b;margin-bottom:20px;}
+
+    /* Fields */
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:12px;font-weight:600;color:#4a5568;margin-bottom:5px;}
+    .field select,.field input,.field textarea{width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1e293b;outline:none;background:#fff;}
+    .field select:focus,.field input:focus{border-color:#f59e0b;}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+    .field-hint{font-size:11px;color:#94a3b8;margin-top:3px;}
+    .field-auto{background:#f0fdf4;border-color:#86efac;color:#166534;font-weight:600;}
+
+    /* Info box */
+    .info-box{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:14px;}
+
+    /* Buttons */
+    .btn-row{display:flex;gap:10px;margin-top:20px;}
+    .btn-next{flex:1;padding:11px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;}
+    .btn-next:hover{background:#e08c00;}
+    .btn-prev{padding:11px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+    .btn-prev:hover{background:#e2e8f0;}
+    .btn-calc{flex:1;padding:11px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;}
+    .btn-calc:hover{background:#16a34a;}
+
+    /* Loading */
+    .loading{display:none;text-align:center;padding:50px 20px;}
+    .loading.show{display:block;}
+    .spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#f59e0b;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* Result */
+    .result-wrap{display:flex;flex-direction:column;gap:14px;}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .info-b{background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;}
+    .info-b .val{font-size:17px;font-weight:700;color:#f59e0b;}
+    .info-b .lbl{font-size:11px;color:#64748b;margin-top:3px;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    th{background:#f8fafc;padding:8px 10px;text-align:left;font-weight:600;color:#4a5568;border-bottom:1px solid #e2e8f0;}
+    th.r{text-align:right;}
+    td{padding:7px 10px;border-bottom:0.5px solid #f1f5f9;color:#1e293b;}
+    td.r{text-align:right;font-weight:500;}
+    tr:hover td{background:#fffbeb;}
+    .total-row td{font-weight:700;background:#fef3c7;border-top:2px solid #f59e0b;}
+    .grand-box{background:linear-gradient(135deg,#1e3a4a,#2f6477);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .grand-box .lbl{color:#94a3b8;font-size:13px;}
+    .grand-box .val{color:#f59e0b;font-size:22px;font-weight:700;}
+    .notes-box{background:#f0fdf4;border:0.5px solid #86efac;border-radius:8px;padding:12px;font-size:12px;color:#166534;line-height:1.6;}
+    .warn-box{background:#fff7ed;border:0.5px solid #fed7aa;border-radius:8px;padding:12px;font-size:12px;color:#c2410c;line-height:1.6;}
+    .download-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+    .recalc-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;}
+    @media(max-width:600px){.field-row,.field-row3{grid-template-columns:1fr;}.info-grid{grid-template-columns:1fr 1fr;}}
+
+    /* Building type cards */
+    .type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+    .type-card{border:2px solid #e2e8f0;border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;text-align:center;}
+    .type-card:hover{border-color:#f59e0b;background:#fffbeb;}
+    .type-card.selected{border-color:#f59e0b;background:#fef3c7;}
+    .type-card .icon{font-size:28px;margin-bottom:6px;}
+    .type-card .name{font-size:13px;font-weight:700;color:#1e293b;}
+    .type-card .desc{font-size:11px;color:#64748b;margin-top:3px;}
+    .subtype-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+    .subtype-card{border:1.5px solid #e2e8f0;border-radius:8px;padding:10px;cursor:pointer;transition:all 0.2s;}
+    .subtype-card:hover{border-color:#f59e0b;}
+    .subtype-card.selected{border-color:#f59e0b;background:#fef3c7;}
+    .subtype-card .sname{font-size:12px;font-weight:600;color:#1e293b;}
+    .subtype-card .sdesc{font-size:11px;color:#64748b;}
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/public/" class="logo-t">БНБ — Барилгын нэгдсэн бааз</a>
+  <div class="nav-r">
+    <a href="/public/" class="nb">Нүүр</a>
+    <a href="/tender/" class="nb">Тендер</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-t">🏗 AI Төсөв Тооцоолох</div>
+  <div class="hero-s">Барилгын мэдээллийг оруулахад бодитой төсөв гарна</div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;">
+    <div style="background:#f59e0b;color:#1e3a4a;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;">⚡ Хурдан тооцоо — одоо байна</div>
+    <a href="/budget/file/" style="background:#22c55e;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">📊 Нарийн тооцоо — файл оруулах</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+{% if not result %}
+
+<!-- АЛХАМ INDICATORS -->
+<div class="progress" id="progress">
+  <div class="step-dot active" id="dot1">1</div>
+  <div class="step-line" id="line1"></div>
+  <div class="step-dot" id="dot2">2</div>
+  <div class="step-line" id="line2"></div>
+  <div class="step-dot" id="dot3">3</div>
+  <div class="step-line" id="line3"></div>
+  <div class="step-dot" id="dot4">4</div>
+</div>
+
+<form method="post" id="main-form">
+{% csrf_token %}
+
+<!-- ============================================================ -->
+<!-- АЛХАМ 1: Барилгын төрөл сонгох -->
+<!-- ============================================================ -->
+<div class="card" id="step1">
+  <div class="step-title">1️⃣ Барилгын төрөл сонгох</div>
+  <div class="step-desc">Барилгын үндсэн зориулалтыг сонгоно уу</div>
+
+  <div class="type-grid">
+    <div class="type-card" onclick="selectType('low_rise')" id="tc_low_rise">
+      <div class="icon">🏡</div>
+      <div class="name">Амины орон сууц</div>
+      <div class="desc">1-2 давхар, нэг өрх</div>
+    </div>
+    <div class="type-card" onclick="selectType('apartment')" id="tc_apartment">
+      <div class="icon">🏢</div>
+      <div class="name">Олон айлын орон сууц</div>
+      <div class="desc">3+ давхар, олон айл</div>
+    </div>
+    <div class="type-card" onclick="selectType('office')" id="tc_office">
+      <div class="icon">🏢</div>
+      <div class="name">Оффис / Нийтийн</div>
+      <div class="desc">Оффис, дэлгүүр, сургууль</div>
+    </div>
+    <div class="type-card" onclick="selectType('warehouse')" id="tc_warehouse">
+      <div class="icon">🏭</div>
+      <div class="name">Үйлдвэр / Агуулах</div>
+      <div class="desc">Агуулах, гараж, үйлдвэр</div>
+    </div>
+  </div>
+
+  <!-- Дэд төрөл -->
+  <div id="subtype_low_rise" style="display:none;">
+    <div class="field"><label>Дэд төрөл</label></div>
+    <div class="subtype-grid">
+      <div class="subtype-card selected" onclick="selectSubtype('low_rise','Амины орон сууц (1 давхар)')" id="st_lr1">
+        <div class="sname">🏠 1 давхар</div>
+        <div class="sdesc">Ердийн амины байшин</div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('low_rise','Амины орон сууц (2 давхар)')" id="st_lr2">
+        <div class="sname">🏠 2 давхар</div>
+        <div class="sdesc">Давхар амины байшин</div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('low_rise','Амины орон сууц (хагас подвалтай)')" id="st_lr3">
+        <div class="sname">🏠 Подвалтай</div>
+        <div class="sdesc">Хагас газар доорх давхартай</div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('low_rise','Засвар өргөтгөл')" id="st_lr4">
+        <div class="sname">🔧 Засвар/Өргөтгөл</div>
+        <div class="sdesc">Байгаа барилгад нэмэлт</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="subtype_apartment" style="display:none;">
+    <div class="field"><label>Давхарын тоо</label></div>
+    <div class="subtype-grid">
+      <div class="subtype-card selected" onclick="selectSubtype('apartment','Олон айлын орон сууц (3-5 давхар)')" id="st_ap1">
+        <div class="sname">🏢 3-5 давхар</div>
+        <div class="sdesc">Дунд давхар</div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('apartment','Олон айлын орон сууц (6-9 давхар)')" id="st_ap2">
+        <div class="sname">🏢 6-9 давхар</div>
+        <div class="sdesc">Өндөр давхар</div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('apartment','Олон айлын орон сууц (10+ давхар)')" id="st_ap3">
+        <div class="sname">🏙 10+ давхар</div>
+        <div class="sdesc">Өндөр цамхаг</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="subtype_office" style="display:none;">
+    <div class="subtype-grid">
+      <div class="subtype-card selected" onclick="selectSubtype('office','Оффисын барилга')" id="st_of1">
+        <div class="sname">🏢 Оффис</div><div class="sdesc"></div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('office','Дэлгүүр, худалдааны төв')" id="st_of2">
+        <div class="sname">🏪 Дэлгүүр</div><div class="sdesc"></div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('office','Сургууль, цэцэрлэг')" id="st_of3">
+        <div class="sname">🏫 Сургууль</div><div class="sdesc"></div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('office','Эмнэлэг')" id="st_of4">
+        <div class="sname">🏥 Эмнэлэг</div><div class="sdesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="subtype_warehouse" style="display:none;">
+    <div class="subtype-grid">
+      <div class="subtype-card selected" onclick="selectSubtype('warehouse','Агуулах (хөнгөн бүтэц)')" id="st_wh1">
+        <div class="sname">🏭 Агуулах</div><div class="sdesc">Хөнгөн бүтэц</div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('warehouse','Үйлдвэрийн барилга')" id="st_wh2">
+        <div class="sname">🏭 Үйлдвэр</div><div class="sdesc"></div>
+      </div>
+      <div class="subtype-card" onclick="selectSubtype('warehouse','Гараж, паркинг')" id="st_wh3">
+        <div class="sname">🚗 Гараж</div><div class="sdesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" name="building_type" id="building_type_input" value="">
+  <input type="hidden" name="building_category" id="building_category" value="">
+
+  <div class="field-row" style="margin-top:14px;">
+    <div class="field">
+      <label>Чанарын түвшин</label>
+      <select name="quality">
+        <option value="эконом">💰 Эконом</option>
+        <option value="дунд" selected>⭐ Дунд</option>
+        <option value="премиум">💎 Премиум</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Байршил</label>
+      <select name="location">
+        <option value="Улаанбаатар">🏙 Улаанбаатар</option>
+        <option value="Дархан">Дархан</option>
+        <option value="Эрдэнэт">Эрдэнэт</option>
+        <option value="Орон нутаг (аймгийн төв)">Орон нутаг (аймгийн төв)</option>
+        <option value="Орон нутаг (сум)">Орон нутаг (сум)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="button" class="btn-next" onclick="goStep(1,2)">Дараах →</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- АЛХАМ 2: Хэмжээс -->
+<!-- ============================================================ -->
+<div class="card" id="step2" style="display:none;">
+  <div class="step-title">2️⃣ Хэмжээс</div>
+  <div class="step-desc">Барилгын хэмжээсийг оруулна уу</div>
+
+  <div class="field-row3">
+    <div class="field">
+      <label>Урт (м)</label>
+      <input type="number" name="length" id="inp_length" placeholder="10" min="3" max="500" oninput="calcArea()">
+    </div>
+    <div class="field">
+      <label>Өргөн (м)</label>
+      <input type="number" name="width" id="inp_width" placeholder="8" min="3" max="500" oninput="calcArea()">
+    </div>
+    <div class="field">
+      <label>Давхар</label>
+      <input type="number" name="floors" id="inp_floors" placeholder="1" min="1" max="50" value="1" oninput="calcArea();updateFloorFields()">
+    </div>
+  </div>
+
+  <!-- Нийт талбай автомат -->
+  <div class="info-box" id="area_info" style="display:none;">
+    📐 Нийт талбай: <strong id="area_display">—</strong> м²
+    &nbsp;|&nbsp; Нэг давхар: <strong id="floor_area_display">—</strong> м²
+  </div>
+
+  <!-- Амины орон сууцны тусгай талбар -->
+  <div id="low_rise_fields" style="display:none;">
+    <div class="field-row">
+      <div class="field">
+        <label>Өрөөний тоо</label>
+        <select name="rooms" id="inp_rooms" onchange="calcWindowsDoors()">
+          <option value="1">1 өрөө</option>
+          <option value="2">2 өрөө</option>
+          <option value="3" selected>3 өрөө</option>
+          <option value="4">4 өрөө</option>
+          <option value="5">5 өрөө</option>
+          <option value="6">6+ өрөө</option>
+        </select>
+        <div class="field-hint">Цонх, хаалга автоматаар тооцоологдоно</div>
+      </div>
+      <div class="field">
+        <label>Тааз өндөр (м)</label>
+        <select name="ceiling_height">
+          <option value="2.7" selected>2.7 м — стандарт</option>
+          <option value="2.5">2.5 м</option>
+          <option value="3.0">3.0 м</option>
+          <option value="3.5">3.5 м</option>
+        </select>
+      </div>
+    </div>
+    <!-- Автомат тооцоологдох -->
+    <div class="field-row3">
+      <div class="field">
+        <label>Цонх (автомат)</label>
+        <input type="number" name="windows_count" id="auto_windows" class="field-auto" readonly>
+        <div class="field-hint">Өрөөний тооноос</div>
+      </div>
+      <div class="field">
+        <label>Дотор хаалга (автомат)</label>
+        <input type="number" name="inner_doors_count" id="auto_inner_doors" class="field-auto" readonly>
+        <div class="field-hint">Өрөө + ванн + гал тогоо</div>
+      </div>
+      <div class="field">
+        <label>Гадна хаалга (автомат)</label>
+        <input type="number" name="outer_doors_count" id="auto_outer_doors" class="field-auto" readonly>
+        <div class="field-hint">Давхараас хамаарна</div>
+      </div>
+    </div>
+    <!-- Нэмэлт -->
+    <div class="field-row">
+      <div class="field">
+        <label>Гараж байхуу?</label>
+        <select name="has_garage">
+          <option value="үгүй">Үгүй</option>
+          <option value="1 машин">1 машины гараж</option>
+          <option value="2 машин">2 машины гараж</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Подвал/зоорь?</label>
+        <select name="has_basement">
+          <option value="үгүй">Үгүй</option>
+          <option value="хагас подвал">Хагас подвал</option>
+          <option value="бүтэн подвал">Бүтэн подвал</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Олон айлын тусгай талбар -->
+  <div id="apartment_fields" style="display:none;">
+    <div class="field-row">
+      <div class="field">
+        <label>Нэг давхарт айлын тоо</label>
+        <select name="units_per_floor" id="inp_units" onchange="calcApartmentInfo()">
+          <option value="2">2 айл</option>
+          <option value="4" selected>4 айл</option>
+          <option value="6">6 айл</option>
+          <option value="8">8 айл</option>
+          <option value="10">10 айл</option>
+          <option value="12">12 айл</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Нэг айлын өрөөний тоо</label>
+        <select name="rooms_per_unit" onchange="calcApartmentInfo()">
+          <option value="1">1 өрөө</option>
+          <option value="2">2 өрөө</option>
+          <option value="3" selected>3 өрөө — нийтлэг</option>
+          <option value="4">4 өрөө</option>
+          <option value="холимог">Холимог</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>1-р давхар</label>
+        <select name="ground_floor_units">
+          <option value="орон сууц">Орон сууц — дээрхтэй адил</option>
+          <option value="дэлгүүр">Дэлгүүр, үйлчилгээ</option>
+          <option value="паркинг">Паркинг</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Тааз өндөр (м)</label>
+        <select name="ceiling_height">
+          <option value="2.7" selected>2.7 м — стандарт</option>
+          <option value="2.5">2.5 м</option>
+          <option value="3.0">3.0 м</option>
+        </select>
+      </div>
+    </div>
+    <div class="info-box" id="apartment_info" style="display:none;">
+      🏢 Нийт айл: <strong id="total_units_display">—</strong> айл
+      &nbsp;|&nbsp; Нийт цонх: <strong id="total_windows_display">—</strong> ш
+    </div>
+    <!-- Лифт -->
+    <div id="lift_field" style="display:none;">
+      <div class="field">
+        <label>Лифт</label>
+        <select name="has_lift">
+          <option value="2 лифт" selected>2 лифт — заавал (5+ давхар)</option>
+          <option value="3 лифт">3 лифт</option>
+          <option value="4 лифт">4 лифт</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Агуулах/оффисын тусгай талбар -->
+  <div id="other_fields" style="display:none;">
+    <div class="field-row">
+      <div class="field">
+        <label>Тааз өндөр (м)</label>
+        <select name="ceiling_height">
+          <option value="3.0">3.0 м — оффис</option>
+          <option value="4.0">4.0 м</option>
+          <option value="5.0">5.0 м — агуулах</option>
+          <option value="6.0">6.0 м</option>
+          <option value="8.0">8.0 м — том агуулах</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ачааны хаалга</label>
+        <select name="cargo_doors">
+          <option value="0">Байхгүй</option>
+          <option value="1">1 ш</option>
+          <option value="2">2 ш</option>
+          <option value="4">4 ш</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden fields for compatibility -->
+  <input type="hidden" name="windows" id="hid_windows" value="5-6">
+  <input type="hidden" name="doors" id="hid_doors" value="4-5">
+  <input type="hidden" name="units_per_floor" id="hid_units" value="1">
+  <input type="hidden" name="inner_wall_length" value="3 өрөөтэй айл">
+  <input type="hidden" name="ground_floor_units" id="hid_ground" value="Дээрх давхартай адил">
+  <input type="hidden" name="build_year" value="2026">
+  <input type="hidden" name="total_height" value="0">
+
+  <div class="btn-row">
+    <button type="button" class="btn-prev" onclick="goStep(2,1)">← Өмнөх</button>
+    <button type="button" class="btn-next" onclick="goStep(2,3)">Дараах →</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- АЛХАМ 3: Бүтэц -->
+<!-- ============================================================ -->
+<div class="card" id="step3" style="display:none;">
+  <div class="step-title">3️⃣ Бүтэц, материал</div>
+  <div class="step-desc">Суурь, хана, дээврийн материалыг сонгоно уу</div>
+
+  <!-- Суурь -->
+  <div class="field-row">
+    <div class="field">
+      <label>Суурийн төрөл</label>
+      <select name="foundation_type" id="sel_foundation">
+        <option value="Шугаман суурь (стандарт)">Шугаман — амины байшин</option>
+        <option value="Хавтан суурь">Хавтан — олон давхар</option>
+        <option value="Гадсан суурь">Гадсан — нойтон хөрс</option>
+        <option value="Нил суурь">Нил — өндөр давхар</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Суурийн гүн (м)</label>
+      <select name="foundation_depth">
+        <option value="1.5">1.5 м</option>
+        <option value="2.0">2.0 м</option>
+        <option value="2.5" selected>2.5 м — УБ стандарт</option>
+        <option value="3.0">3.0 м</option>
+        <option value="3.5">3.5 м+</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Хана -->
+  <div class="field-row">
+    <div class="field">
+      <label>Гадна ханын материал</label>
+      <select name="wall_material" id="sel_wall">
+        <option value="Мак блок">Мак блок — дулаан, хөнгөн</option>
+        <option value="Тоосго">Тоосго — уламжлалт</option>
+        <option value="Бетон хавтан">Бетон хавтан — олон давхар</option>
+        <option value="Металл хийц">Металл хийц — агуулах</option>
+        <option value="Мод каркас">Мод каркас — амины</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Ханын дулаалга</label>
+      <select name="insulation">
+        <option value="Байхгүй">Байхгүй</option>
+        <option value="Шилэн хөвөн 10см" selected>Шилэн хөвөн 10см — стандарт</option>
+        <option value="Базальт хөвөн 10см">Базальт хөвөн 10см</option>
+        <option value="XPS пенополистирол (50мм)">XPS 50мм</option>
+        <option value="Хөөсөнцөр (пенопласт) 10см">Хөөсөнцөр 10см</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Дээвэр -->
+  <div class="field-row">
+    <div class="field">
+      <label>Дээврийн төрөл</label>
+      <select name="roof_type" id="sel_roof">
+        <option value="Налуу дээвэр (метал)">Налуу — металл черепица</option>
+        <option value="Налуу дээвэр (профнастил)">Налуу — профнастил</option>
+        <option value="Хавтгай дээвэр">Хавтгай — олон давхар</option>
+        <option value="Налуу дээвэр (битум)">Налуу — битум черепица</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Гадна фасад</label>
+      <select name="facade">
+        <option value="Шавар штукатур">Шавар штукатур — нийтлэг</option>
+        <option value="Өнгөлгөөний тоосго">Өнгөлгөөний тоосго</option>
+        <option value="Эмульс будаг">Эмульс будаг</option>
+        <option value="Композит хавтан">Композит хавтан</option>
+        <option value="Шилэн фасад">Шилэн фасад</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Хөрс -->
+  <div class="field-row">
+    <div class="field">
+      <label>Хөрсний төрөл</label>
+      <select name="soil_type">
+        <option value="Шавранцар" selected>Шавранцар — нийтлэг</option>
+        <option value="Элсэрхэг">Элсэрхэг — хатуу</option>
+        <option value="Чулуурхаг">Чулуурхаг</option>
+        <option value="Нойтон, намаглаг">Нойтон, намаглаг</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Газрын усны түвшин</label>
+      <select name="water_table">
+        <option value="Гүн (3м+)" selected>Гүн (3м+) — хэвийн</option>
+        <option value="Дунд (1.5-3м)">Дунд (1.5-3м)</option>
+        <option value="Өндөр (1.5м-)">Өндөр — анхаарах</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="button" class="btn-prev" onclick="goStep(3,2)">← Өмнөх</button>
+    <button type="button" class="btn-next" onclick="goStep(3,4)">Дараах →</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- АЛХАМ 4: Дотор засал + Инженер -->
+<!-- ============================================================ -->
+<div class="card" id="step4" style="display:none;">
+  <div class="step-title">4️⃣ Дотор засал, инженерийн систем</div>
+  <div class="step-desc">Дотор засал болон инженерийн системийг сонгоно уу</div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Шалны материал</label>
+      <select name="floor_material">
+        <option value="Ламинат (үндсэн) + Плита (ванн, гал тогоо)">Ламинат + Плита — нийтлэг</option>
+        <option value="Паркет (үндсэн) + Плита (ванн, гал тогоо)">Паркет + Плита</option>
+        <option value="Плита бүгд">Плита бүгд</option>
+        <option value="Цутгамал шал бүгд">Цутгамал шал</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Ханын засал</label>
+      <select name="wall_finish">
+        <option value="Хосолсон" selected>Хосолсон — нийтлэг</option>
+        <option value="Будаг">Будаг</option>
+        <option value="Обой">Обой</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Халаалт</label>
+      <select name="heating">
+        <option value="Бие даасан зуух">Бие даасан зуух — амины</option>
+        <option value="Төвийн халаалт">Төвийн халаалт — олон айлын</option>
+        <option value="Цахилгаан халаалт">Цахилгаан халаалт</option>
+        <option value="Шалан халаалт">Шалан халаалт</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Усан хангамж</label>
+      <select name="water">
+        <option value="Төвийн шугамд холбогдох">Төвийн шугам</option>
+        <option value="Өөрийн худаг">Өөрийн худаг</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Цахилгаан</label>
+      <select name="electrical">
+        <option value="Стандарт 220В">Стандарт 220В</option>
+        <option value="Гурван фаз 380В">Гурван фаз 380В</option>
+      </select>
+    </div>
+    <div class="field" id="extras_field">
+      <label>Нэмэлт</label>
+      <select name="extras">
+        <option value="Байхгүй">Байхгүй</option>
+        <option value="Гараж">Гараж</option>
+        <option value="Подвал">Подвал</option>
+        <option value="Гараж + Подвал">Гараж + Подвал</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Бетоны марк hidden -->
+  <input type="hidden" name="concrete_grade" value="М250">
+  <input type="hidden" name="inner_wall_material" value="Гипрок">
+
+  <div class="btn-row">
+    <button type="button" class="btn-prev" onclick="goStep(4,3)">← Өмнөх</button>
+    <button type="submit" class="btn-calc">🤖 Төсөв тооцоолох</button>
+  </div>
+</div>
+
+</form>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div style="font-size:15px;font-weight:600;color:#1e293b;margin-bottom:6px;">Тооцоолж байна...</div>
+  <div style="font-size:12px;color:#94a3b8;">10-20 секунд болно</div>
+</div>
+
+{% else %}
+
+<!-- ============================================================ -->
+<!-- ҮЛДЭГДЭЛ: Result -->
+<!-- ============================================================ -->
+{% if result and not result.error %}
+<div class="result-wrap">
+  <div class="info-grid">
+    <div class="info-b">
+      <div class="val">{{ result.summary.duration_months }} сар</div>
+      <div class="lbl">⏱ Барилгын хугацаа</div>
+    </div>
+    <div class="info-b">
+      <div class="val">{{ result.summary.price_per_m2|floatformat:0|intcomma }}₮</div>
+      <div class="lbl">📐 1 м² үнэ</div>
+    </div>
+    <div class="info-b">
+      <div class="val">{{ result.building_info.quality }}</div>
+      <div class="lbl">⭐ Чанарын түвшин</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:14px;font-weight:700;">🧱 Материалын зардал</div>
+      <button onclick="downloadExcel()" class="download-btn">📥 Excel татах</button>
+    </div>
+    <table>
+      <tr><th>Материал</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+      {% for item in result.materials %}
+      <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0|intcomma }}₮</td><td class="r">{{ item.total|floatformat:0|intcomma }}₮</td></tr>
+      {% endfor %}
+      <tr class="total-row"><td colspan="4">Материалын нийт</td><td class="r">{{ result.summary.materials_total|floatformat:0|intcomma }}₮</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;">👷 Ажилчдын зардал</div>
+    <table>
+      <tr><th>Ажил</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+      {% for item in result.labor %}
+      <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0|intcomma }}₮</td><td class="r">{{ item.total|floatformat:0|intcomma }}₮</td></tr>
+      {% endfor %}
+      <tr class="total-row"><td colspan="4">Ажилчдын нийт</td><td class="r">{{ result.summary.labor_total|floatformat:0|intcomma }}₮</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🚛 Тээврийн зардал</div>
+    <table>
+      <tr><th>Тээвэр</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+      {% for item in result.transport %}
+      <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0|intcomma }}₮</td><td class="r">{{ item.total|floatformat:0|intcomma }}₮</td></tr>
+      {% endfor %}
+      <tr class="total-row"><td colspan="4">Тээврийн нийт</td><td class="r">{{ result.summary.transport_total|floatformat:0|intcomma }}₮</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;">📦 Бусад зардал</div>
+    <table>
+      <tr><th>Зардал</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+      {% for item in result.other %}
+      <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0|intcomma }}₮</td><td class="r">{{ item.total|floatformat:0|intcomma }}₮</td></tr>
+      {% endfor %}
+      <tr class="total-row"><td colspan="4">Бусад нийт</td><td class="r">{{ result.summary.other_total|floatformat:0|intcomma }}₮</td></tr>
+    </table>
+  </div>
+
+  <div class="grand-box">
+    <div>
+      <div class="lbl">{{ result.building_info.type }} · {{ result.building_info.location }}</div>
+      <div style="color:#fff;font-size:13px;margin-top:4px;">НИЙТ ТӨСӨВ</div>
+    </div>
+    <div class="val">{{ result.summary.grand_total|floatformat:0|intcomma }}₮</div>
+  </div>
+
+  {% if result.notes %}
+  <div class="notes-box">💡 <strong>Анхаарах:</strong><br>{{ result.notes }}</div>
+  {% endif %}
+
+  <div class="warn-box">
+    ⚠️ <strong>Анхааруулга:</strong> Энэ тооцоо ойролцоо үнэлгээ бөгөөд мэргэжлийн инженерийн тооцоог орлохгүй. Гэрээ байгуулахаасаа өмнө мэргэжлийн байгууллагаар нарийвчилсан тооцоо гаргуулна уу.
+  </div>
+
+  <div style="display:flex;gap:10px;">
+    <button onclick="downloadExcel()" class="download-btn">📥 Excel татах</button>
+    <a href="/budget/" class="recalc-btn">🔄 Дахин тооцоолох</a>
+  </div>
+</div>
+
+{% else %}
+<div class="card"><div style="color:#c53030;padding:12px;">{{ result.error }}</div></div>
+<a href="/budget/" class="recalc-btn" style="display:inline-block;margin-top:12px;">🔄 Дахин оролдох</a>
+{% endif %}
+
+{% endif %}
+
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentStep = 1;
+let selectedType = '';
+let selectedSubtype = '';
+
+// ============================================================
+// БАРИЛГЫН ТӨРӨЛ СОНГОХ
+// ============================================================
+function selectType(type) {
+  selectedType = type;
+  // Card-уудыг reset
+  ['low_rise','apartment','office','warehouse'].forEach(t => {
+    document.getElementById('tc_'+t).classList.remove('selected');
+    document.getElementById('subtype_'+t).style.display = 'none';
+  });
+  document.getElementById('tc_'+type).classList.add('selected');
+  document.getElementById('subtype_'+type).style.display = 'block';
+
+  // Default subtype
+  const defaults = {
+    low_rise: 'Амины орон сууц (1 давхар)',
+    apartment: 'Олон айлын орон сууц (3-5 давхар)',
+    office: 'Оффисын барилга',
+    warehouse: 'Агуулах (хөнгөн бүтэц)'
+  };
+  selectedSubtype = defaults[type];
+  document.getElementById('building_type_input').value = selectedSubtype;
+  document.getElementById('building_category').value = type;
+
+  // Step 2 талбаруудыг тохируулах
+  updateStep2Fields(type);
+}
+
+function selectSubtype(type, subtype) {
+  selectedSubtype = subtype;
+  document.getElementById('building_type_input').value = subtype;
+
+  // Subtype card-уудыг update
+  const prefix = {low_rise:'lr', apartment:'ap', office:'of', warehouse:'wh'}[type];
+  document.querySelectorAll('[id^="st_'+prefix+'"]').forEach(el => el.classList.remove('selected'));
+
+  // Find and select clicked
+  document.querySelectorAll('.subtype-card').forEach(el => {
+    if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(subtype)) {
+      el.classList.add('selected');
+    }
+  });
+
+  // Давхар автоматаар тохируулах
+  if(subtype.includes('1 давхар')) document.getElementById('inp_floors').value = 1;
+  if(subtype.includes('2 давхар')) document.getElementById('inp_floors').value = 2;
+  if(subtype.includes('3-5')) document.getElementById('inp_floors').value = 4;
+  if(subtype.includes('6-9')) document.getElementById('inp_floors').value = 7;
+  if(subtype.includes('10+')) document.getElementById('inp_floors').value = 12;
+
+  updateFloorFields();
+  calcArea();
+}
+
+function updateStep2Fields(type) {
+  document.getElementById('low_rise_fields').style.display = type === 'low_rise' ? 'block' : 'none';
+  document.getElementById('apartment_fields').style.display = type === 'apartment' ? 'block' : 'none';
+  document.getElementById('other_fields').style.display = (type === 'office' || type === 'warehouse') ? 'block' : 'none';
+
+  if(type === 'low_rise') calcWindowsDoors();
+  if(type === 'apartment') calcApartmentInfo();
+}
+
+// ============================================================
+// ТООЦООЛОХ ФУНКЦҮҮД
+// ============================================================
+function calcArea() {
+  const l = parseFloat(document.getElementById('inp_length').value) || 0;
+  const w = parseFloat(document.getElementById('inp_width').value) || 0;
+  const f = parseInt(document.getElementById('inp_floors').value) || 1;
+  if(l > 0 && w > 0) {
+    const floorArea = l * w;
+    const totalArea = floorArea * f;
+    document.getElementById('area_display').textContent = totalArea.toLocaleString();
+    document.getElementById('floor_area_display').textContent = floorArea.toLocaleString();
+    document.getElementById('area_info').style.display = 'block';
+  }
+  if(selectedType === 'low_rise') calcWindowsDoors();
+  if(selectedType === 'apartment') calcApartmentInfo();
+}
+
+function calcWindowsDoors() {
+  const rooms = parseInt(document.getElementById('inp_rooms').value) || 3;
+  const floors = parseInt(document.getElementById('inp_floors').value) || 1;
+
+  // Цонх: өрөө × 1.5 + 1 (коридор, гал тогоо)
+  const windows = Math.round(rooms * 1.5) + 1;
+  // Дотор хаалга: өрөө + ванн + гал тогоо + коридор
+  const innerDoors = rooms + 2;
+  // Гадна хаалга: 2 давхар бол 2
+  const outerDoors = floors >= 2 ? 2 : 1;
+
+  document.getElementById('auto_windows').value = windows;
+  document.getElementById('auto_inner_doors').value = innerDoors;
+  document.getElementById('auto_outer_doors').value = outerDoors;
+
+  // Hidden fields update
+  document.getElementById('hid_windows').value = windows + '-' + (windows+1);
+  document.getElementById('hid_doors').value = innerDoors + '-' + (innerDoors+1);
+}
+
+function calcApartmentInfo() {
+  const floors = parseInt(document.getElementById('inp_floors').value) || 4;
+  const unitsPerFloor = parseInt(document.getElementById('inp_units').value) || 4;
+  const totalUnits = floors * unitsPerFloor;
+
+  // Нийт цонх: айл бүр 7 цонх (3 өрөөт)
+  const totalWindows = totalUnits * 7;
+
+  document.getElementById('total_units_display').textContent = totalUnits;
+  document.getElementById('total_windows_display').textContent = totalWindows;
+  document.getElementById('apartment_info').style.display = 'block';
+
+  // Hidden update
+  document.getElementById('hid_units').value = unitsPerFloor;
+
+  // Лифт 5+ давхар
+  document.getElementById('lift_field').style.display = floors >= 5 ? 'block' : 'none';
+}
+
+function updateFloorFields() {
+  const floors = parseInt(document.getElementById('inp_floors').value) || 1;
+
+  // Суурийн төрлийг автомат санал болгох
+  const foundationSel = document.getElementById('sel_foundation');
+  if(foundationSel) {
+    if(floors >= 10) foundationSel.value = 'Нил суурь';
+    else if(floors >= 5) foundationSel.value = 'Хавтан суурь';
+    else foundationSel.value = 'Шугаман суурь (стандарт)';
+  }
+
+  // Дээврийн төрлийг санал болгох
+  const roofSel = document.getElementById('sel_roof');
+  if(roofSel) {
+    if(floors >= 3) roofSel.value = 'Хавтгай дээвэр';
+    else roofSel.value = 'Налуу дээвэр (метал)';
+  }
+
+  // Лифт
+  if(document.getElementById('lift_field')) {
+    document.getElementById('lift_field').style.display = floors >= 5 ? 'block' : 'none';
+  }
+
+  calcWindowsDoors();
+  calcApartmentInfo();
+}
+
+// ============================================================
+// WIZARD NAVIGATION
+// ============================================================
+function goStep(from, to) {
+  // Validation
+  if(to > from) {
+    if(from === 1 && !document.getElementById('building_type_input').value) {
+      alert('Барилгын төрлийг сонгоно уу!');
+      return;
+    }
+    if(from === 2) {
+      const l = document.getElementById('inp_length').value;
+      const w = document.getElementById('inp_width').value;
+      if(!l || !w) {
+        alert('Урт, өргөнийг оруулна уу!');
+        return;
+      }
+    }
+  }
+
+  document.getElementById('step'+from).style.display = 'none';
+  document.getElementById('dot'+from).classList.remove('active');
+  if(to > from) {
+    document.getElementById('dot'+from).classList.add('done');
+    if(from < 4) document.getElementById('line'+from).classList.add('done');
+  } else {
+    document.getElementById('dot'+from).classList.remove('done');
+    if(from <= 4 && from > 1) document.getElementById('line'+(from-1)).classList.remove('done');
+  }
+
+  currentStep = to;
+  document.getElementById('step'+to).style.display = 'block';
+  document.getElementById('dot'+to).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Form submit
+document.getElementById('main-form') && document.getElementById('main-form').addEventListener('submit', function(e) {
+  // Validate
+  if(!document.getElementById('building_type_input').value) {
+    e.preventDefault();
+    alert('Барилгын төрлийг сонгоно уу!');
+    return;
+  }
+
+  // Windows/doors final update
+  if(selectedType === 'low_rise') {
+    const w = document.getElementById('auto_windows').value;
+    const d = parseInt(document.getElementById('auto_inner_doors').value) + parseInt(document.getElementById('auto_outer_doors').value);
+    document.getElementById('hid_windows').value = w;
+    document.getElementById('hid_doors').value = d;
+    document.getElementById('hid_units').value = 1;
+  }
+
+  document.getElementById('step4').style.display = 'none';
+  document.getElementById('progress').style.display = 'none';
+  document.getElementById('loading').classList.add('show');
+});
+
+{% if result %}
+function downloadExcel() {
+  const data = {{ result_json|safe }};
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/budget/excel/";
+  const csrf = document.createElement("input");
+  csrf.type = "hidden";
+  csrf.name = "csrfmiddlewaretoken";
+  csrf.value = "{{ csrf_token }}";
+  form.appendChild(csrf);
+  const inp = document.createElement("input");
+  inp.type = "hidden";
+  inp.name = "data";
+  inp.value = JSON.stringify(data);
+  form.appendChild(inp);
+  document.body.appendChild(form);
+  form.submit();
+}
+{% endif %}
+
+// JavaScript-аар тоог таслалтай болгох
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll("td.r, .val, .grand-box .val").forEach(function(el) {
+    var text = el.textContent.trim();
+    if(text.endsWith("₮")) {
+      var num = text.replace("₮","").replace(/,/g,"").trim();
+      var n = parseFloat(num);
+      if(!isNaN(n)) {
+        el.textContent = n.toLocaleString("en-US") + "₮";
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>'''
+
+with open(path, "w", encoding="utf-8") as f:
+    f.write(content)
+print(f"DONE - шинэ wizard бичигдлээ ({len(content)} тэмдэгт)")

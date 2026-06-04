@@ -1,0 +1,197 @@
+content = """<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Бүртгүүлэх</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,sans-serif;background:#f0f4f8;min-height:100vh;display:grid;place-items:center;padding:24px;}
+    .card{width:min(440px,94vw);background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;}
+    .logo{text-align:center;margin-bottom:20px;}
+    .logo-icon{width:48px;height:48px;background:#2f6477;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;}
+    .logo-icon svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2;}
+    .logo h1{font-size:16px;font-weight:600;color:#1a202c;margin-bottom:3px;}
+    .logo p{font-size:13px;color:#718096;}
+    .type-select{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+    .type-btn{padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;text-align:center;cursor:pointer;background:#fff;transition:all .15s;}
+    .type-btn.active{border-color:#2f6477;background:#f0f8fb;}
+    .type-btn .icon{font-size:22px;display:block;margin-bottom:4px;}
+    .type-btn span{font-size:13px;font-weight:500;color:#2d3748;display:block;}
+    .type-btn small{font-size:11px;color:#718096;display:block;}
+    .section-label{font-size:11px;font-weight:600;color:#a0aec0;letter-spacing:0.05em;text-transform:uppercase;margin:14px 0 8px;}
+    .field{margin-bottom:12px;}
+    .field label{display:block;font-size:12px;font-weight:600;color:#4a5568;margin-bottom:4px;}
+    .field input,.field select{width:100%;padding:8px 11px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1a202c;outline:none;background:#fff;}
+    .field input::placeholder{color:#b0bac9;font-size:12px;}
+    .field input:focus,.field select:focus{border-color:#2f6477;}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .btn-google{width:100%;padding:9px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#2d3748;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;}
+    .btn-google:hover{background:#f7fafc;}
+    .email-divider{display:flex;align-items:center;gap:8px;margin:8px 0;}
+    .email-divider hr{flex:1;border:none;border-top:1px solid #e2e8f0;}
+    .email-divider span{font-size:11px;color:#a0aec0;}
+    .agree-box{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:14px;}
+    .agree-box input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:#2f6477;}
+    .agree-box label{font-size:12px;color:#4a5568;line-height:1.5;cursor:pointer;}
+    .agree-box a{color:#2f6477;text-decoration:none;}
+    .btn-main{width:100%;padding:10px;background:#2f6477;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+    .btn-main:hover{background:#265666;}
+    .btn-main:disabled{background:#a0aec0;cursor:not-allowed;}
+    .footer{text-align:center;margin-top:14px;font-size:12px;color:#718096;}
+    .footer a{color:#2f6477;text-decoration:none;}
+    .err{background:#fff5f5;border:1px solid #fed7d7;color:#c53030;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:14px;}
+    .hidden{display:none;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21v-6h6v6"/></svg>
+      </div>
+      <h1>Шинээр бүртгүүлэх</h1>
+      <p>Та компани эсвэл хувь хүнээр бүртгүүлж болно</p>
+    </div>
+
+    {% if errors %}
+      <div class="err">{{ errors }}</div>
+    {% endif %}
+
+    <form method="post" id="reg-form">
+      {% csrf_token %}
+      <input type="hidden" name="reg_type" id="reg_type" value="company">
+
+      <div class="type-select">
+        <div class="type-btn active" onclick="setType('company')">
+          <span class="icon">🏢</span>
+          <span>Компани</span>
+          <small>ААН, ХХК, ХНН</small>
+        </div>
+        <div class="type-btn" onclick="setType('person')">
+          <span class="icon">👤</span>
+          <span>Хувь хүн</span>
+          <small>Ажилтан, инженер</small>
+        </div>
+      </div>
+
+      <!-- Компанийн мэдээлэл -->
+      <div id="company-fields">
+        <div class="section-label">Компанийн мэдээлэл</div>
+        <div class="field">
+          <label>Компанийн нэр</label>
+          <input type="text" name="company_name" placeholder="Компанийн нэр бичих">
+        </div>
+        <div class="field">
+          <label>Регистрийн дугаар</label>
+          <input type="text" name="company_regno" placeholder="Компанийн регистр бичих">
+        </div>
+        <div class="field">
+          <label>Үйл ажиллагааны чиглэл</label>
+          <select name="company_activity">
+            <option value="">--- сонгоно уу ---</option>
+            <option value="CONSTRUCTION">Барилга угсралт</option>
+            <option value="DESIGN">Зураг төсөл</option>
+            <option value="SUPPLY">Материал нийлүүлэлт</option>
+            <option value="CONSULTING">Зөвлөх үйлчилгээ</option>
+            <option value="OTHER">Бусад</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Хувь хүний мэдээлэл -->
+      <div id="person-fields" class="hidden">
+        <div class="section-label">Хувийн мэдээлэл</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Овог</label>
+            <input type="text" name="last_name" placeholder="Овог бичих">
+          </div>
+          <div class="field">
+            <label>Нэр</label>
+            <input type="text" name="first_name" placeholder="Нэр бичих">
+          </div>
+        </div>
+        <div class="field">
+          <label>Мэргэжил</label>
+          <select name="profession">
+            <option value="">--- сонгоно уу ---</option>
+            <option value="engineer">Инженер</option>
+            <option value="architect">Архитектор</option>
+            <option value="foreman">Дааман</option>
+            <option value="worker">Ажилчин</option>
+            <option value="other">Бусад</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Нэвтрэх мэдээлэл -->
+      <div class="section-label">Нэвтрэх мэдээлэл</div>
+      <div class="field">
+        <label>Хэрэглэгчийн нэр</label>
+        <input type="text" name="username" placeholder="Хэрэглэгчийн нэр оруулах">
+      </div>
+      <div class="field">
+        <label>И-мэйл</label>
+        <button type="button" class="btn-google" onclick="toggleGoogle()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Google акаунтаар и-мэйл оруулах
+        </button>
+        <div class="email-divider"><hr><span>эсвэл гараар бичих</span><hr></div>
+        <input type="email" name="email" id="email-input" placeholder="И-мэйл хаяг оруулах">
+      </div>
+      <div class="field">
+        <label>Утасны дугаар</label>
+        <input type="text" name="phone" placeholder="Утасны дугаар оруулах">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Нууц үг</label>
+          <input type="password" name="password1" placeholder="Нууц үг оруулах">
+        </div>
+        <div class="field">
+          <label>Давтах</label>
+          <input type="password" name="password2" placeholder="Нууц үг давтах">
+        </div>
+      </div>
+
+      <!-- Зөвшөөрөл -->
+      <div class="agree-box">
+        <input type="checkbox" id="agree" name="agree" onchange="checkAgree()">
+        <label for="agree">
+          Миний мэдээллийг <a href="#">нууцлалын бодлого</a>-ын дагуу боловсруулахыг зөвшөөрч,
+          <a href="#">үйлчилгээний нөхцөл</a>-тэй танилцаж зөвшөөрсөн.
+        </label>
+      </div>
+
+      <button type="submit" class="btn-main" id="submit-btn" disabled>Бүртгүүлэх</button>
+    </form>
+
+    <div class="footer">
+      Аль хэдийн бүртгэлтэй юу? <a href="/login/">Нэвтрэх</a>
+    </div>
+  </div>
+
+  <script>
+    function setType(type) {
+      document.getElementById('reg_type').value = type;
+      document.querySelectorAll('.type-btn').forEach(function(b, i) {
+        b.classList.toggle('active', (type==='company'&&i===0)||(type==='person'&&i===1));
+      });
+      document.getElementById('company-fields').classList.toggle('hidden', type!=='company');
+      document.getElementById('person-fields').classList.toggle('hidden', type!=='person');
+    }
+    function checkAgree() {
+      document.getElementById('submit-btn').disabled = !document.getElementById('agree').checked;
+    }
+    function toggleGoogle() {
+      alert('Google нэвтрэх тохиргоо хийгдээгүй байна. И-мэйлээ гараар оруулна уу.');
+      document.getElementById('email-input').focus();
+    }
+  </script>
+</body>
+</html>"""
+
+with open("templates/registration/register.html", "w", encoding="utf-8") as f:
+    f.write(content)
+print("OK")

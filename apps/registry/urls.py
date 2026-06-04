@@ -2,6 +2,15 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
 from .views import (
+    budget_calculator,
+    budget_excel,
+    budget_chat,
+    budget_file_upload,
+    tender_list,
+    ad_delete,
+    news_list,
+    news_detail,
+    ad_detail,
     home,
     public_home,
     public_login,
@@ -10,6 +19,9 @@ from .views import (
     auth_facebook,
     auth_emongolia,
     auth_bank,
+    register_view,
+    ad_create,
+    ad_list,
 )
 
 urlpatterns = [
@@ -17,15 +29,23 @@ urlpatterns = [
     path("home/", home, name="home_page"),
     path("public/", public_home, name="public_home"),
     path("login/", public_login, name="login"),
+    path("register/", register_view, name="register"),
     path("profile/", personal_profile, name="personal_profile"),
-
-    # ✅ ШИНЭ: Компанийн нийтийн хуудас
     path("company/<slug:slug>/", company_profile, name="company_profile"),
-
-    # Social / SSO / Bank
     path("auth/facebook/", auth_facebook, name="auth_facebook"),
     path("auth/emongolia/", auth_emongolia, name="auth_emongolia"),
     path("auth/bank/", auth_bank, name="auth_bank"),
     path("logout/", auth_views.LogoutView.as_view(next_page="/public/"), name="logout"),
     path("dashboard/", RedirectView.as_view(url="/public/", permanent=False)),
+    path("ads/", ad_list, name="ad_list"),
+    path("ads/create/", ad_create, name="ad_create"),
+    path("ads/<int:pk>/", ad_detail, name="ad_detail"),
+    path("news/", news_list, name="news_list"),
+    path("news/<int:pk>/", news_detail, name="news_detail"),
+    path("tender/", tender_list, name="tender_list"),
+    path("budget/", budget_calculator, name="budget_calculator"),
+    path("budget/excel/", budget_excel, name="budget_excel"),
+    path("budget/chat/", budget_chat, name="budget_chat"),
+    path("budget/file/", budget_file_upload, name="budget_file_upload"),
+    path("ads/<int:pk>/delete/", ad_delete, name="ad_delete"),
 ]

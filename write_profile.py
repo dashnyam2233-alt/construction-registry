@@ -1,0 +1,205 @@
+html = """{% load static %}
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Миний профайл — БНБ</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,sans-serif;background:#f1f5f9;}
+    a{text-decoration:none;color:inherit;}
+    .nav{background:#1e3a4a;height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;}
+    .logo-box{width:32px;height:32px;background:#f59e0b;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .logo-box svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;}
+    .logo-t{color:#fff;font-size:13px;font-weight:700;margin-left:8px;}
+    .nav-r{margin-left:auto;display:flex;gap:6px;align-items:center;}
+    .nb{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;border:none;cursor:pointer;}
+    .nb-o{background:transparent;color:#cbd5e1;border:1px solid #2d4f63;}
+    .nb-y{background:#f59e0b;color:#1e3a4a;}
+    .wrap{max-width:900px;margin:24px auto;padding:0 20px;display:grid;grid-template-columns:240px 1fr;gap:16px;}
+    .sb-card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:12px;}
+    .sb-hd{padding:12px 14px;border-bottom:0.5px solid #e2e8f0;font-size:13px;font-weight:600;color:#1e293b;}
+    .sb-body{padding:14px;}
+    .user-av{width:64px;height:64px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px;}
+    .user-name{text-align:center;font-size:15px;font-weight:700;color:#1e293b;margin-bottom:4px;}
+    .user-role{text-align:center;font-size:11px;color:#64748b;margin-bottom:12px;}
+    .nav-links{display:flex;flex-direction:column;gap:2px;}
+    .nav-lnk{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;font-size:13px;color:#374151;cursor:pointer;}
+    .nav-lnk:hover{background:#f1f5f9;}
+    .nav-lnk.on{background:#f0fdf4;color:#166534;font-weight:500;}
+    .nav-lnk-ic{font-size:16px;}
+    .card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;}
+    .card-hd{padding:14px 16px;border-bottom:0.5px solid #e2e8f0;font-size:14px;font-weight:600;color:#1e293b;display:flex;align-items:center;justify-content:space-between;}
+    .card-body{padding:16px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .info-item{display:flex;flex-direction:column;gap:3px;}
+    .info-label{font-size:11px;color:#94a3b8;font-weight:500;}
+    .info-val{font-size:13px;color:#1e293b;font-weight:500;}
+    .field{margin-bottom:12px;}
+    .field label{display:block;font-size:12px;font-weight:600;color:#4a5568;margin-bottom:4px;}
+    .field input{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1e293b;outline:none;}
+    .field input:focus{border-color:#f59e0b;}
+    .field input::placeholder{color:#b0bac9;font-size:12px;}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .btn-save{padding:9px 20px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+    .btn-danger{padding:9px 20px;background:transparent;color:#e53e3e;border:1px solid #fed7d7;border-radius:8px;font-size:13px;cursor:pointer;}
+    .ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .ad-card{background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px;}
+    .ad-card:hover{border-color:#f59e0b;}
+    .ad-cat{display:inline-block;background:#fef3c7;color:#854f0b;font-size:10px;padding:1px 7px;border-radius:20px;margin-bottom:5px;}
+    .ad-t{font-size:12px;font-weight:600;color:#1e293b;line-height:1.35;margin-bottom:4px;}
+    .ad-p{font-size:13px;font-weight:700;color:#f59e0b;}
+    .ad-m{font-size:11px;color:#94a3b8;margin-top:3px;}
+    .ad-actions{display:flex;gap:6px;margin-top:8px;}
+    .btn-sm{padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;border:none;}
+    .btn-edit{background:#f0fdf4;color:#166534;}
+    .btn-del{background:#fff5f5;color:#e53e3e;}
+    .empty{text-align:center;padding:24px;color:#94a3b8;font-size:13px;}
+    .comp-card{background:#f0f9ff;border:0.5px solid #bae6fd;border-radius:8px;padding:14px;display:flex;align-items:center;gap:12px;}
+    .comp-av{width:44px;height:44px;background:#dbeafe;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .comp-n{font-size:14px;font-weight:600;color:#1e293b;}
+    .comp-t{font-size:12px;color:#64748b;margin-top:2px;}
+    .lock-box{background:#fffbeb;border:0.5px solid #fde68a;border-radius:10px;padding:24px;text-align:center;}
+    .lock-ic{font-size:40px;margin-bottom:12px;}
+    .lock-t{font-size:15px;font-weight:600;color:#1e293b;margin-bottom:6px;}
+    .lock-s{font-size:13px;color:#64748b;margin-bottom:16px;}
+    .lock-inp{width:100%;max-width:240px;padding:9px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;text-align:center;}
+    .lock-btn{padding:9px 24px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+    .err{color:#e53e3e;font-size:12px;margin-top:6px;}
+    .success{background:#f0fdf4;border:0.5px solid #bbf7d0;color:#166534;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;}
+    @media(max-width:768px){.wrap{grid-template-columns:1fr;}.info-grid{grid-template-columns:1fr;}.ad-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/public/" style="display:flex;align-items:center;gap:8px;">
+    <div class="logo-box"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21v-6h6v6"/></svg></div>
+    <span class="logo-t">БНБ — Барилгын нэгдсэн бааз</span>
+  </a>
+  <div class="nav-r">
+    <a href="/public/" class="nb nb-o">Нүүр</a>
+    <form method="post" action="/logout/" style="display:inline;">{% csrf_token %}<button type="submit" class="nb nb-o">Гарах</button></form>
+  </div>
+</nav>
+
+{% if lock_mode %}
+<div style="min-height:calc(100vh - 52px);display:flex;align-items:center;justify-content:center;padding:24px;">
+  <div style="width:min(400px,94vw);">
+    <div class="lock-box">
+      <div class="lock-ic">🔒</div>
+      <div class="lock-t">Нууц үг оруулна уу</div>
+      <div class="lock-s">Профайл харахын тулд нууц үгээ баталгаажуулна уу</div>
+      <form method="post">
+        {% csrf_token %}
+        <div>
+          <input type="password" name="password" class="lock-inp" placeholder="••••••••" autofocus>
+        </div>
+        {% if error %}<div class="err">{{ error }}</div>{% endif %}
+        <div style="margin-top:10px;">
+          <button type="submit" class="lock-btn">Нээх</button>
+        </div>
+      </form>
+      <div style="margin-top:14px;font-size:12px;color:#94a3b8;"><a href="/public/" style="color:#2f6477;">← Нүүр хуудас руу буцах</a></div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+
+<div class="wrap">
+  <div>
+    <div class="sb-card">
+      <div class="sb-body">
+        <div class="user-av">👤</div>
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-role">{{ request.user.email }}</div>
+        <div class="nav-links" style="margin-top:10px;">
+          <a href="/profile/" class="nav-lnk on"><span class="nav-lnk-ic">👤</span> Профайл</a>
+          <a href="/ads/?author={{ request.user.pk }}" class="nav-lnk"><span class="nav-lnk-ic">📢</span> Миний зарууд</a>
+          <a href="/ads/create/" class="nav-lnk"><span class="nav-lnk-ic">➕</span> Зар нэмэх</a>
+          {% if request.user.is_staff %}<a href="/admin/" class="nav-lnk"><span class="nav-lnk-ic">⚙️</span> Удирдлага</a>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if company %}
+    <div class="sb-card">
+      <div class="sb-hd">🏢 Миний компани</div>
+      <div class="sb-body">
+        <a href="/company/{{ company.slug }}/" class="comp-card" style="display:flex;">
+          <div class="comp-av">🏢</div>
+          <div><div class="comp-n">{{ company.name }}</div><div class="comp-t">{{ company.get_activity_type_display|default:"Барилга" }}</div></div>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="card-hd">
+        <span>👤 Хувийн мэдээлэл</span>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item"><span class="info-label">Хэрэглэгчийн нэр</span><span class="info-val">{{ request.user.username }}</span></div>
+          <div class="info-item"><span class="info-label">И-мэйл</span><span class="info-val">{{ request.user.email|default:"—" }}</span></div>
+          <div class="info-item"><span class="info-label">Нэр</span><span class="info-val">{{ request.user.first_name|default:"—" }}</span></div>
+          <div class="info-item"><span class="info-label">Овог</span><span class="info-val">{{ request.user.last_name|default:"—" }}</span></div>
+          <div class="info-item"><span class="info-label">Бүртгүүлсэн огноо</span><span class="info-val">{{ request.user.date_joined|date:"Y-m-d" }}</span></div>
+          <div class="info-item"><span class="info-label">Сүүлд нэвтэрсэн</span><span class="info-val">{{ request.user.last_login|date:"Y-m-d H:i"|default:"—" }}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">
+        <span>📢 Миний зарууд</span>
+        <a href="/ads/create/" class="nb nb-y" style="padding:5px 12px;font-size:12px;">+ Нэмэх</a>
+      </div>
+      <div class="card-body">
+        {% if my_ads %}
+        <div class="ad-grid">
+          {% for ad in my_ads %}
+          <div class="ad-card">
+            <span class="ad-cat">{{ ad.get_category_display }}</span>
+            <div class="ad-t">{{ ad.title|truncatechars:50 }}</div>
+            <div class="ad-p">{{ ad.get_price_display_full }}</div>
+            <div class="ad-m">📍 {{ ad.city }} · 👁 {{ ad.views }} · {{ ad.created_at|date:"m-d" }}</div>
+            <div class="ad-actions">
+              <a href="/ads/{{ ad.pk }}/" class="btn-sm btn-edit">👁 Харах</a>
+              <span class="btn-sm btn-del">🗑 Устгах</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+          <div style="font-size:32px;margin-bottom:8px;">📭</div>
+          <div>Одоогоор зар байхгүй байна.</div>
+          <a href="/ads/create/" style="display:inline-block;margin-top:10px;padding:7px 16px;background:#f59e0b;color:#1e3a4a;border-radius:7px;font-size:13px;font-weight:600;">+ Зар оруулах</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">🔐 Нууц үг солих</div>
+      <div class="card-body">
+        <a href="/accounts/password_change/" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:7px;font-size:13px;color:#374151;">🔑 Нууц үг солих</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endif %}
+
+</body>
+</html>"""
+
+with open("templates/registry/profile.html", "w", encoding="utf-8") as f:
+    f.write(html)
+print("OK")

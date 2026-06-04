@@ -1,0 +1,300 @@
+{% load static %}
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Нарийн төсөв — БНБ</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,sans-serif;background:#f1f5f9;}
+    a{text-decoration:none;color:inherit;}
+    .nav{background:#1e3a4a;height:52px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:1000;}
+    .logo-t{color:#fff;font-size:13px;font-weight:700;}
+    .nav-r{margin-left:auto;display:flex;gap:8px;}
+    .nb{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;border:1px solid #2d4f63;color:#cbd5e1;background:transparent;}
+    .hero{background:linear-gradient(135deg,#1e3a4a,#2f6477);padding:24px 20px;text-align:center;}
+    .hero-t{color:#fff;font-size:20px;font-weight:700;margin-bottom:6px;}
+    .hero-s{color:#94a3b8;font-size:13px;}
+    .wrap{max-width:800px;margin:24px auto;padding:0 20px;}
+    .card{background:#fff;border:0.5px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:16px;}
+    .card-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:14px;}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+    .step{background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:14px;text-align:center;}
+    .step-num{width:28px;height:28px;background:#f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1e3a4a;margin:0 auto 8px;}
+    .step-t{font-size:12px;font-weight:600;color:#1e293b;margin-bottom:4px;}
+    .step-s{font-size:11px;color:#64748b;}
+    .download-box{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .download-box-t{font-size:13px;font-weight:600;color:#1e293b;}
+    .download-box-s{font-size:11px;color:#64748b;margin-top:3px;}
+    .btn-download{padding:8px 18px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
+    .upload-area{border:2px dashed #e2e8f0;border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;}
+    .upload-area:hover{border-color:#f59e0b;background:#fffbeb;}
+    .upload-area.dragover{border-color:#f59e0b;background:#fef3c7;}
+    .upload-icon{font-size:40px;margin-bottom:10px;}
+    .upload-t{font-size:14px;font-weight:600;color:#1e293b;margin-bottom:4px;}
+    .upload-s{font-size:12px;color:#64748b;}
+    .file-input{display:none;}
+    .file-selected{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-top:10px;}
+    .file-name{font-size:13px;color:#166534;font-weight:500;}
+    .btn-calc{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px;}
+    .btn-calc:hover{background:#16a34a;}
+    .btn-calc:disabled{background:#94a3b8;cursor:not-allowed;}
+    .err-box{background:#fff5f5;border:0.5px solid #fed7d7;color:#c53030;border-radius:8px;padding:12px;font-size:13px;margin-bottom:14px;}
+    .loading{display:none;text-align:center;padding:40px;}
+    .loading.show{display:block;}
+    .spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#22c55e;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .result-wrap{display:flex;flex-direction:column;gap:14px;}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .info-box{background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;}
+    .info-box .val{font-size:17px;font-weight:700;color:#22c55e;}
+    .info-box .lbl{font-size:11px;color:#64748b;margin-top:3px;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    th{background:#f8fafc;padding:8px 10px;text-align:left;font-weight:600;color:#4a5568;border-bottom:1px solid #e2e8f0;}
+    th.r{text-align:right;}
+    td{padding:7px 10px;border-bottom:0.5px solid #f1f5f9;color:#1e293b;}
+    td.r{text-align:right;font-weight:500;}
+    tr:hover td{background:#f0fdf4;}
+    .total-row td{font-weight:700;background:#f0fdf4;border-top:2px solid #22c55e;}
+    .grand-box{background:linear-gradient(135deg,#1e3a4a,#2f6477);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .grand-box .lbl{color:#94a3b8;font-size:13px;}
+    .grand-box .val{color:#22c55e;font-size:22px;font-weight:700;}
+    .notes-box{background:#f0fdf4;border:0.5px solid #86efac;border-radius:8px;padding:12px;font-size:12px;color:#166534;line-height:1.6;}
+    .accuracy-box{background:#eff6ff;border:0.5px solid #93c5fd;border-radius:8px;padding:12px;font-size:12px;color:#1d4ed8;margin-bottom:10px;}
+    .action-row{display:flex;gap:10px;}
+    .btn-excel{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+    .btn-back{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;}
+    @media(max-width:600px){.steps{grid-template-columns:1fr;}.info-grid{grid-template-columns:1fr 1fr;}}
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/public/" class="logo-t">БНБ — Барилгын нэгдсэн бааз</a>
+  <div class="nav-r">
+    <a href="/budget/" class="nb">← Хурдан тооцоо</a>
+    <a href="/public/" class="nb">Нүүр</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-t">📊 Нарийн төсөв тооцоолох</div>
+  <div class="hero-s">Excel загвар бөглөж оруулахад AI нарийвчлалтай төсөв гаргана</div>
+</div>
+
+<div class="wrap">
+
+{% if not result %}
+  <div class="card">
+    <div class="card-title">Хэрхэн ажиллах вэ?</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-t">Загвар татах</div>
+        <div class="step-s">Excel загвар файлыг татаж авна</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-t">Тоо хэмжээ бөглөх</div>
+        <div class="step-s">Материал, ажлын тоо хэмжээг оруулна</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-t">Файл оруулах</div>
+        <div class="step-s">AI автоматаар үнэ нэмж төсөв гаргана</div>
+      </div>
+    </div>
+
+    <div class="download-box">
+      <div>
+        <div class="download-box-t">📥 Excel загвар файл</div>
+        <div class="download-box-s">Материал, ажил, тоо хэмжээний жагсаалт — бөглөөд оруулна уу</div>
+      </div>
+      <a href="/media/budget_templates/budget_template.xlsx" class="btn-download" download>⬇️ Татах</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📂 Бөглөсөн файлаа оруулах</div>
+
+    {% if error %}<div class="err-box">{{ error }}</div>{% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="upload-form">
+      {% csrf_token %}
+      <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+        <div class="upload-icon">📊</div>
+        <div class="upload-t">Excel файл оруулах</div>
+        <div class="upload-s">.xlsx, .xls файл дэмжинэ · Дарж эсвэл чирж оруулна уу</div>
+      </div>
+      <input type="file" name="budget_file" id="file-input" class="file-input" accept=".xlsx,.xls" onchange="onFileSelect(this)">
+      <div class="file-selected" id="file-selected" style="display:none;">
+        <span>📊</span>
+        <span class="file-name" id="file-name"></span>
+      </div>
+      <button type="submit" class="btn-calc" id="calc-btn" disabled>📊 Төсөв тооцоолох</button>
+    </form>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div style="font-size:15px;font-weight:600;color:#1e293b;">AI тооцоолж байна...</div>
+    <div style="font-size:12px;color:#94a3b8;margin-top:6px;">20-30 секунд болно</div>
+  </div>
+
+{% else %}
+
+  {% if result and not result.error %}
+  <div class="accuracy-box">
+    ✅ <strong>Нарийн тооцоо:</strong> Та оруулсан тоо хэмжээнд үндэслэн тооцоолов. Нэгж үнэ нь 2026 оны зах зээлийн үнэ.
+  </div>
+
+  <div class="result-wrap">
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="val">{{ result.summary.duration_months }} сар</div>
+        <div class="lbl">⏱ Барилгын хугацаа</div>
+      </div>
+      <div class="info-box">
+        <div class="val">{{ result.summary.price_per_m2|floatformat:0 }}₮</div>
+        <div class="lbl">📐 1 м² үнэ</div>
+      </div>
+      <div class="info-box">
+        <div class="val">{{ result.building_info.type|truncatechars:15 }}</div>
+        <div class="lbl">🏗 Барилгын төрөл</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:700;">🧱 Материалын зардал</div>
+      </div>
+      <table>
+        <tr><th>Материал</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+        {% for item in result.materials %}
+        <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0 }}₮</td><td class="r">{{ item.total|floatformat:0 }}₮</td></tr>
+        {% endfor %}
+        <tr class="total-row"><td colspan="4">Материалын нийт</td><td class="r">{{ result.summary.materials_total|floatformat:0 }}₮</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">👷 Ажилчдын зардал</div>
+      <table>
+        <tr><th>Ажил</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+        {% for item in result.labor %}
+        <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0 }}₮</td><td class="r">{{ item.total|floatformat:0 }}₮</td></tr>
+        {% endfor %}
+        <tr class="total-row"><td colspan="4">Ажилчдын нийт</td><td class="r">{{ result.summary.labor_total|floatformat:0 }}₮</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🚛 Тээвэр</div>
+      <table>
+        <tr><th>Тээвэр</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+        {% for item in result.transport %}
+        <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0 }}₮</td><td class="r">{{ item.total|floatformat:0 }}₮</td></tr>
+        {% endfor %}
+        <tr class="total-row"><td colspan="4">Тээврийн нийт</td><td class="r">{{ result.summary.transport_total|floatformat:0 }}₮</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">📦 Бусад зардал</div>
+      <table>
+        <tr><th>Зардал</th><th>Нэгж</th><th class="r">Тоо</th><th class="r">Нэгж үнэ</th><th class="r">Нийт</th></tr>
+        {% for item in result.other %}
+        <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td class="r">{{ item.qty }}</td><td class="r">{{ item.unit_price|floatformat:0 }}₮</td><td class="r">{{ item.total|floatformat:0 }}₮</td></tr>
+        {% endfor %}
+        <tr class="total-row"><td colspan="4">Бусад нийт</td><td class="r">{{ result.summary.other_total|floatformat:0 }}₮</td></tr>
+      </table>
+    </div>
+
+    <div class="grand-box">
+      <div>
+        <div class="lbl">{{ result.building_info.type }}</div>
+        <div style="color:#fff;font-size:13px;margin-top:4px;">НИЙТ ТӨСӨВ</div>
+      </div>
+      <div class="val">{{ result.summary.grand_total|floatformat:0 }}₮</div>
+    </div>
+
+    {% if result.notes %}
+    <div class="notes-box">💡 <strong>Анхаарах:</strong><br>{{ result.notes }}</div>
+    {% endif %}
+
+    <div class="action-row">
+      <button onclick="downloadExcel()" class="btn-excel">📥 Excel татах</button>
+      <a href="/budget/file/" class="btn-back">🔄 Дахин тооцоолох</a>
+      <a href="/budget/" class="btn-back">⚡ Хурдан тооцоо</a>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="card"><div class="err-box">{{ result.error }}</div></div>
+  <a href="/budget/file/" class="btn-back" style="display:inline-block;margin-top:12px;">🔄 Дахин оролдох</a>
+  {% endif %}
+
+{% endif %}
+</div>
+
+<script>
+function onFileSelect(input) {
+  if (input.files && input.files[0]) {
+    document.getElementById("file-name").textContent = input.files[0].name;
+    document.getElementById("file-selected").style.display = "flex";
+    document.getElementById("calc-btn").disabled = false;
+  }
+}
+
+const uploadArea = document.getElementById("upload-area");
+if (uploadArea) {
+  uploadArea.addEventListener("dragover", function(e) {
+    e.preventDefault();
+    this.classList.add("dragover");
+  });
+  uploadArea.addEventListener("dragleave", function() {
+    this.classList.remove("dragover");
+  });
+  uploadArea.addEventListener("drop", function(e) {
+    e.preventDefault();
+    this.classList.remove("dragover");
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const input = document.getElementById("file-input");
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      onFileSelect(input);
+    }
+  });
+}
+
+document.getElementById("upload-form") && document.getElementById("upload-form").addEventListener("submit", function() {
+  document.getElementById("loading").classList.add("show");
+  document.getElementById("calc-btn").disabled = true;
+  document.getElementById("calc-btn").textContent = "Тооцоолж байна...";
+});
+
+{% if result %}
+function downloadExcel() {
+  const data = {{ result_json|safe }};
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/budget/excel/";
+  const csrf = document.createElement("input");
+  csrf.type = "hidden";
+  csrf.name = "csrfmiddlewaretoken";
+  csrf.value = "{{ csrf_token }}";
+  form.appendChild(csrf);
+  const inp = document.createElement("input");
+  inp.type = "hidden";
+  inp.name = "data";
+  inp.value = JSON.stringify(data);
+  form.appendChild(inp);
+  document.body.appendChild(form);
+  form.submit();
+}
+{% endif %}
+</script>
+</body>
+</html>

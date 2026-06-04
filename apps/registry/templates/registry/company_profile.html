@@ -4,394 +4,450 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ company.name }} — БНБ Систем</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <title>{{ company.name }} — БНБ</title>
   <style>
-    :root {
-      --ink:    #0e0f13;
-      --navy:   #131620;
-      --slate:  #1c1f2e;
-      --card:   #22263a;
-      --card2:  #282d42;
-      --glass:  rgba(28,31,46,0.85);
-      --text:   #eef0f6;
-      --text2:  #9197b3;
-      --text3:  #565d7c;
-      --amber:  #f5a623;
-      --amber2: #ffc04d;
-      --amber-g: rgba(245,166,35,0.12);
-      --amber-b: rgba(245,166,35,0.22);
-      --blue:   #3b82f6;
-      --teal:   #14b8a6;
-      --line:   rgba(255,255,255,0.06);
-      --line2:  rgba(255,255,255,0.1);
-      --r:      10px;
-      --font:   'Plus Jakarta Sans', sans-serif;
-      --font-d: 'Bebas Neue', sans-serif;
-      --font-m: 'JetBrains Mono', monospace;
-      --shadow: 0 4px 24px rgba(0,0,0,0.4);
-      --shadow2: 0 8px 40px rgba(0,0,0,0.5);
-    }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{background:var(--ink);color:var(--text);font-family:var(--font);line-height:1.6;overflow-x:hidden}
-    img{display:block;max-width:100%}
-    a{color:var(--amber);text-decoration:none}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,sans-serif;background:#f1f5f9;}
+    a{text-decoration:none;color:inherit;}
+    .nav{background:#1e3a4a;height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;}
+    .logo-box{width:32px;height:32px;background:#f59e0b;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .logo-box svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;}
+    .logo-t{color:#fff;font-size:13px;font-weight:700;margin-left:8px;}
+    .nav-r{margin-left:auto;display:flex;gap:6px;align-items:center;}
+    .nb{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;border:none;cursor:pointer;}
+    .nb-o{background:transparent;color:#cbd5e1;border:1px solid #2d4f63;}
+    .nb-y{background:#f59e0b;color:#1e3a4a;}
+    .breadcrumb{background:#fff;border-bottom:0.5px solid #e2e8f0;padding:10px 20px;font-size:12px;color:#64748b;}
+    .breadcrumb a{color:#2f6477;}
 
-    /* === TOPBAR === */
-    .topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(14,15,19,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--line)}
-    .tb-logo{display:flex;align-items:center;gap:10px}
-    .tb-logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1a1208,#2a1e08);border:1.5px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:16px}
-    .tb-logo-text{font-family:var(--font-d);font-size:19px;letter-spacing:1px;color:var(--text)}
-    .tb-logo-text span{color:var(--amber)}
-    .tb-nav{display:flex;align-items:center;gap:8px}
-    .tb-btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;border:1px solid var(--line2);color:var(--text2);cursor:pointer;transition:all.15s;background:transparent;font-family:var(--font)}
-    .tb-btn:hover{border-color:var(--amber);color:var(--amber)}
-    .tb-btn-a{background:var(--amber);color:#0e0f13;border-color:var(--amber);font-weight:700}
-    .tb-btn-a:hover{background:var(--amber2);border-color:var(--amber2);color:#0e0f13}
+    .hero{background:#1e3a4a;padding:28px 20px;}
+    .hero-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:20px;}
+    .hero-logo{width:72px;height:72px;background:#f59e0b;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;}
+    .hero-info{flex:1;}
+    .hero-name{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;}
+    .hero-type{display:inline-block;background:#f59e0b;color:#1e3a4a;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-bottom:8px;}
+    .hero-meta{display:flex;gap:16px;flex-wrap:wrap;}
+    .hero-meta span{font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:4px;}
+    .hero-actions{display:flex;gap:8px;flex-shrink:0;}
+    .btn-contact{padding:9px 18px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+    .btn-share{padding:9px 14px;background:transparent;color:#cbd5e1;border:1px solid #2d4f63;border-radius:8px;font-size:13px;cursor:pointer;}
 
-    /* === HERO === */
-    .hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:flex-end;padding-top:64px;overflow:hidden}
+    .stats-bar{background:#2d4f63;padding:12px 20px;}
+    .stats-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+    .stat{text-align:center;padding:8px;border-right:0.5px solid rgba(255,255,255,0.1);}
+    .stat:last-child{border-right:none;}
+    .stat-n{font-size:20px;font-weight:700;color:#f59e0b;}
+    .stat-l{font-size:11px;color:#94a3b8;margin-top:2px;}
 
-    /* Animated gradient background */
-    .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0e0f13 0%,#131828 35%,#0f1a14 65%,#0e0f13 100%)}
-    .hero-mesh{position:absolute;inset:0;background:
-      radial-gradient(ellipse 80% 60% at 20% 80%,rgba(245,166,35,.12) 0%,transparent 55%),
-      radial-gradient(ellipse 60% 50% at 85% 20%,rgba(59,130,246,.08) 0%,transparent 50%),
-      radial-gradient(ellipse 40% 40% at 60% 70%,rgba(20,184,166,.06) 0%,transparent 45%)}
-    .hero-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,255,255,.025) 79px,rgba(255,255,255,.025) 80px),repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,255,255,.025) 79px,rgba(255,255,255,.025) 80px)}
-    .hero-cover{position:absolute;inset:0}
-    .hero-cover img{width:100%;height:100%;object-fit:cover;opacity:.15;filter:saturate(.4) brightness(.8);mix-blend-mode:luminosity}
-    .hero-fade{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,15,19,1) 0%,rgba(14,15,19,.7) 40%,rgba(14,15,19,.15) 100%)}
+    .wrap{max-width:1000px;margin:20px auto;padding:0 20px;display:grid;grid-template-columns:1fr 280px;gap:16px;}
 
-    /* Decorative amber stripe */
-    .hero-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--amber) 20%,var(--amber2) 50%,var(--amber) 80%,transparent 100%)}
+    .card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;margin-bottom:14px;overflow:hidden;}
+    .card-hd{padding:14px 16px;border-bottom:0.5px solid #e2e8f0;font-size:14px;font-weight:600;color:#1e293b;}
+    .card-body{padding:16px;}
 
-    .hero-body{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 60px 80px;width:100%}
-    .hero-crumb{font-family:var(--font-m);font-size:11px;color:var(--text3);letter-spacing:.8px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-    .hero-crumb a{color:var(--text3);transition:color.15s}.hero-crumb a:hover{color:var(--amber)}
+    .desc{font-size:13px;color:#374151;line-height:1.7;}
 
-    .hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:11px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;border:1px solid var(--amber-b);padding:5px 14px;border-radius:999px;background:var(--amber-g);margin-bottom:18px}
-    .hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber);animation:blink 2s ease-in-out infinite}
-    @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .info-item{display:flex;flex-direction:column;gap:3px;}
+    .info-label{font-size:11px;color:#94a3b8;font-weight:500;}
+    .info-val{font-size:13px;color:#1e293b;font-weight:500;}
 
-    .hero-name{font-family:var(--font-d);font-size:clamp(52px,8vw,100px);line-height:.92;letter-spacing:2px;color:var(--text);margin-bottom:18px;text-shadow:0 4px 40px rgba(0,0,0,.5)}
+    .worker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .worker-card{background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;}
+    .worker-av{width:40px;height:40px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px;}
+    .worker-name{font-size:12px;font-weight:600;color:#1e293b;}
+    .worker-role{font-size:11px;color:#64748b;margin-top:2px;}
+    .locked-msg{background:#fefce8;border:0.5px solid #fef08a;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:#854d0e;}
+    .locked-msg a{color:#2f6477;font-weight:600;}
 
-    .hero-meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:36px}
-    .hero-meta-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--line2);padding:6px 14px;border-radius:999px;font-size:13px;color:var(--text2)}
+    .brigade-list{display:flex;flex-direction:column;gap:8px;}
+    .brigade-item{background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;}
+    .brigade-ic{font-size:20px;}
+    .brigade-n{font-size:13px;font-weight:600;color:#1e293b;}
+    .brigade-t{font-size:11px;color:#64748b;margin-top:2px;}
 
-    .hero-btns{display:flex;gap:12px;flex-wrap:wrap}
-    .hbtn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all.2s;letter-spacing:.3px;border:none}
-    .hbtn-p{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#0e0f13;box-shadow:0 4px 20px rgba(245,166,35,.35)}
-    .hbtn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,166,35,.45)}
-    .hbtn-o{background:rgba(255,255,255,.06);border:1px solid var(--line2);color:var(--text)}
-    .hbtn-o:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-g)}
+    .sb-card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;margin-bottom:14px;overflow:hidden;}
+    .sb-hd{padding:12px 14px;border-bottom:0.5px solid #e2e8f0;font-size:13px;font-weight:600;}
+    .sb-body{padding:14px;}
+    .contact-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid #f1f5f9;}
+    .contact-item:last-child{border-bottom:none;}
+    .contact-ic{font-size:16px;flex-shrink:0;margin-top:1px;}
+    .contact-label{font-size:11px;color:#94a3b8;}
+    .contact-val{font-size:13px;color:#1e293b;font-weight:500;margin-top:1px;}
+    .contact-val a{color:#2f6477;}
+    .badge{display:inline-block;background:#f0fdf4;color:#166534;font-size:11px;padding:3px 10px;border-radius:20px;}
+    .map-placeholder{background:#f1f5f9;border-radius:8px;height:120px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#94a3b8;margin-top:10px;}
 
-    /* === STATS === */
-    .stats-wrap{background:var(--navy);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-    .stats-in{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
-    .stat{padding:30px 28px;border-right:1px solid var(--line);position:relative;overflow:hidden;cursor:default;transition:background.2s}
-    .stat:last-child{border-right:0}
-    .stat:hover{background:rgba(245,166,35,.04)}
-    .stat-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:120px;height:80px;background:radial-gradient(circle,rgba(245,166,35,.15),transparent 70%);opacity:0;transition:opacity.3s}
-    .stat:hover .stat-glow{opacity:1}
-    .stat-v{font-family:var(--font-d);font-size:52px;color:var(--amber);line-height:1;margin-bottom:4px;letter-spacing:1px}
-    .stat-l{font-family:var(--font-m);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px}
+    .share-btns{display:flex;gap:8px;}
+    .share-btn{flex:1;padding:8px;border:0.5px solid #e2e8f0;border-radius:7px;font-size:12px;color:#374151;text-align:center;cursor:pointer;background:#f8fafc;}
+    .share-btn:hover{background:#f1f5f9;}
 
-    /* === LAYOUT === */
-    .layout{max-width:1240px;margin:0 auto;padding:72px 60px;display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:start}
-
-    /* === SECTION === */
-    .sec{margin-bottom:56px}
-    .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:28px}
-    .sec-accent{width:4px;height:28px;border-radius:2px;background:linear-gradient(to bottom,var(--amber),var(--amber2));flex-shrink:0}
-    .sec-title{font-family:var(--font-d);font-size:28px;letter-spacing:1px;color:var(--text)}
-    .sec-cnt{margin-left:auto;font-family:var(--font-m);font-size:11px;color:var(--text3);background:var(--slate);border:1px solid var(--line2);padding:4px 10px;border-radius:999px}
-
-    /* === ABOUT === */
-    .about-box{background:var(--navy);border:1px solid var(--line2);border-radius:var(--r);padding:24px 28px;position:relative;overflow:hidden}
-    .about-box::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(to bottom,var(--amber),transparent)}
-    .about-txt{font-size:15px;color:var(--text2);line-height:1.85}
-
-    /* === WORKERS === */
-    .workers{display:flex;flex-direction:column;gap:3px}
-    .wk{display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--navy);border:1px solid var(--line);border-radius:8px;transition:all.15s;position:relative;overflow:hidden}
-    .wk::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,166,35,.04),transparent);opacity:0;transition:opacity.2s}
-    .wk:hover{border-color:var(--line2);background:var(--slate);transform:translateX(3px)}
-    .wk:hover::after{opacity:1}
-    .wk-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--slate),var(--card));border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;z-index:1}
-    .wk-info{flex:1;min-width:0;position:relative;z-index:1}
-    .wk-name{font-weight:700;font-size:14px;color:var(--text)}
-    .wk-role{font-size:12px;color:var(--text3);font-family:var(--font-m);margin-top:2px}
-    .wk-ph{font-family:var(--font-m);font-size:13px;color:var(--amber);font-weight:500;position:relative;z-index:1}
-    .wk-ph:hover{color:var(--amber2)}
-
-    /* Lock */
-    .lock{background:linear-gradient(135deg,var(--navy),var(--slate));border:1px dashed var(--amber-b);border-radius:var(--r);padding:36px;text-align:center;margin-top:8px;position:relative;overflow:hidden}
-    .lock::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(245,166,35,.08),transparent 70%)}
-    .lock-ico{font-size:32px;margin-bottom:12px;filter:grayscale(0.3)}
-    .lock-t{font-family:var(--font-d);font-size:22px;color:var(--text);margin-bottom:8px;letter-spacing:.5px}
-    .lock-s{font-size:13px;color:var(--text3);margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto}
-    .lock-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--amber),var(--amber2));color:#0e0f13;padding:11px 28px;border-radius:8px;font-weight:700;font-size:14px;box-shadow:0 4px 16px rgba(245,166,35,.3)}
-    .lock-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(245,166,35,.4)}
-
-    /* Brigades */
-    .brig-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .brig{background:var(--navy);border:1px solid var(--line);border-radius:8px;padding:16px 18px;transition:all.15s;position:relative;overflow:hidden}
-    .brig::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--amber),var(--teal));border-radius:0 0 0 8px;opacity:0;transition:opacity.2s}
-    .brig:hover{border-color:var(--line2);background:var(--slate)}
-    .brig:hover::before{opacity:1}
-    .brig-n{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
-    .brig-d{font-size:11px;color:var(--text3);font-family:var(--font-m)}
-
-    /* === SIDEBAR === */
-    .sbar{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px}
-
-    /* Logo */
-    .logo-c{background:linear-gradient(160deg,var(--navy),var(--slate));border:1px solid var(--line2);border-radius:12px;padding:28px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--shadow)}
-    .logo-c::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(245,166,35,.1),transparent 70%)}
-    .logo-wrap{width:90px;height:90px;border-radius:16px;overflow:hidden;margin:0 auto 16px;border:2px solid var(--amber-b);box-shadow:0 0 0 4px var(--amber-g);position:relative}
-    .logo-wrap img{width:100%;height:100%;object-fit:cover}
-    .logo-def{width:100%;height:100%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:38px}
-    .logo-name{font-family:var(--font-d);font-size:22px;letter-spacing:.5px;color:var(--text);margin-bottom:12px;line-height:1.2}
-    .badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-    .badge{font-family:var(--font-m);font-size:10px;letter-spacing:.8px;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--amber-b);color:var(--amber);background:var(--amber-g)}
-
-    /* Contact */
-    .ct-c{background:var(--navy);border:1px solid var(--line2);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
-    .ct-head{padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
-    .ct-head::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal)}
-    .ct-row{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);transition:background.14s}
-    .ct-row:last-child{border-bottom:0}
-    .ct-row:hover{background:var(--slate)}
-    .ct-ic{width:32px;height:32px;flex-shrink:0;background:var(--slate);border:1px solid var(--line2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
-    .ct-lbl{font-family:var(--font-m);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
-    .ct-val{font-size:13px;font-weight:600;color:var(--text)}
-    .ct-val a{color:var(--amber)}.ct-val a:hover{color:var(--amber2)}
-
-    /* CTA */
-    .cta{background:linear-gradient(135deg,var(--navy),var(--slate));border:1px solid var(--amber-b);border-radius:12px;padding:24px;text-align:center;position:relative;overflow:hidden}
-    .cta::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,166,35,.05),transparent)}
-    .cta-t{font-family:var(--font-d);font-size:20px;color:var(--text);margin-bottom:8px;position:relative}
-    .cta-s{font-size:12px;color:var(--text3);margin-bottom:16px;position:relative}
-    .cta-btn{display:block;background:linear-gradient(135deg,var(--amber),var(--amber2));color:#0e0f13;padding:11px 20px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:10px;position:relative;box-shadow:0 4px 14px rgba(245,166,35,.3)}
-    .cta-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,.4)}
-    .cta-sub{font-size:11px;color:var(--text3);position:relative}
-    .cta-sub a{color:var(--amber)}
-
-    /* Owner */
-    .owner-b{background:var(--amber-g);border:1px solid var(--amber-b);border-radius:8px;padding:12px 18px;display:flex;align-items:center;gap:10px;margin-bottom:20px;font-size:13px;color:var(--text2)}
-    .owner-btn{margin-left:auto;background:var(--amber);color:#0e0f13;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700}
-    .owner-btn:hover{background:var(--amber2)}
-
-    /* Responsive */
-    @media(max-width:1040px){.layout{grid-template-columns:1fr;padding:56px 32px;gap:40px}.sbar{position:static}.hero-body{padding:0 32px 70px}.stats-in{grid-template-columns:repeat(2,1fr)}.brig-grid{grid-template-columns:1fr}}
-    @media(max-width:640px){.topbar{padding:0 16px}.hero-body{padding:0 16px 56px}.layout{padding:40px 16px}.hero-name{font-size:46px}.stats-in{grid-template-columns:1fr 1fr}.tb-logo-text{font-size:16px}}
-
-    /* Animations */
-    @keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-    .au{opacity:0;animation:slideUp .6s ease forwards}
-    .au:nth-child(1){animation-delay:.08s}.au:nth-child(2){animation-delay:.18s}.au:nth-child(3){animation-delay:.28s}.au:nth-child(4){animation-delay:.38s}.au:nth-child(5){animation-delay:.48s}
+    .footer{background:#1e3a4a;padding:16px 20px;text-align:center;color:#64748b;font-size:11px;margin-top:0;}
+    .footer a{color:#94a3b8;}
+    @media(max-width:768px){.wrap{grid-template-columns:1fr;}.hero-inner{flex-direction:column;align-items:flex-start;}.stats-inner{grid-template-columns:1fr 1fr;}.worker-grid{grid-template-columns:1fr 1fr;}}
   </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <a href="/public/" class="tb-logo">
-    <div class="tb-logo-icon">🏗️</div>
-    <div class="tb-logo-text">БНБ <span>СИСТЕМ</span></div>
+<nav class="nav">
+  <a href="/public/" style="display:flex;align-items:center;gap:8px;">
+    <div class="logo-box"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21v-6h6v6"/></svg></div>
+    <span class="logo-t">БНБ — Барилгын нэгдсэн бааз</span>
   </a>
-  <nav class="tb-nav">
-    {% if request.user.is_authenticated %}
-      <span style="font-size:12px;color:var(--text3);font-family:var(--font-m)">{{ display_name }}</span>
-      {% if is_owner %}<a href="/admin/registry/company/{{ company.pk }}/change/" class="tb-btn">⚙️ Засах</a>{% endif %}
-      <form method="post" action="/logout/" style="margin:0">{% csrf_token %}
-        <button class="tb-btn tb-btn-a" type="submit">Гарах</button>
-      </form>
+  <div class="nav-r">
+    {% if user.is_authenticated %}
+      <span style="color:#cbd5e1;font-size:12px;">{{ display_name }}</span>
+      <form method="post" action="/logout/" style="display:inline;">{% csrf_token %}<button type="submit" class="nb nb-o">Гарах</button></form>
     {% else %}
-      <a href="/login/" class="tb-btn">Нэвтрэх</a>
-      <a href="/public/" class="tb-btn tb-btn-a">Нүүр</a>
+      <a href="/login/" class="nb nb-o">Нэвтрэх</a>
+      <a href="/register/" class="nb nb-y">Бүртгүүлэх</a>
     {% endif %}
-  </nav>
-</header>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-mesh"></div>
-  <div class="hero-lines"></div>
-  <div class="hero-cover">
-    {% if company.cover %}<img src="{{ company.cover.url }}" alt="">{% endif %}
   </div>
-  <div class="hero-fade"></div>
-  <div class="hero-stripe"></div>
+</nav>
 
-  <div class="hero-body">
-    <div class="hero-crumb au">
-      <a href="/public/">БНБ СИСТЕМ</a> <span>›</span>
-      <a href="/public/">КОМПАНИУД</a> <span>›</span>
-      <span style="color:var(--amber)">{{ company.name|upper }}</span>
+<div class="breadcrumb">
+  <a href="/public/">Нүүр</a> › <a href="/public/?tab=companies">Компаниуд</a> › {{ company.name }}
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-logo">
+      {% if company.display_logo_url %}
+        <img src="{{ company.display_logo_url }}" alt="{{ company.name }}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;">
+      {% else %}🏢{% endif %}
     </div>
-    <div class="hero-badge au">
-      {% if company.get_activity_type_display %}{{ company.get_activity_type_display }}{% else %}Барилгын компани{% endif %}
+    <div class="hero-info">
+      <div class="hero-name">{{ company.name }}</div>
+      <span class="hero-type">{{ company.get_activity_type_display|default:"Барилга" }}</span>
+      <div class="hero-meta">
+        {% if company.get_city_display %}<span>📍 {{ company.get_city_display }}</span>{% endif %}
+        {% if company.phone %}<span>📞 {{ company.phone }}</span>{% endif %}
+        {% if company.established_year %}<span>📅 {{ company.established_year }} оноос</span>{% endif %}
+        {% if company.employee_count %}<span>👥 {{ company.employee_count }} ажилтан</span>{% endif %}
+      </div>
     </div>
-    <h1 class="hero-name au">{{ company.name }}</h1>
-    <div class="hero-meta au">
-      {% if company.city %}
-      <span class="hero-meta-chip">📍 {{ company.get_city_display }}</span>
-      {% endif %}
-      {% if company.register_no %}
-      <span class="hero-meta-chip" style="font-family:var(--font-m);font-size:12px">РД: {{ company.register_no }}</span>
-      {% endif %}
-      {% if company.established_year %}
-      <span class="hero-meta-chip">📅 {{ company.established_year }} оноос</span>
-      {% endif %}
-      <span class="hero-meta-chip">👷 {{ workers_total }} ажиллагсад</span>
-    </div>
-    <div class="hero-btns au">
+    <div class="hero-actions">
       {% if company.phone %}
-      <a href="tel:{{ company.phone }}" class="hbtn hbtn-p">📞 {{ company.phone }}</a>
+      <a href="tel:{{ company.phone }}" class="btn-contact">📞 Холбогдох</a>
+      {% else %}
+      <button class="btn-contact">📞 Холбогдох</button>
       {% endif %}
-      {% if company.email %}
-      <a href="mailto:{{ company.email }}" class="hbtn hbtn-o">✉️ Имэйл</a>
-      {% endif %}
-      {% if company.website %}
-      <a href="{{ company.website }}" target="_blank" class="hbtn hbtn-o">🌐 Вэбсайт</a>
-      {% endif %}
+      <button class="btn-share" onclick="navigator.share ? navigator.share({title:'{{ company.name }}',url:window.location.href}) : navigator.clipboard.writeText(window.location.href)">🔗 Хуваалцах</button>
     </div>
-  </div>
-</section>
-
-<!-- STATS -->
-<div class="stats-wrap">
-  <div class="stats-in">
-    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ workers_total }}</div><div class="stat-l">Ажиллагсад</div></div>
-    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ brigades_total }}</div><div class="stat-l">Бригадууд</div></div>
-    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ company.employee_count|default:"—" }}</div><div class="stat-l">Нийт ажилчид</div></div>
-    <div class="stat"><div class="stat-glow"></div><div class="stat-v">{{ company.established_year|default:"—" }}</div><div class="stat-l">Үүссэн он</div></div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="layout">
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-n">{{ workers_total }}</div><div class="stat-l">Ажиллагсад</div></div>
+    <div class="stat"><div class="stat-n">{{ brigades_total }}</div><div class="stat-l">Бригадууд</div></div>
+    <div class="stat"><div class="stat-n">{{ company.employee_count|default:"—" }}</div><div class="stat-l">Нийт ажилчид</div></div>
+    <div class="stat"><div class="stat-n">{{ company.established_year|default:"—" }}</div><div class="stat-l">Үүссэн он</div></div>
+  </div>
+</div>
+
+<div class="wrap">
   <div>
-    {% if is_owner %}
-    <div class="owner-b">✏️ Та энэ компанийн эзэн хэрэглэгч.
-      <a href="/admin/registry/company/{{ company.pk }}/change/" class="owner-btn">Засах</a>
-    </div>
-    {% endif %}
 
     {% if company.description %}
-    <div class="sec">
-      <div class="sec-head"><div class="sec-accent"></div><h2 class="sec-title">КОМПАНИЙН ТУХАЙ</h2></div>
-      <div class="about-box"><p class="about-txt">{{ company.description|linebreaksbr }}</p></div>
+    <div class="card">
+      <div class="card-hd">📋 Компанийн тухай</div>
+      <div class="card-body"><div class="desc">{{ company.description }}</div></div>
     </div>
     {% endif %}
 
-    <div class="sec">
-      <div class="sec-head">
-        <div class="sec-accent"></div>
-        <h2 class="sec-title">АЖИЛЛАГСАД</h2>
-        <span class="sec-cnt">{{ workers_total }} ХҮН</span>
+    <div class="card">
+      <div class="card-hd">ℹ️ Үндсэн мэдээлэл</div>
+      <div class="card-body">
+        <div class="info-grid">
+          {% if company.register_no %}
+          <div class="info-item"><span class="info-label">Регистрийн дугаар</span><span class="info-val">{{ company.register_no }}</span></div>
+          {% endif %}
+          {% if company.activity_direction %}
+          <div class="info-item"><span class="info-label">Үйл ажиллагааны чиглэл</span><span class="info-val">{{ company.get_activity_direction_display|default:company.activity_direction }}</span></div>
+          {% endif %}
+          {% if company.get_city_display %}
+          <div class="info-item"><span class="info-label">Хот/Аймаг</span><span class="info-val">{{ company.get_city_display }}</span></div>
+          {% endif %}
+          {% if company.address %}
+          <div class="info-item"><span class="info-label">Хаяг</span><span class="info-val">{{ company.address }}</span></div>
+          {% endif %}
+          {% if company.established_year %}
+          <div class="info-item"><span class="info-label">Үүссэн он</span><span class="info-val">{{ company.established_year }}</span></div>
+          {% endif %}
+          {% if company.employee_count %}
+          <div class="info-item"><span class="info-label">Ажилчдын тоо</span><span class="info-val">{{ company.employee_count }}</span></div>
+          {% endif %}
+        </div>
       </div>
-      <div class="workers">
-        {% for w in workers %}
-        <div class="wk">
-          <div class="wk-av">👤</div>
-          <div class="wk-info">
-            <div class="wk-name">{{ w }}</div>
-            <div class="wk-role">{% if w.responsible_role %}{{ w.get_responsible_role_display }}{% endif %}{% if w.engineer_specialty %} · {{ w.get_engineer_specialty_display }}{% endif %}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">👷 Ажиллагсад <span style="background:#f1f5f9;color:#64748b;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px;">{{ workers_total }}</span></div>
+      <div class="card-body">
+        {% if workers %}
+          <div class="worker-grid">
+            {% for w in workers %}
+            <div class="worker-card">
+              <div class="worker-av">👤</div>
+              <div class="worker-name">{{ w.first_name }} {{ w.last_name }}</div>
+              <div class="worker-role">{{ w.get_responsible_role_display|default:w.get_profession_display|default:"—" }}</div>
+            </div>
+            {% endfor %}
           </div>
-          {% if is_auth and w.phone %}<a href="tel:{{ w.phone }}" class="wk-ph">{{ w.phone }}</a>{% endif %}
-        </div>
-        {% empty %}
-        <div style="color:var(--text3);font-size:13px;padding:20px 0;text-align:center">Ажиллагсадын мэдээлэл оруулаагүй.</div>
-        {% endfor %}
-        {% if not is_auth and workers_total > 3 %}
-        <div class="lock">
-          <div class="lock-ico">🔐</div>
-          <div class="lock-t">БҮРЭН МЭДЭЭЛЭЛ</div>
-          <div class="lock-s">Нийт <strong style="color:var(--amber)">{{ workers_total }}</strong> ажилтны утас, имэйл болон дэлгэрэнгүй мэдээллийг харахын тулд нэвтэрнэ үү.</div>
-          <a href="/login/" class="lock-btn">🔓 Нэвтрэх →</a>
-        </div>
+          {% if not is_auth and workers_total > 3 %}
+          <div class="locked-msg" style="margin-top:12px;">
+            🔒 Нийт {{ workers_total }} ажилтны мэдээлэл харахын тулд <a href="/login/">нэвтрэх</a> шаардлагатай.
+          </div>
+          {% endif %}
+        {% else %}
+          <div class="locked-msg">
+            {% if is_auth %}
+              Ажиллагсдын мэдээлэл оруулаагүй байна.
+            {% else %}
+              🔒 Ажиллагсдын мэдээлэл харахын тулд <a href="/login/">нэвтрэх</a> шаардлагатай.
+            {% endif %}
+          </div>
         {% endif %}
       </div>
     </div>
 
-    {% if brigades_total > 0 %}
-    <div class="sec">
-      <div class="sec-head">
-        <div class="sec-accent"></div>
-        <h2 class="sec-title">БАРИЛГЫН БРИГАДУУД</h2>
-        <span class="sec-cnt">{{ brigades_total }}</span>
-      </div>
-      <div class="brig-grid">
-        {% for b in brigades %}
-        <div class="brig">
-          <div class="brig-n">{{ b.name }}</div>
-          {% if b.activity_directions_csv %}<div class="brig-d">{{ b.get_activity_directions_display }}</div>{% endif %}
+    {% if brigades %}
+    <div class="card">
+      <div class="card-hd">🏗️ Бригадууд <span style="background:#f1f5f9;color:#64748b;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px;">{{ brigades_total }}</span></div>
+      <div class="card-body">
+        <div class="brigade-list">
+          {% for b in brigades %}
+          <div class="brigade-item">
+            <span class="brigade-ic">🏗️</span>
+            <div><div class="brigade-n">{{ b.name }}</div><div class="brigade-t">{{ b.get_activity_directions_display|default:"—" }}</div></div>
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
       </div>
     </div>
     {% endif %}
+
   </div>
 
-  <!-- SIDEBAR -->
-  <aside class="sbar">
-    <div class="logo-c">
-      <div class="logo-wrap">
-        {% if company.display_logo_url %}<img src="{{ company.display_logo_url }}" alt="">
-        {% else %}<div class="logo-def">🏢</div>{% endif %}
-      </div>
-      <div class="logo-name">{{ company.name }}</div>
-      <div class="badges">
-        {% if company.get_activity_type_display %}<span class="badge">{{ company.get_activity_type_display }}</span>{% endif %}
-        {% if company.get_activity_direction_display %}<span class="badge">{{ company.get_activity_direction_display }}</span>{% endif %}
-        {% if company.city %}<span class="badge">{{ company.get_city_display }}</span>{% endif %}
+  <div>
+
+    <div class="sb-card">
+      <div class="sb-hd">📞 Холбоо барих</div>
+      <div class="sb-body">
+        {% if company.phone %}
+        <div class="contact-item">
+          <span class="contact-ic">📞</span>
+          <div><div class="contact-label">Утас</div><div class="contact-val"><a href="tel:{{ company.phone }}">{{ company.phone }}</a></div></div>
+        </div>
+        {% endif %}
+        {% if company.email %}
+        <div class="contact-item">
+          <span class="contact-ic">✉️</span>
+          <div><div class="contact-label">И-мэйл</div><div class="contact-val"><a href="mailto:{{ company.email }}">{{ company.email }}</a></div></div>
+        </div>
+        {% endif %}
+        {% if company.website %}
+        <div class="contact-item">
+          <span class="contact-ic">🌐</span>
+          <div><div class="contact-label">Вэб сайт</div><div class="contact-val"><a href="{{ company.website }}" target="_blank">{{ company.website }}</a></div></div>
+        </div>
+        {% endif %}
+        {% if company.facebook_url %}
+        <div class="contact-item">
+          <span class="contact-ic">📘</span>
+          <div><div class="contact-label">Facebook</div><div class="contact-val"><a href="{{ company.facebook_url }}" target="_blank">Холбоос</a></div></div>
+        </div>
+        {% endif %}
+        {% if company.address %}
+        <div class="contact-item">
+          <span class="contact-ic">📍</span>
+          <div><div class="contact-label">Хаяг</div><div class="contact-val">{{ company.address }}</div></div>
+        </div>
+        {% endif %}
+        {% if not company.phone and not company.email %}
+        <div style="color:#94a3b8;font-size:12px;">Холбоо барих мэдээлэл оруулаагүй байна.</div>
+        {% endif %}
+        <div class="map-placeholder">🗺️ Байршил тодорхойгүй</div>
       </div>
     </div>
 
-    <div class="ct-c">
-      <div class="ct-head">Холбоо барих</div>
-      {% if company.phone %}
-      <div class="ct-row"><div class="ct-ic">📞</div><div><div class="ct-lbl">Утас</div><div class="ct-val"><a href="tel:{{ company.phone }}">{{ company.phone }}</a></div></div></div>
-      {% endif %}
-      {% if company.email %}
-      <div class="ct-row"><div class="ct-ic">✉️</div><div><div class="ct-lbl">Имэйл</div><div class="ct-val">{{ company.email }}</div></div></div>
-      {% endif %}
-      {% if company.address %}
-      <div class="ct-row"><div class="ct-ic">📍</div><div><div class="ct-lbl">Хаяг</div><div class="ct-val">{{ company.address }}</div></div></div>
-      {% endif %}
-      {% if company.website %}
-      <div class="ct-row"><div class="ct-ic">🌐</div><div><div class="ct-lbl">Вэбсайт</div><div class="ct-val"><a href="{{ company.website }}" target="_blank">{{ company.website }}</a></div></div></div>
-      {% endif %}
-      {% if company.facebook_url %}
-      <div class="ct-row"><div class="ct-ic">📘</div><div><div class="ct-lbl">Facebook</div><div class="ct-val"><a href="{{ company.facebook_url }}" target="_blank">Facebook хуудас</a></div></div></div>
-      {% endif %}
-      {% if not company.phone and not company.email %}
-      <div style="padding:16px 18px;color:var(--text3);font-size:13px;font-family:var(--font-m)">Мэдээлэл оруулаагүй.</div>
-      {% endif %}
+    <div class="sb-card">
+      <div class="sb-hd">🏷️ Ангилал & Статус</div>
+      <div class="sb-body">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span class="badge">{{ company.get_activity_type_display|default:"Барилга" }}</span>
+          {% if company.get_city_display %}<span class="badge">📍 {{ company.get_city_display }}</span>{% endif %}
+          <span style="background:#f0fdf4;color:#166534;font-size:11px;padding:3px 10px;border-radius:20px;display:inline-block;">✅ Идэвхтэй</span>
+        </div>
+      </div>
     </div>
 
-    {% if not is_auth %}
-    <div class="cta">
-      <div class="cta-t">БҮРЭН МЭДЭЭЛЭЛ</div>
-      <div class="cta-s">Нэвтэрснээр ажиллагсадын утас, имэйл болон дэлгэрэнгүй мэдээллийг харна.</div>
-      <a href="/login/" class="cta-btn">🔓 Нэвтрэх →</a>
-      <div class="cta-sub">Бүртгэлгүй бол <a href="/register/">бүртгүүлнэ үү</a></div>
+    {% if is_owner %}
+    <div class="sb-card">
+      <div class="sb-hd">⚙️ Удирдлага</div>
+      <div class="sb-body">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <a href="/admin/core/company/" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8fafc;border-radius:7px;font-size:12px;color:#374151;">✏️ Мэдээлэл засах</a>
+          <a href="/admin/core/worker/add/" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8fafc;border-radius:7px;font-size:12px;color:#374151;">👷 Ажилтан нэмэх</a>
+        </div>
+      </div>
     </div>
     {% endif %}
-  </aside>
+
+    <div class="sb-card">
+      <div class="sb-hd">🔗 Хуваалцах</div>
+      <div class="sb-body">
+        <div class="share-btns">
+          <div class="share-btn" onclick="navigator.clipboard.writeText(window.location.href);alert('Хуулагдлаа!')">📋 Хуулах</div>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="share-btn">📘 FB</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<div style="border-top:1px solid var(--line);padding:24px 60px;max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text3);font-family:var(--font-m)">
-  <span>© 2026 БНБ СИСТЕМ — БАРИЛГАЧДЫН НЭГДСЭН МЭДЭЭЛЛИЙН БААЗ</span>
-  <a href="/public/" style="color:var(--text3);transition:color.15s" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--text3)'">← НҮҮР ХУУДАС</a>
+<footer class="footer">
+  <div>© 2026 barilgainfo.mn · Монголын барилгын нэгдсэн платформ</div>
+  <div style="margin-top:6px;"><a href="/public/">← Нүүр хуудас</a></div>
+</footer>
+
+
+<!-- AI Зөвлөх Widget -->
+<style>
+.ai-fab{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+.ai-fab-btn{display:flex;align-items:center;gap:8px;padding:12px 18px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:all 0.2s;}
+.ai-fab-btn:hover{background:#e08c00;transform:scale(1.04);}
+.ai-fab-btn .ai-ic{width:28px;height:28px;background:#1e3a4a;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f59e0b;font-size:14px;font-weight:700;flex-shrink:0;}
+.ai-chat-box{position:fixed;bottom:80px;right:24px;width:360px;background:#fff;border:0.5px solid #e2e8f0;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.15);z-index:9999;display:none;flex-direction:column;overflow:hidden;max-height:520px;}
+.ai-chat-box.open{display:flex;}
+.ai-chat-hd{background:#1e3a4a;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.ai-chat-hd-left{display:flex;align-items:center;gap:10px;}
+.ai-chat-hd-ic{width:36px;height:36px;background:#f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#1e3a4a;flex-shrink:0;}
+.ai-chat-hd-t{color:#fff;font-size:14px;font-weight:700;}
+.ai-chat-hd-s{color:#94a3b8;font-size:11px;margin-top:2px;}
+.ai-chat-close{color:#94a3b8;background:none;border:none;font-size:20px;cursor:pointer;line-height:1;padding:0;}
+.ai-chat-close:hover{color:#fff;}
+.ai-chat-msgs{padding:14px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;background:#f8fafc;}
+.ai-msg{display:flex;gap:8px;align-items:flex-start;}
+.ai-msg.user{flex-direction:row-reverse;}
+.ai-msg-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:#e2e8f0;color:#1e293b;}
+.ai-msg.user .ai-msg-av{background:#fef3c7;color:#854d0e;}
+.ai-msg-bbl{border-radius:12px;padding:8px 12px;font-size:12px;line-height:1.6;color:#1e293b;max-width:85%;}
+.ai-msg.ai .ai-msg-bbl{background:#fff;border:0.5px solid #e2e8f0;}
+.ai-msg.user .ai-msg-bbl{background:#fef3c7;border:0.5px solid #f59e0b;}
+.ai-msg.typing .ai-msg-bbl{color:#94a3b8;font-style:italic;}
+.ai-chat-inp-wrap{padding:10px;border-top:0.5px solid #e2e8f0;display:flex;gap:6px;background:#fff;flex-shrink:0;}
+.ai-chat-inp{flex:1;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;outline:none;font-family:inherit;}
+.ai-chat-inp:focus{border-color:#f59e0b;}
+.ai-chat-send{padding:8px 14px;background:#f59e0b;color:#1e3a4a;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:700;}
+.ai-chat-send:hover{background:#e08c00;}
+@media(max-width:480px){.ai-chat-box{width:calc(100vw - 20px);right:10px;bottom:70px;}.ai-fab-btn span.ai-label{display:none;}}
+</style>
+
+<div class="ai-fab">
+  <div class="ai-chat-box" id="ai-chat-box">
+    <div class="ai-chat-hd">
+      <div class="ai-chat-hd-left">
+        <div class="ai-chat-hd-ic">AI</div>
+        <div>
+          <div class="ai-chat-hd-t">AI Зөвлөх</div>
+          <div class="ai-chat-hd-s">Барилгын мэргэжилтэн</div>
+        </div>
+      </div>
+      <button class="ai-chat-close" onclick="aiToggleChat()">✕</button>
+    </div>
+    <div class="ai-chat-msgs" id="ai-chat-msgs">
+      <div class="ai-msg ai">
+        <div class="ai-msg-av">AI</div>
+        <div class="ai-msg-bbl">Сайн байна уу! Би барилгын мэргэжилтэн AI зөвлөх.<br><br>
+        Дараах зүйлсийг тусална:<br>
+        • Барилгын зөвшөөрөл, бүртгэл<br>
+        • Материал сонгох зөвлөгөө<br>
+        • Барилгын компани сонгох<br>
+        • Төсөв, хугацааны тооцоо<br>
+        • Барилгын норм, дүрэм</div>
+      </div>
+    </div>
+    <div class="ai-chat-inp-wrap">
+      <input type="text" id="ai-chat-inp" class="ai-chat-inp" placeholder="Асуултаа бичнэ үү..." onkeydown="if(event.key==='Enter') aiSendChat()">
+      <button class="ai-chat-send" onclick="aiSendChat()">Илгээх</button>
+    </div>
+  </div>
+  <button class="ai-fab-btn" onclick="aiToggleChat()" id="ai-fab-btn">
+    <div class="ai-ic">AI</div>
+    <span class="ai-label">AI Зөвлөх</span>
+  </button>
 </div>
+
+<script>
+const aiChatHistory = [];
+let aiChatOpen = false;
+
+function aiToggleChat() {
+  aiChatOpen = !aiChatOpen;
+  const box = document.getElementById("ai-chat-box");
+  const btn = document.getElementById("ai-fab-btn");
+  if (aiChatOpen) {
+    box.classList.add("open");
+    btn.innerHTML = '<div class="ai-ic">✕</div><span class="ai-label">Хаах</span>';
+    document.getElementById("ai-chat-inp").focus();
+  } else {
+    box.classList.remove("open");
+    btn.innerHTML = '<div class="ai-ic">AI</div><span class="ai-label">AI Зөвлөх</span>';
+  }
+}
+
+async function aiSendChat() {
+  const inp = document.getElementById("ai-chat-inp");
+  const msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = "";
+  aiAddMsg("user", msg);
+  aiChatHistory.push({role: "user", content: msg});
+  const tid = "typing-" + Date.now();
+  aiAddMsg("ai", "Бодож байна...", tid, true);
+  try {
+    const res = await fetch("/budget/chat/", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "X-CSRFToken": aiGetCookie("csrftoken")},
+      body: JSON.stringify({message: msg, messages: aiChatHistory.slice(-10)})
+    });
+    const data = await res.json();
+    aiRemoveMsg(tid);
+    if (data.reply) {
+      aiAddMsg("ai", data.reply);
+      aiChatHistory.push({role: "assistant", content: data.reply});
+    } else {
+      aiAddMsg("ai", "Алдаа гарлаа. Дахин оролдоно уу.");
+    }
+  } catch(e) {
+    aiRemoveMsg(tid);
+    aiAddMsg("ai", "Холболтын алдаа гарлаа.");
+  }
+}
+
+function aiAddMsg(role, text, id, isTyping) {
+  const wrap = document.getElementById("ai-chat-msgs");
+  const div = document.createElement("div");
+  div.className = "ai-msg " + role + (isTyping ? " typing" : "");
+  if (id) div.id = id;
+  div.innerHTML = '<div class="ai-msg-av">' + (role === "user" ? "Та" : "AI") + '</div><div class="ai-msg-bbl">' + text.replace(/\n/g, "<br>") + '</div>';
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function aiRemoveMsg(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function aiGetCookie(name) {
+  const v = document.cookie.match("(^|;) ?" + name + "=([^;]*)(;|$)");
+  return v ? v[2] : null;
+}
+</script>
 
 </body>
 </html>

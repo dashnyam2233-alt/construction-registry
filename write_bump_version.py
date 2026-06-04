@@ -1,0 +1,8 @@
+content = open("templates/admin/base_site.html", "r", encoding="utf-8").read()
+content = content.replace("admin_menu.css'}?v=12", "admin_menu.css'}?v=13")
+content = content.replace("admin_menu.js'}?v=12", "admin_menu.js'}?v=13")
+content = content.replace("changelist_patch.css'}?v=12", "changelist_patch.css'}?v=13")
+content = content.replace("changelist_patch.js'}?v=12", "changelist_patch.js'}?v=13")
+content = content.replace("admin_search_fix.js'}?v=12", "admin_search_fix.js'}?v=13")
+open("templates/admin/base_site.html", "w", encoding="utf-8").write(content)
+print("OK")

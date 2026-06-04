@@ -1,0 +1,9 @@
+{% extends "admin/import_export/change_list_import_export.html" %}
+{% load i18n %}
+
+{% block content_title %}{% endblock %}
+
+{% block search %}
+  <h1 style="margin: 0 0 8px 0; font-size: 20px;">{% block page_title %}{{ title }}{% endblock %}</h1>
+  {{ block.super }}
+{% endblock %}

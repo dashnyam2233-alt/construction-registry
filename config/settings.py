@@ -12,15 +12,6 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-# Production security (DEBUG=False үед автоматаар идэвхждэг)
-if not DEBUG:
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = [
     "https://www.barilgainfo.mn",
     "https://barilgainfo.mn",
@@ -40,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "django.contrib.postgres",
     "import_export",
     "rest_framework",
@@ -93,6 +85,15 @@ DATABASES = {
     }
 }
 
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -118,7 +119,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -132,3 +133,4 @@ VIBER_AUTH_TOKEN = os.getenv("VIBER_AUTH_TOKEN", "")
 SMS_GATEWAY_URL = os.getenv("SMS_GATEWAY_URL", "")
 SMS_GATEWAY_TOKEN = os.getenv("SMS_GATEWAY_TOKEN", "")
 SMS_SENDER_NAME = os.getenv("SMS_SENDER_NAME", "BNB")
+ANTHROPIC_API_KEY = "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"

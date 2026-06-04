@@ -1,29 +1,23 @@
 {% extends "admin/base.html" %}
 {% load static %}
-{% load admin_sidebar %}
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'registry/admin/admin_menu.css' %}?v=2">
-  <link rel="stylesheet" href="{% static 'registry/admin/admin_sidebar.css' %}?v=2">
-  <link rel="stylesheet" href="{% static 'registry/admin/changelist_patch.css' %}?v=2">
+  <link rel="stylesheet" href="{% static 'registry/admin/admin_menu.css' %}?v=6">
+  <link rel="stylesheet" href="{% static 'registry/admin/changelist_patch.css' %}?v=6">
+  <style>
+    .cr-admin-side { display: none !important; }
+    .cr-admin-layout { display: block !important; }
+    .cr-admin-main { width: 100% !important; }
+  </style>
 {% endblock %}
 
 {% block extrahead %}
   {{ block.super }}
-  <script src="{% static 'registry/admin/admin_menu.js' %}?v=2" defer></script>
-  <script src="{% static 'registry/admin/changelist_patch.js' %}?v=2" defer></script>
+  <script src="{% static 'registry/admin/admin_menu.js' %}?v=6" defer></script>
+  <script src="{% static 'registry/admin/changelist_patch.js' %}?v=6" defer></script>
 {% endblock %}
 
-{# ✅ Django 5.x admin дээр найдвартай wrapper: content_container #}
 {% block content_container %}
-  <div class="cr-admin-layout">
-    <div class="cr-admin-main">
-      {{ block.super }}
-    </div>
-
-    <aside class="cr-admin-side">
-      {% registry_admin_sidebar %}
-    </aside>
-  </div>
+  {{ block.super }}
 {% endblock %}

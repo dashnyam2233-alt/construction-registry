@@ -26,6 +26,8 @@
       icon: '📢',
       label: 'МАРКЕТИНГ',
       items: [
+        { url: '/admin/public/ad/',        label: '\ud83d\udce2 \u0411\u04af\u0445 \u0437\u0430\u0440\u0443\u0443\u0434' },
+        { url: '/admin/public/sliderad/',   label: '\ud83d\udd04 \u0423\u0440\u0441\u0434\u0430\u0433 \u0437\u0430\u0440\u0443\u0443\u0434' },
         { url: '/admin/messaging/messagelog/',  label: '📨 Мессеж илгээх', highlight: true },
         { url: '/admin/public/herobanner/',  label: 'Hero баннер' },
         { url: '/admin/public/subbanner/',   label: 'Дэд баннер' },
