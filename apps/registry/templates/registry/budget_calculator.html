@@ -141,9 +141,10 @@ window.showEngInput = function(engType) {
         {id:'insulation',label:'Гадна дулаалга',type:'select',opts:['XPS 100мм','PPU 80мм','Дулаалгагүй'],def:'XPS 100мм'},
       ],
       water_pit: [
+        {id:'eng_count',label:'Тоо ширхэг',type:'number',def:'1',min:'1',step:'1'},
         {id:'depth',label:'Гүн (метр)',type:'number',def:'3.0',min:'1',step:'0.5'},
         {id:'diameter',label:'Диаметр (метр)',type:'number',def:'1.5',min:'0.8',step:'0.1'},
-        {id:'cover_material',label:'Бүрхүүлийн материал',type:'select',opts:['бетон','тоосго']},
+        {id:'cover_material',label:'Бүрхүүлийн материал',type:'select',opts:['бетон','тоосго','бетон цагираг (КС)']},
       ],
       heat_pipe: [
         {id:'pipe_diameter',label:'Хоолойн диаметр',type:'select',opts:['57мм','76мм','89мм','108мм','133мм','159мм','219мм','273мм'],def:'219мм'},
@@ -1555,8 +1556,8 @@ function goStep(from, to) {
         }
       });
       form.submit();
+      return;
     }
-    return;
   }
   if(from === 1 && !btype && !document.getElementById('hidden_eng_type').value) {
       alert('Барилгын төрлийг сонгоно уу!');

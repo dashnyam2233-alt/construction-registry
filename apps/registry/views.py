@@ -628,7 +628,7 @@ def api_material_prices(request):
             for f in filters:
                 q |= Q(name__icontains=f)
             items = items.filter(q)
-    data = [{'name': i.name, 'price': int((i.price_min + i.price_max) / 2), 'unit': i.unit} for i in items]
+    data = [{'name': i.name, 'unit_price': int((i.price_min + i.price_max) / 2), 'unit': i.unit} for i in items]
     return JsonResponse({'items': data})
 
 
@@ -1268,6 +1268,32 @@ def calculate_engineering_budget(data):
         rebar_kg  = round(total_vol * 90, 0)
         exc_vol   = round((outer_l + 1.0) * (outer_w + 1.0) * (depth + 0.5) * count, 2)
         concrete_price = {'B20': 260000, 'B25': 280000, 'B30': 320000}.get(concrete, 280000)
+
+        materials.append({'name': f'Бетон {concrete}', 'unit': 'м³', 'qty': total_vol,
+                          'unit_price': int(concrete_price * quality_coef),
+                          'total': int(total_vol * concrete_price * quality_coef)})
+        materials.append({'name': 'Арматур φ12 A400', 'unit': 'кг', 'qty': rebar_kg,
+                          'unit_price': int(3000 * quality_coef),
+                          'total': int(rebar_kg * 3000 * quality_coef)})
+        materials.append({'name': 'Хэвлэгч мод', 'unit': 'м³', 'qty': round(total_vol * 0.3, 2),
+                          'unit_price': int(450000 * quality_coef),
+                          'total': int(total_vol * 0.3 * 450000 * quality_coef)})
+        if insulation != 'Байхгүй':
+            ins_vol = round((outer_l * outer_w * 2 + 2 * (outer_l + outer_w) * depth) * 0.1 * count, 2)
+            materials.append({'name': f'Дулаалга {insulation}', 'unit': 'м²', 'qty': ins_vol,
+                              'unit_price': int(25000 * quality_coef),
+                              'total': int(ins_vol * 25000 * quality_coef)})
+        labor.append({'name': 'Малтлага', 'unit': 'м³', 'qty': exc_vol,
+                      'unit_price': int(28000 * loc_coef), 'total': int(exc_vol * 28000 * loc_coef)})
+        labor.append({'name': 'Бетон цутгах', 'unit': 'м³', 'qty': total_vol,
+                      'unit_price': int(95000 * quality_coef),
+                      'total': int(total_vol * 95000 * quality_coef)})
+        labor.append({'name': 'Арматур боох', 'unit': 'кг', 'qty': rebar_kg,
+                      'unit_price': int(800 * quality_coef),
+                      'total': int(rebar_kg * 800 * quality_coef)})
+        other.append({'name': 'Тээвэр, бусад', 'unit': 'дүн', 'qty': 1,
+                      'unit_price': 350000, 'total': 350000})
+
     elif eng_type == 'water_pit':
         count    = int(data.get('eng_count') or data.get('count') or 1)
         diameter = float(data.get('diameter') or 1.5)
@@ -1280,25 +1306,25 @@ def calculate_engineering_budget(data):
         exc_vol  = round(3.14 * ((diameter/2 + thick + 0.5)**2) * (depth + 0.3) * count, 2)
 
         materials.append({'name': 'Бетон B25', 'unit': 'м³', 'qty': vol,
-                          'price': int(280000 * quality_coef),
+                          'unit_price': int(280000 * quality_coef),
                           'total': int(vol * 280000 * quality_coef)})
         materials.append({'name': 'Арматур φ12 A400', 'unit': 'кг', 'qty': rebar_kg,
-                          'price': int(3000 * quality_coef),
+                          'unit_price': int(3000 * quality_coef),
                           'total': int(rebar_kg * 3000 * quality_coef)})
         if cover == 'тоосго':
             materials.append({'name': 'Тоосго M150', 'unit': 'ш', 'qty': round(vol*400, 0),
-                              'price': int(600 * quality_coef),
+                              'unit_price': int(600 * quality_coef),
                               'total': int(vol * 400 * 600 * quality_coef)})
         materials.append({'name': 'Тагт (cast iron)', 'unit': 'ш', 'qty': count,
-                          'price': int(180000 * quality_coef),
+                          'unit_price': int(180000 * quality_coef),
                           'total': int(count * 180000 * quality_coef)})
         labor.append({'name': 'Малтлага', 'unit': 'м³', 'qty': exc_vol,
-                      'price': int(28000 * loc_coef), 'total': int(exc_vol * 28000 * loc_coef)})
+                      'unit_price': int(28000 * loc_coef), 'total': int(exc_vol * 28000 * loc_coef)})
         labor.append({'name': 'Цутгах ажил', 'unit': 'м³', 'qty': vol,
-                      'price': int(90000 * quality_coef),
+                      'unit_price': int(90000 * quality_coef),
                       'total': int(vol * 90000 * quality_coef)})
         other.append({'name': 'Тээвэр, бусад', 'unit': 'дүн', 'qty': 1,
-                      'price': 300000, 'total': 300000})
+                      'unit_price': 300000, 'total': 300000})
 
     # ── ДУЛААНЫ ШУГАМ ──────────────────────────────────────────
     elif eng_type == 'heat_pipe':
@@ -1317,26 +1343,26 @@ def calculate_engineering_budget(data):
         sand_vol   = round(pipe_len * 0.8 * 0.2, 2)
 
         materials.append({'name': f'Дулааны хоолой {pipe_dia}', 'unit': 'м', 'qty': pipe_len,
-                          'price': int(pipe_price * quality_coef),
+                          'unit_price': int(pipe_price * quality_coef),
                           'total': int(pipe_len * pipe_price * quality_coef)})
         if insulated:
             materials.append({'name': 'PPU дулаалга', 'unit': 'м', 'qty': pipe_len,
-                              'price': int(ins_price * quality_coef),
+                              'unit_price': int(ins_price * quality_coef),
                               'total': int(pipe_len * ins_price * quality_coef)})
         materials.append({'name': 'Элс (дэвсгэр)', 'unit': 'м³', 'qty': sand_vol,
-                          'price': 35000, 'total': int(sand_vol * 35000)})
+                          'unit_price': 35000, 'total': int(sand_vol * 35000)})
         materials.append({'name': 'Хаалт, арматур (valve)', 'unit': 'иж', 'qty': round(pipe_len/50, 0),
-                          'price': int(500000 * quality_coef),
+                          'unit_price': int(500000 * quality_coef),
                           'total': int(round(pipe_len/50, 0) * 500000 * quality_coef)})
         labor.append({'name': 'Шуудуу малтах', 'unit': 'м³', 'qty': trench_vol,
-                      'price': int(20000 * loc_coef), 'total': int(trench_vol * 20000 * loc_coef)})
+                      'unit_price': int(20000 * loc_coef), 'total': int(trench_vol * 20000 * loc_coef)})
         labor.append({'name': 'Хоолой тавих, гагнах', 'unit': 'м', 'qty': pipe_len,
-                      'price': int(35000 * quality_coef),
+                      'unit_price': int(35000 * quality_coef),
                       'total': int(pipe_len * 35000 * quality_coef)})
         labor.append({'name': 'Шуудуу буцаан дүүргэх', 'unit': 'м³', 'qty': trench_vol,
-                      'price': int(10000 * loc_coef), 'total': int(trench_vol * 10000 * loc_coef)})
+                      'unit_price': int(10000 * loc_coef), 'total': int(trench_vol * 10000 * loc_coef)})
         other.append({'name': 'Тоног төхөөрөмж, тест', 'unit': 'дүн', 'qty': 1,
-                      'price': 800000, 'total': 800000})
+                      'unit_price': 800000, 'total': 800000})
 
     # ── АРИУТГАХ ТАТУУРГА ───────────────────────────────────────
     elif eng_type == 'sewer':
@@ -1355,30 +1381,30 @@ def calculate_engineering_budget(data):
         sand_vol    = round(pipe_len * 0.9 * 0.15, 2)
 
         materials.append({'name': f'{material} хоолой {pipe_dia}', 'unit': 'м', 'qty': pipe_len,
-                          'price': int(pipe_prices * quality_coef),
+                          'unit_price': int(pipe_prices * quality_coef),
                           'total': int(pipe_len * pipe_prices * quality_coef)})
         materials.append({'name': 'Шуудуу худаг (manhole)', 'unit': 'ш', 'qty': manholes,
-                          'price': int(1800000 * quality_coef),
+                          'unit_price': int(1800000 * quality_coef),
                           'total': int(manholes * 1800000 * quality_coef)})
         materials.append({'name': 'Элс (дэвсгэр)', 'unit': 'м³', 'qty': sand_vol,
-                          'price': 35000, 'total': int(sand_vol * 35000)})
+                          'unit_price': 35000, 'total': int(sand_vol * 35000)})
         materials.append({'name': 'Хаалт, холбох хэсэг', 'unit': 'иж', 'qty': 1,
-                          'price': int(300000 * quality_coef),
+                          'unit_price': int(300000 * quality_coef),
                           'total': int(300000 * quality_coef)})
         labor.append({'name': 'Шуудуу малтах', 'unit': 'м³', 'qty': trench_vol,
-                      'price': int(22000 * loc_coef), 'total': int(trench_vol * 22000 * loc_coef)})
+                      'unit_price': int(22000 * loc_coef), 'total': int(trench_vol * 22000 * loc_coef)})
         labor.append({'name': 'Хоолой тавих', 'unit': 'м', 'qty': pipe_len,
-                      'price': int(40000 * quality_coef),
+                      'unit_price': int(40000 * quality_coef),
                       'total': int(pipe_len * 40000 * quality_coef)})
         labor.append({'name': 'Худаг угсрах', 'unit': 'ш', 'qty': manholes,
-                      'price': int(250000 * quality_coef),
+                      'unit_price': int(250000 * quality_coef),
                       'total': int(manholes * 250000 * quality_coef)})
         labor.append({'name': 'Шуудуу буцаан дүүргэх', 'unit': 'м³', 'qty': trench_vol,
-                      'price': int(10000 * loc_coef), 'total': int(trench_vol * 10000 * loc_coef)})
+                      'unit_price': int(10000 * loc_coef), 'total': int(trench_vol * 10000 * loc_coef)})
         other.append({'name': 'Хоолой тээвэрлэх', 'unit': 'м', 'qty': pipe_len,
-                      'price': 3000, 'total': int(pipe_len * 3000)})
+                      'unit_price': 3000, 'total': int(pipe_len * 3000)})
         other.append({'name': 'Тоног төхөөрөмж, бусад', 'unit': 'дүн', 'qty': 1,
-                      'price': 400000, 'total': 400000})
+                      'unit_price': 400000, 'total': 400000})
 
     # ── ГАДНА ЦАХИЛГААНЫ ШУГАМ ─────────────────────────────────
     elif eng_type == 'electric_line':
@@ -1424,20 +1450,20 @@ def calculate_engineering_budget(data):
                           'total': int(round(cable_len/50, 0) * 150000 * quality_coef)})
         if cable_type == 'газар доорх':
             labor.append({'name': 'Шуудуу малтах', 'unit': 'м³', 'qty': trench_vol,
-                          'price': int(18000 * loc_coef), 'total': int(trench_vol * 18000 * loc_coef)})
+                          'unit_price': int(18000 * loc_coef), 'total': int(trench_vol * 18000 * loc_coef)})
             labor.append({'name': 'Кабель тавих', 'unit': 'м', 'qty': cable_len,
-                          'price': int(12000 * quality_coef),
+                          'unit_price': int(12000 * quality_coef),
                           'total': int(cable_len * 12000 * quality_coef)})
             labor.append({'name': 'Шуудуу буцаан дүүргэх', 'unit': 'м³', 'qty': trench_vol,
-                          'price': int(8000 * loc_coef), 'total': int(trench_vol * 8000 * loc_coef)})
+                          'unit_price': int(8000 * loc_coef), 'total': int(trench_vol * 8000 * loc_coef)})
         else:
             labor.append({'name': 'Кабель татах, дамнуурга', 'unit': 'м', 'qty': cable_len,
-                          'price': int(8000 * quality_coef),
+                          'unit_price': int(8000 * quality_coef),
                           'total': int(cable_len * 8000 * quality_coef)})
         if poles > 0:
             labor.append({'name': 'Багана суурилуулах', 'unit': 'ш', 'qty': poles,
 
-                          'price': int(180000 * quality_coef),
+                          'unit_price': int(180000 * quality_coef),
                           'total': int(poles * 180000 * quality_coef)})
         # Тээврийн зардал
         _cwt = {'0.4кВ': 1.2, '6кВ': 2.5, '10кВ': 3.8}.get(voltage, 1.2)
@@ -1447,9 +1473,9 @@ def calculate_engineering_budget(data):
         other.append({'name': 'Хамгаалалтын хоолой тээвэрлэх', 'unit': 'удаа', 'qty': 1, 'unit_price': 80000, 'total': 80000})
         other.append({'name': 'Элс, дайрга тээвэрлэх', 'unit': 'удаа', 'qty': max(1, round(cable_len/50)), 'unit_price': 90000, 'total': max(1, round(cable_len/50)) * 90000})
         other.append({'name': 'Хэмжилт, туршилт (мегаомметр)', 'unit': 'дүн', 'qty': 1,
-                      'price': 300000, 'total': 300000})
+                      'unit_price': 300000, 'total': 300000})
         other.append({'name': 'Тоног төхөөрөмж, бусад', 'unit': 'дүн', 'qty': 1,
-                      'price': 500000, 'total': 500000})
+                      'unit_price': 500000, 'total': 500000})
 
     # ── ГЭРЭЛТҮҮЛГИЙН ШУГАМ ────────────────────────────────────
     elif eng_type == 'lighting':
@@ -1464,30 +1490,30 @@ def calculate_engineering_budget(data):
         pole_price  = int(350000 + pole_height * 50000)
 
         materials.append({'name': f'Гэрэлтүүлгийн багана H={pole_height}м', 'unit': 'ш',
-                          'qty': pole_count, 'price': int(pole_price * quality_coef),
+                          'qty': pole_count, 'unit_price': int(pole_price * quality_coef),
                           'total': int(pole_count * pole_price * quality_coef)})
         materials.append({'name': f'{lamp_type} гэрэл (светильник)', 'unit': 'ш',
-                          'qty': pole_count, 'price': int(lamp_prices * quality_coef),
+                          'qty': pole_count, 'unit_price': int(lamp_prices * quality_coef),
                           'total': int(pole_count * lamp_prices * quality_coef)})
         materials.append({'name': 'Кабель АВВГ 4х16', 'unit': 'м', 'qty': cable_len,
-                          'price': int(6500 * quality_coef),
+                          'unit_price': int(6500 * quality_coef),
                           'total': int(cable_len * 6500 * quality_coef)})
         materials.append({'name': 'Хамгаалалтын хоолой', 'unit': 'м', 'qty': cable_len,
-                          'price': int(3000 * quality_coef),
+                          'unit_price': int(3000 * quality_coef),
                           'total': int(cable_len * 3000 * quality_coef)})
         materials.append({'name': 'Удирдлагын самбар (ШУС)', 'unit': 'ш', 'qty': 1,
-                          'price': int(2500000 * quality_coef),
+                          'unit_price': int(2500000 * quality_coef),
                           'total': int(2500000 * quality_coef)})
         labor.append({'name': 'Шуудуу малтах, кабель тавих', 'unit': 'м', 'qty': cable_len,
-                      'price': int(15000 * loc_coef), 'total': int(cable_len * 15000 * loc_coef)})
+                      'unit_price': int(15000 * loc_coef), 'total': int(cable_len * 15000 * loc_coef)})
         labor.append({'name': 'Багана суурилуулах', 'unit': 'ш', 'qty': pole_count,
-                      'price': int(200000 * quality_coef),
+                      'unit_price': int(200000 * quality_coef),
                       'total': int(pole_count * 200000 * quality_coef)})
         labor.append({'name': 'Гэрэл угсрах, холболт', 'unit': 'ш', 'qty': pole_count,
-                      'price': int(80000 * quality_coef),
+                      'unit_price': int(80000 * quality_coef),
                       'total': int(pole_count * 80000 * quality_coef)})
         other.append({'name': 'Туршилт, тохируулга', 'unit': 'дүн', 'qty': 1,
-                      'price': 400000, 'total': 400000})
+                      'unit_price': 400000, 'total': 400000})
 
     # ── ХОЛБОО ДОХИОЛОЛ ────────────────────────────────────────
     elif eng_type == 'telecom':
@@ -1498,26 +1524,26 @@ def calculate_engineering_budget(data):
         cable_prices = {'оптик': 3500, 'UTP cat6': 1800, 'коаксиал': 2200}.get(cable_type, 3500)
 
         materials.append({'name': f'Кабель ({cable_type})', 'unit': 'м', 'qty': cable_len,
-                          'price': int(cable_prices * quality_coef),
+                          'unit_price': int(cable_prices * quality_coef),
                           'total': int(cable_len * cable_prices * quality_coef)})
         materials.append({'name': 'HDPE хамгаалалтын хоолой Ø40', 'unit': 'м', 'qty': conduit_len,
-                          'price': int(2800 * quality_coef),
+                          'unit_price': int(2800 * quality_coef),
                           'total': int(conduit_len * 2800 * quality_coef)})
         materials.append({'name': 'Холбох хайрцаг (муфт)', 'unit': 'ш', 'qty': round(cable_len/100, 0) + 2,
-                          'price': int(85000 * quality_coef),
+                          'unit_price': int(85000 * quality_coef),
                           'total': int((round(cable_len/100, 0) + 2) * 85000 * quality_coef)})
         materials.append({'name': 'Кабелийн шүүгээ (ODF)', 'unit': 'ш', 'qty': 2,
-                          'price': int(350000 * quality_coef),
+                          'unit_price': int(350000 * quality_coef),
                           'total': int(2 * 350000 * quality_coef)})
         labor.append({'name': 'Шуудуу малтах', 'unit': 'м', 'qty': cable_len,
-                      'price': int(12000 * loc_coef), 'total': int(cable_len * 12000 * loc_coef)})
+                      'unit_price': int(12000 * loc_coef), 'total': int(cable_len * 12000 * loc_coef)})
         labor.append({'name': 'Кабель тавих, холбох', 'unit': 'м', 'qty': cable_len,
-                      'price': int(8000 * quality_coef),
+                      'unit_price': int(8000 * quality_coef),
                       'total': int(cable_len * 8000 * quality_coef)})
         labor.append({'name': 'Хэмжилт, OTDR туршилт', 'unit': 'дүн', 'qty': 1,
-                      'price': 350000, 'total': 350000})
+                      'unit_price': 350000, 'total': 350000})
         other.append({'name': 'Тоног төхөөрөмж, бусад', 'unit': 'дүн', 'qty': 1,
-                      'price': 300000, 'total': 300000})
+                      'unit_price': 300000, 'total': 300000})
 
     # ── ДУЛААН ХАНГАМЖИЙН ШУГАМ ────────────────────────────────
     elif eng_type == 'gas_pipe':
@@ -1530,21 +1556,21 @@ def calculate_engineering_budget(data):
         trench_vol  = round(pipe_len * 0.7 * 1.2, 2)
 
         materials.append({'name': f'Дулааны хоолой {pipe_dia} (утасгүй)', 'unit': 'м', 'qty': pipe_len,
-                          'price': int(pipe_prices * quality_coef),
+                          'unit_price': int(pipe_prices * quality_coef),
                           'total': int(pipe_len * pipe_prices * quality_coef)})
         materials.append({'name': 'Дулаалга (цилиндр PPU)', 'unit': 'м', 'qty': pipe_len,
-                          'price': int(pipe_prices * 0.3 * quality_coef),
+                          'unit_price': int(pipe_prices * 0.3 * quality_coef),
                           'total': int(pipe_len * pipe_prices * 0.3 * quality_coef)})
         materials.append({'name': 'Хаалт, тоноглол', 'unit': 'иж', 'qty': round(pipe_len/30, 0),
-                          'price': int(350000 * quality_coef),
+                          'unit_price': int(350000 * quality_coef),
                           'total': int(round(pipe_len/30, 0) * 350000 * quality_coef)})
         labor.append({'name': 'Шуудуу малтах', 'unit': 'м³', 'qty': trench_vol,
-                      'price': int(20000 * loc_coef), 'total': int(trench_vol * 20000 * loc_coef)})
+                      'unit_price': int(20000 * loc_coef), 'total': int(trench_vol * 20000 * loc_coef)})
         labor.append({'name': 'Хоолой тавих, гагнах', 'unit': 'м', 'qty': pipe_len,
-                      'price': int(40000 * quality_coef),
+                      'unit_price': int(40000 * quality_coef),
                       'total': int(pipe_len * 40000 * quality_coef)})
         other.append({'name': 'Даралтын тест, баримт бичиг', 'unit': 'дүн', 'qty': 1,
-                      'price': 500000, 'total': 500000})
+                      'unit_price': 500000, 'total': 500000})
 
     mat_total   = sum(i['total'] for i in materials)
     labor_total = sum(i['total'] for i in labor)
