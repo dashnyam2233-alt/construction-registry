@@ -1,109 +1,60 @@
-/* registry/static/registry/admin/admin_menu.js v3 */
 (function () {
-  'use strict';
+  function makeIndexAccordion() {
+    const contentMain = document.querySelector("#content-main");
+    if (!contentMain) return;
 
-  var GROUPS = [
-    {
-      icon: '🏢',
-      label: 'БАЙГУУЛЛАГА',
-      items: [
-        { url: '/admin/core/company/',                   label: 'Компаниуд' },
-        { url: '/admin/core/governmentorganization/',    label: 'Төрийн байгууллагууд' },
-        { url: '/admin/core/nongovernmentorganization/', label: 'ТББ байгууллагууд' },
-      ]
-    },
-    {
-      icon: '👷',
-      label: 'АЖИЛЛАГСАД',
-      items: [
-        { url: '/admin/core/worker/',        label: 'Ажиллагсад' },
-        { url: '/admin/core/familymember/',  label: 'Ажилтны хамаарал' },
-        { url: '/admin/core/brigade/',       label: 'Бригадууд' },
-        { url: '/admin/core/brigademember/', label: 'Бригадын гишүүд' },
-      ]
-    },
-    {
-      icon: '📢',
-      label: 'МАРКЕТИНГ',
-      items: [
-        { url: '/admin/public/ad/',        label: '\ud83d\udce2 \u0411\u04af\u0445 \u0437\u0430\u0440\u0443\u0443\u0434' },
-        { url: '/admin/public/sliderad/',   label: '\ud83d\udd04 \u0423\u0440\u0441\u0434\u0430\u0433 \u0437\u0430\u0440\u0443\u0443\u0434' },
-        { url: '/admin/messaging/messagelog/',  label: '📨 Мессеж илгээх', highlight: true },
-        { url: '/admin/public/herobanner/',  label: 'Hero баннер' },
-        { url: '/admin/public/subbanner/',   label: 'Дэд баннер' },
-        { url: '/admin/public/sliderad/',    label: 'Урсдаг зарууд' },
-        { url: '/admin/public/banner/',      label: 'Баннерууд' },
-        { url: '/admin/public/publicpost/',  label: 'Нээлттэй постууд' },
-      ]
-    },
-    {
-      icon: '👤',
-      label: 'ХЭРЭГЛЭГЧ',
-      items: [
-        { url: '/admin/accounts/usercompanyprofile/', label: 'Хэрэглэгчийн компани' },
-        { url: '/admin/auth/user/',                   label: 'Хэрэглэгчид' },
-        { url: '/admin/auth/group/',                  label: 'Бүлгүүд' },
-      ]
-    },
-    {
-      icon: '⚙️',
-      label: 'ТОХИРГОО',
-      items: [
-        { url: '/admin/messaging/siteconfig/', label: 'Системийн тохиргоо' },
-      ]
-    },
-  ];
+    const tables = contentMain.querySelectorAll(".module table");
+    if (!tables.length) return;
 
-  function buildSidebar() {
-    var sidebar = document.getElementById('nav-sidebar');
-    if (!sidebar) return;
+    tables.forEach((table) => {
+      const caption = table.querySelector("caption");
+      if (!caption) return;
 
-    var modules = sidebar.querySelectorAll('.module');
-    modules.forEach(function (m) { m.remove(); });
+      if (caption.querySelector(".registry-app-toggle")) return;
 
-    var curPath = window.location.pathname;
+      const link = caption.querySelector("a");
+      const titleText = (link ? link.textContent : caption.textContent || "").trim();
 
-    GROUPS.forEach(function (group) {
-      var titleEl = document.createElement('div');
-      titleEl.className = 'nav-group-title';
-      titleEl.innerHTML = '<span class="ng-icon">' + group.icon + '</span>' + group.label;
-      sidebar.appendChild(titleEl);
+      caption.textContent = "";
 
-      group.items.forEach(function (item) {
-        var isActive = curPath === item.url || curPath.startsWith(item.url.replace(/\/$/, '/'));
+      const toggle = document.createElement("span");
+      toggle.className = "registry-app-toggle";
+      toggle.setAttribute("role", "button");
+      toggle.setAttribute("tabindex", "0");
+      toggle.innerHTML = `<span class="registry-caret"></span><span>${titleText}</span>`;
 
-        var link = document.createElement('a');
-        link.href = item.url;
-        link.textContent = item.label;
+      // Default: COLLAPSED
+      table.classList.add("registry-app-collapsed");
+      caption.classList.remove("registry-app-open");
 
-        if (item.highlight) {
-          link.style.cssText = 'display:block;background:#f0a500;color:#0d1117;font-weight:700;border-radius:6px;margin:4px 10px;padding:7px 12px;text-align:center;text-decoration:none;font-size:13px;';
-          link.addEventListener('mouseenter', function () { this.style.background = '#d99400'; });
-          link.addEventListener('mouseleave', function () { this.style.background = '#f0a500'; });
-        } else {
-          link.style.cssText = 'display:block;padding:6px 14px 6px 22px;font-size:13px;text-decoration:none;color:var(--link-fg,#417690);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (isActive ? 'background:var(--selected-row,#e4f0f8);font-weight:700;' : '');
-          link.addEventListener('mouseenter', function () { this.style.background = 'var(--selected-row,#e4f0f8)'; this.style.color = 'var(--link-hover-color,#265d87)'; });
-          link.addEventListener('mouseleave', function () { this.style.background = isActive ? 'var(--selected-row,#e4f0f8)' : ''; this.style.color = 'var(--link-fg,#417690)'; });
-        }
+      function toggleOpen() {
+        const collapsed = table.classList.toggle("registry-app-collapsed");
+        if (!collapsed) caption.classList.add("registry-app-open");
+        else caption.classList.remove("registry-app-open");
+      }
 
-        sidebar.appendChild(link);
+      toggle.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleOpen();
       });
+
+      // ✅ KEYDOWN — зөвхөн toggle өөрөө focus дээр байх үед л ажиллана
+      toggle.addEventListener("keydown", function (e) {
+        if (document.activeElement !== toggle) return;
+
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleOpen();
+        }
+      });
+
+      caption.appendChild(toggle);
     });
-
-    var divider = document.createElement('div');
-    divider.style.cssText = 'height:1px;background:var(--hairline-color,#e5e5e5);margin:8px 0;';
-    sidebar.appendChild(divider);
-
-    var gs = document.createElement('a');
-    gs.href = '/admin/global-search/';
-    gs.textContent = '🔍 Нэгдсэн хайлт';
-    gs.style.cssText = 'display:block;padding:7px 14px 7px 22px;font-size:13px;color:var(--link-fg,#417690);text-decoration:none;';
-    sidebar.appendChild(gs);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', buildSidebar);
-  } else {
-    buildSidebar();
-  }
+  document.addEventListener("DOMContentLoaded", function () {
+    makeIndexAccordion();
+  });
 })();

@@ -1096,10 +1096,85 @@ _old_get_urls = admin.site.get_urls
 
 def _new_get_urls():
     urls = _old_get_urls()
-    custom = [path("global-search/", admin.site.admin_view(global_admin_search_view), name="global-search")]
+    custom = [path("global-search/", admin.site.admin_view(global_admin_search_view), name="global-search"), path("broadcast/", broadcast_view, name="broadcast")]
     return custom + urls
 
 admin.site.get_urls = _new_get_urls
+
+# =====================================================
+# 📢 BROADCAST VIEW
+# =====================================================
+from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
+
+def broadcast_view(request):
+    from django.shortcuts import render
+    from django.contrib.admin.views.decorators import staff_member_required
+    from apps.registry.messaging import send_message
+    from apps.core.models import Company
+    from apps.core.models import Worker
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+
+    result = None
+    if request.method == "POST":
+        channels = request.POST.getlist("channels")
+        target_type = request.POST.get("target_type", "all_users")
+        subject = request.POST.get("subject", "БНБ мэдэгдэл")
+        body = request.POST.get("body", "")
+
+        if not channels:
+            result = {"success": False, "message": "Суваг сонгоно уу!"}
+        elif not body:
+            result = {"success": False, "message": "Мессеж бичнэ үү!"}
+        else:
+            recipients = []
+            if target_type == "all_companies":
+                for c in Company.objects.filter(email__gt=""):
+                    recipients.append({"name": c.name, "email": c.email, "phone": c.phone})
+            elif target_type == "all_workers":
+                try:
+                    from apps.core.models import Worker
+                    for w in Worker.objects.all():
+                        recipients.append({"name": str(w), "email": getattr(w, "email", ""), "phone": getattr(w, "phone", "")})
+                except Exception:
+                    pass
+            elif target_type == "all_users":
+                for u in User.objects.filter(is_active=True).exclude(email=""):
+                    recipients.append({"name": u.get_full_name() or u.username, "email": u.email, "phone": ""})
+
+            sent = 0
+            errors = 0
+            details = []
+            for rec in recipients[:50]:  # Нэг удаад max 50
+                for ch in channels:
+                    addr = ""
+                    if ch == "email": addr = rec.get("email", "")
+                    elif ch in ("sms",): addr = rec.get("phone", "")
+                    if not addr:
+                        continue
+                    try:
+                        r = send_message(ch, addr, subject, body)
+                        if r.get("ok"):
+                            sent += 1
+                        else:
+                            errors += 1
+                            details.append(f"{rec['name']}: {r.get('error','')}")
+                    except Exception as e:
+                        errors += 1
+                        details.append(f"{rec['name']}: {str(e)[:80]}")
+
+            result = {
+                "success": True,
+                "message": f"Нийт {sent} мессеж амжилттай илгээгдлээ, {errors} алдаа гарлаа.",
+                "details": details[:10],
+            }
+
+    return render(request, "admin/broadcast.html", {"result": result})
+
+broadcast_view = admin.site.admin_view(broadcast_view)
+
+
 
 
 # =====================================================
@@ -1150,7 +1225,7 @@ class SiteConfigAdmin(admin.ModelAdmin):
         obj, _ = SiteConfig.objects.get_or_create(pk=1)
         from django.shortcuts import redirect
         from django.urls import reverse
-        return redirect(reverse("admin:registry_siteconfig_change", args=[obj.pk]))
+        return redirect(reverse("admin:messaging_siteconfig_change", args=[obj.pk]))
 
 
 # =====================================================

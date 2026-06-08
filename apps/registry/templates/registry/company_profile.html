@@ -119,6 +119,8 @@
     <div class="hero-info">
       <div class="hero-name">{{ company.name }}</div>
       <span class="hero-type">{{ company.get_activity_type_display|default:"Барилга" }}</span>
+      <span style="display:inline-block;background:{{ plan_color }};color:#fff;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-left:6px;">{{ plan_label }}</span>
+      {% if is_owner %}<a href="/company/{{ company.slug }}/edit/" style="display:inline-block;margin-left:10px;padding:4px 12px;background:#1e3a4a;color:#f59e0b;border:1px solid #f59e0b;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;">✏️ Засах</a>{% endif %}
       <div class="hero-meta">
         {% if company.get_city_display %}<span>📍 {{ company.get_city_display }}</span>{% endif %}
         {% if company.phone %}<span>📞 {{ company.phone }}</span>{% endif %}

@@ -84,6 +84,12 @@ class GovernmentOrganization(SearchNormalizedMixin, models.Model):
     phone = models.CharField("Утас", max_length=50, blank=True, default="")
     email = models.EmailField("Имэйл", blank=True, default="")
     website = models.CharField("Вэб", max_length=255, blank=True, default="")
+    plan = models.CharField(
+        "Багцын төрөл", max_length=20,
+        choices=[("free","Үнэгүй"),("standard","Стандарт"),("premium","Премиум")],
+        default="free"
+    )
+    plan_expires = models.DateField("Багц дуусах огноо", null=True, blank=True)
     note = models.TextField("Тайлбар", blank=True, default="")
 
     class Meta:
@@ -106,6 +112,12 @@ class NonGovernmentOrganization(SearchNormalizedMixin, models.Model):
     phone = models.CharField("Утас", max_length=50, blank=True, default="")
     email = models.EmailField("Имэйл", blank=True, default="")
     website = models.CharField("Вэб", max_length=255, blank=True, default="")
+    plan = models.CharField(
+        "Багцын төрөл", max_length=20,
+        choices=[("free","Үнэгүй"),("standard","Стандарт"),("premium","Премиум")],
+        default="free"
+    )
+    plan_expires = models.DateField("Багц дуусах огноо", null=True, blank=True)
     note = models.TextField("Тайлбар", blank=True, default="")
 
     class Meta:
@@ -148,6 +160,12 @@ class Company(SearchNormalizedMixin, models.Model):
     phone = models.CharField("Утас", max_length=50, blank=True, default="")
     email = models.EmailField("Имэйл", blank=True, default="")
     website = models.CharField("Вэб", max_length=255, blank=True, default="")
+    plan = models.CharField(
+        "Багцын төрөл", max_length=20,
+        choices=[("free","Үнэгүй"),("standard","Стандарт"),("premium","Премиум")],
+        default="free"
+    )
+    plan_expires = models.DateField("Багц дуусах огноо", null=True, blank=True)
     note = models.TextField("Тайлбар", blank=True, default="")
 
     class Meta:

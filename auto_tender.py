@@ -5,7 +5,9 @@ import django
 django.setup()
 
 from apps.public.models import Tender
-import undetected_chromedriver as uc
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 import re
@@ -17,9 +19,10 @@ CONSTRUCTION_KEYWORDS = [
     "өргөтгөх", "шинэчлэх", "их засвар", "дотоод засал"
 ]
 
-options = uc.ChromeOptions()
+options = webdriver.ChromeOptions()
 options.add_argument("--window-size=1920,1080")
-driver = uc.Chrome(options=options, headless=False)
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=options)
 tenders = []
 
 def parse_rows():
@@ -43,12 +46,31 @@ def parse_rows():
             org = next((l.replace("Захиалагчийн нэр:", "").strip() for l in lines if "захиалагч" in l.lower()), "")
             price = next((l for l in lines if "₮" in l), "")
             method = next((l.replace("ХАА-ны журам:", "").strip() for l in lines if "журам" in l.lower() or "арга" in l.lower()), "")
+            # Deadline — Cell 0-с авах (хүлээн авах огноо)
+            # Cell 0: "11:00\n2026-06\n26" хэлбэртэй
             deadline = ""
-            for l in lines:
-                m = re.search(r"\d{4}-\d{2}-\d{2}", l)
-                if m:
-                    deadline = m.group()
-                    break
+            try:
+                cell0 = cells[0].text.strip()
+                # 2026-06 болон 26 гэсэн хэлбэрийг нэгтгэх
+                parts = cell0.split("\n")
+                # "2026-06" болон "26" хайх
+                year_mon = ""
+                day = ""
+                for p in parts:
+                    p = p.strip()
+                    if re.match(r"\d{4}-\d{2}$", p):
+                        year_mon = p
+                    elif re.match(r"^\d{1,2}$", p):
+                        day = p.zfill(2)
+                if year_mon and day:
+                    deadline = f"{year_mon}-{day}"
+                else:
+                    # Fallback: огноо хэлбэрээр хайх
+                    m = re.search(r"(\d{4}-\d{2}-\d{2})", cell0)
+                    if m:
+                        deadline = m.group(1)
+            except:
+                deadline = ""
             tender_code = next((l for l in lines if re.match(r"[А-ЯӨҮ]+/\d+", l)), "")
             tenders.append({"title": title, "organization": org, "price": price,
                             "deadline": deadline, "method": method,
@@ -110,15 +132,42 @@ for item in tenders:
 # Ангилал шинэчлэх
 from apps.public.models import Tender as T2
 CATEGORIES = {
-    "construction": ["барилга","угсралт","цутгалт","бетон","суурь","хана","дээвэр","орон сууц","өргөтгөх"],
-    "repair": ["засвар","их засвар","шинэчлэх","дотоод засал","гадаад засал","будаг"],
-    "design": ["зураг төсөл","зураг","төсөл","ded","fed","тэзү","геодези","геологи","архитектур"],
-    "road": ["зам","гүүр","хучилт","авто зам","талбай","тротуар"],
-    "engineering": ["цахилгаан","сантехник","дулаан","халаалт","агааржуулалт","усан хангамж","лифт","хоолой"],
-    "material": ["материал","тоосго","цемент","арматур","хайрга","бараа","нийлүүлэлт"],
-    "equipment": ["тоног төхөөрөмж","машин","механизм","техник","кран","экскаватор"],
-    "consulting": ["зөвлөх","судалгаа","үнэлгээ","хяналт","аудит"],
-    "service": ["үйлчилгээ","ажил"],
+
+    "construction": [
+        "барилга угсралт", "барилга байгууламж барих", "барилгын ажил",
+        "цутгалт", "суурь", "өргөтгөх барилга", "орон сууц барих",
+        "сургууль барих", "эмнэлэг барих", "цэцэрлэг барих",
+    ],
+    "repair": [
+        "их засвар", "дотоод засал", "гадаад засал", "засварын ажил",
+        "засварчдын", "шинэчлэх ажил", "будагдах",
+    ],
+    "design": [
+        "зураг төсөл", "зураг төслийн", "ded", "fed", "тэзү",
+        "геодезийн", "геологийн", "архитектурын зураг",
+    ],
+    "road": [
+        "авто зам", "хатуу хучилттай зам", "гүүр барих",
+        "замын хучилт", "тротуар", "талбай хучих",
+    ],
+    "engineering": [
+        "цахилгааны ажил", "сантехникийн ажил", "дулааны шугам",
+        "халаалтын систем", "агааржуулалтын", "усан хангамжийн шугам",
+        "лифт", "шугам хоолой угсралт",
+    ],
+    "material": [
+        "материал нийлүүлэх", "бараа нийлүүлэх", "тоосго",
+        "цемент", "арматур нийлүүлэх", "барилгын материал",
+    ],
+    "equipment": [
+        "тоног төхөөрөмж", "машин механизм", "техник хэрэгсэл",
+        "кран", "экскаватор",
+    ],
+    "consulting": [
+        "зөвлөх үйлчилгээ", "судалгааны ажил", "үнэлгээний",
+        "техникийн хяналт", "аудит",
+    ],
+    "service": ["үйлчилгээ"],
 }
 for t in T2.objects.filter(category="other"):
     text = (t.title + " " + t.method).lower()

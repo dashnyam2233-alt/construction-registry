@@ -103,27 +103,28 @@
     <div><div class="logo-t">БНБ — Барилгын нэгдсэн бааз</div><div class="logo-s">barilgainfo.mn</div></div>
   </a>
   <div class="nav-links">
-    <a href="/public/" class="nl {% if not tab or tab == 'home' %}on{% endif %}">Нүүр</a>
-    <a href="/ads/" class="nl {% if tab == 'ads' %}on{% endif %}">Зарууд</a>
-    <a href="/public/?tab=companies" class="nl {% if tab == 'companies' %}on{% endif %}">Компаниуд</a>
-    <a href="/ads/?cat=workers" class="nl {% if tab == 'workers' %}on{% endif %}">Ажилтан</a>
-    <a href="/news/" class="nl {% if tab == 'news' %}on{% endif %}">Мэдээ</a>↵    <a href="/tender/" class="nl">📋 Тендер</a>
-    <a href="/budget/" class="nl">🤖 AI Төсөв</a>
+    <a href="/public/" class="nl {% if not tab or tab == 'home' %}on{% endif %}"><span data-translate>Нүүр</span></a>
+    <a href="/ads/" class="nl {% if tab == 'ads' %}on{% endif %}"><span data-translate>Зарууд</span></a>
+    <a href="/public/?tab=companies" class="nl {% if tab == 'companies' %}on{% endif %}"><span data-translate>Компаниуд</span></a>
+    <a href="/ads/?cat=workers" class="nl {% if tab == 'workers' %}on{% endif %}"><span data-translate>Ажилтан</span></a>
+    <a href="/news/" class="nl {% if tab == 'news' %}on{% endif %}"><span data-translate>Мэдээ</span></a>↵    <a href="/tender/" class="nl"><span data-translate>📋 Тендер</span></a>
+    <a href="/budget/" class="nl"><span data-translate>🤖 AI Төсөв</span></a>
   </div>
   <div class="nav-r">
+  <button id="lang-toggle-btn" type="button">🇲🇳 <span>МН</span><span class="lang-sep">|</span><span class="lang-dim">EN</span></button>
     {% if user.is_authenticated %}
       <span style="color:#cbd5e1;font-size:12px;">{{ display_name }}</span>
       <a href="/profile/" class="nb nb-o">Профайл</a>
       <form method="post" action="/logout/" style="display:inline;">{% csrf_token %}<button type="submit" class="nb nb-o">Гарах</button></form>
     {% else %}
-      <a href="/login/" class="nb nb-o">Нэвтрэх</a>
+      <a href="/login/" class="nb nb-o"><span data-translate>Нэвтрэх</span></a>
     {% endif %}
   </div>
 </nav>
 
 <div class="hero">
-  <div class="hero-title">Монголын барилгын нэгдсэн платформ</div>
-  <div class="hero-sub">Зар, компани, ажилтан, материал — бүгд нэг дороос</div>
+  <div class="hero-title"><span data-translate>Монголын барилгын нэгдсэн платформ</span></div>
+  <div class="hero-sub"><span data-translate>Зар, компани, ажилтан, материал</span> — бүгд нэг дороос</div>
   <form method="get" action="/ads/" class="search-box">
     <input class="search-inp" name="q" placeholder="Юу хайж байна вэ? Жишээ: тоосго, инженер, барилга компани..." value="{{ request.GET.q|default:'' }}">
     <select class="search-sel" name="cat">
@@ -131,33 +132,33 @@
       <option value="house">Орон сууц</option>
       <option value="construction">Барилга ажил</option>
       <option value="material">Материал</option>
-      <option value="worker">Ажилтан</option>
+      <option value="worker"><span data-translate>Ажилтан</span></option>
       <option value="repair">Засвар</option>
     </select>
     <button type="submit" class="search-btn">🔍 Хайх</button>
   </form>
   <div class="hero-stats">
     <div class="hs"><div class="n">{{ companies_count }}</div><div class="l">Компани</div></div>
-    <div class="hs"><div class="n">{{ workers_count }}</div><div class="l">Ажилтан</div></div>
+    <div class="hs"><div class="n">{{ workers_count }}</div><div class="l"><span data-translate>Ажилтан</span></div></div>
     <div class="hs"><div class="n">{{ slider_ads|length }}</div><div class="l">Зар</div></div>
-    <div class="hs"><div class="n">{{ chat_stream|length }}</div><div class="l">Мэдээ</div></div>
+    <div class="hs"><div class="n">{{ chat_stream|length }}</div><div class="l"><span data-translate>Мэдээ</span></div></div>
   </div>
 </div>
 
 <div class="cats">
-  <a href="/public/" class="cat {% if not tab or tab == 'home' %}on{% endif %}">🏠 Бүгд</a>
-  <a href="/ads/?cat=realestate" class="cat {% if tab == 'house' %}on{% endif %}">🏘️ Орон сууц & Барилга</a>
-  <a href="/ads/?cat=material" class="cat {% if tab == 'material' %}on{% endif %}">🧱 Материал & Тоног</a>
-  <a href="/ads/?cat=worker" class="cat {% if tab == 'worker' %}on{% endif %}">👷 Бригад & Ажилчид</a>
-  <a href="/ads/?cat=service" class="cat {% if tab == 'repair' %}on{% endif %}">🔧 Засвар & Үйлчилгээ</a>
-  <a href="/ads/?cat=design" class="cat {% if tab == 'design' %}on{% endif %}">📐 Зураг төсөл</a>
-  <a href="/ads/" class="cat {% if tab == 'ads' %}on{% endif %}">📢 Бүх зар</a>
+  <a href="/public/" class="cat {% if not tab or tab == 'home' %}on{% endif %}"><span data-translate>🏠 Бүгд</span></a>
+  <a href="/ads/?cat=realestate" class="cat {% if tab == 'house' %}on{% endif %}"><span data-translate>🏘️ Орон сууц & Барилга</span></a>
+  <a href="/ads/?cat=material" class="cat {% if tab == 'material' %}on{% endif %}"><span data-translate>🧱 Материал & Тоног</span></a>
+  <a href="/ads/?cat=worker" class="cat {% if tab == 'worker' %}on{% endif %}"><span data-translate>👷 Бригад & Ажилчид</span></a>
+  <a href="/ads/?cat=service" class="cat {% if tab == 'repair' %}on{% endif %}"><span data-translate>🔧 Засвар & Үйлчилгээ</span></a>
+  <a href="/ads/?cat=design" class="cat {% if tab == 'design' %}on{% endif %}"><span data-translate>📐 Зураг төсөл</span></a>
+  <a href="/ads/" class="cat {% if tab == 'ads' %}on{% endif %}"><span data-translate>📢 Бүх зар</span></a>
 </div>
 
 <div class="wrap">
   <div>
 
-    <div class="sec-hd"><div class="sec-t">🔥 Онцлох зарууд</div><a href="/ads/" class="sec-more">Бүгдийг харах →</a></div>
+    <div class="sec-hd"><div class="sec-t">🔥 <span data-translate>Онцлох зарууд</span></div><a href="/ads/" class="sec-more"><span data-translate>Бүгдийг харах</span> →</a></div>
     <div class="ads-grid">
       {% for ad in slider_ads|slice:":4" %}
       <div class="ad">
@@ -177,7 +178,7 @@
       {% endfor %}
     </div>
 
-    <div class="sec-hd"><div class="sec-t">🏢 Бүртгэлтэй компаниуд</div><a href="/public/?tab=companies" class="sec-more">Бүгдийг харах →</a></div>
+    <div class="sec-hd"><div class="sec-t">🏢 <span data-translate>Бүртгэлтэй компаниуд</span></div><a href="/public/?tab=companies" class="sec-more"><span data-translate>Бүгдийг харах</span> →</a></div>
     <div class="comp-list">
       {% for c in recent_companies %}
       <a href="/company/{{ c.slug }}/" class="comp-row">
@@ -190,13 +191,13 @@
       {% endfor %}
     </div>
 
-    <div class="sec-hd"><div class="sec-t">📰 Барилгын мэдээ</div><a href="/news/" class="sec-more">Бүгдийг харах →</a></div>
+    <div class="sec-hd"><div class="sec-t">📰 <span data-translate>Барилгын мэдээ</span></div><a href="/news/" class="sec-more"><span data-translate>Бүгдийг харах</span> →</a></div>
     <div class="news-list">
       {% for post in chat_stream|slice:":4" %}
       <div class="news-row">
         <div class="news-img">📰</div>
         <div>
-          <span class="news-tag">Мэдээ</span>
+          <span class="news-tag"><span data-translate>Мэдээ</span></span>
           <div class="news-t">{{ post.title|default:"Мэдээлэл" }}</div>
           <div class="news-m">📅 {{ post.created_at|date:"Y-m-d" }} · {{ post.author|default:"" }}</div>
         </div>
@@ -211,12 +212,12 @@
   <div class="sb">
 
     <div class="sb-card">
-      <div class="sb-hd">📂 Ангилалаар хайх</div>
+      <div class="sb-hd">📂 <span data-translate>Ангилалаар хайх</span></div>
       <div class="sb-body">
         <div class="cat-links">
           <a href="/ads/?cat=realestate" class="cl"><span class="cl-ic">🏠</span>Орон сууц</a>
           <a href="/ads/?cat=material" class="cl"><span class="cl-ic">🧱</span>Материал</a>
-          <a href="/ads/?cat=worker" class="cl"><span class="cl-ic">👷</span>Ажилтан</a>
+          <a href="/ads/?cat=worker" class="cl"><span class="cl-ic">👷</span><span data-translate>Ажилтан</span></a>
           <a href="/ads/?cat=service" class="cl"><span class="cl-ic">🔧</span>Засвар</a>
           <a href="/ads/?cat=design" class="cl"><span class="cl-ic">📐</span>Зураг</a>
           <a href="/ads/" class="cl"><span class="cl-ic">📢</span>Бүх зар</a>
@@ -225,14 +226,14 @@
     </div>
 
     <div class="sb-card">
-      <div class="sb-hd">⚡ Хурдан хандах</div>
+      <div class="sb-hd">⚡ <span data-translate>Хурдан хандах</span></div>
       <div class="sb-body">
         <div class="ql-list">
           <a href="/register/" class="ql">📢 Зар оруулах</a>
           <a href="/register/" class="ql">🏢 Компани бүртгэх</a>
           <a href="/ads/?cat=worker" class="ql">👷 Ажилтан хайх</a>
           <a href="/public/?tab=contact" class="ql">📞 Холбоо барих</a>
-          <a href="/tender/" class="nl">📋 Тендер</a>
+          <a href="/tender/" class="nl"><span data-translate>📋 Тендер</span></a>
           {% if is_admin_like %}<a href="/admin/" class="ql">⚙️ Удирдлага</a>{% endif %}
         </div>
       </div>
@@ -272,7 +273,7 @@
 </div>
 
 <footer class="footer">
-  <div>© 2026 barilgainfo.mn · Монголын барилгын нэгдсэн платформ</div>
+  <div>© 2026 barilgainfo.mn · <span data-translate>Монголын барилгын нэгдсэн платформ</span></div>
   <div style="margin-top:6px;"><a href="/public/?tab=contact">Холбоо барих</a> · <a href="/register/">Бүртгүүлэх</a> · <a href="/admin/">Удирдлага</a></div>
 </footer>
 
@@ -412,5 +413,15 @@ function aiGetCookie(name) {
 }
 </script>
 
+<style>
+  #lang-toggle-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border:1px solid #2d4f63;border-radius:20px;background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:#cbd5e1;transition:all 0.2s;white-space:nowrap;}
+  #lang-toggle-btn:hover{border-color:#f59e0b;color:#f59e0b;}
+  #lang-toggle-btn:disabled{opacity:.6;cursor:wait;}
+  #lang-toggle-btn.translating::after{content:"";display:inline-block;width:10px;height:10px;border:2px solid #f59e0b;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;margin-left:4px;}
+  .lang-sep{color:#2d4f63;margin:0 1px;}
+  .lang-dim{color:#64748b;font-weight:400;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+<script src="{% static 'js/language_switcher.js' %}"></script>
 </body>
 </html>

@@ -20,11 +20,13 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
+    "social_core.backends.facebook.FacebookOAuth2",
     "apps.accounts.backends.EmailOrUsernameModelBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
 INSTALLED_APPS = [
+    'social_django',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -133,4 +135,11 @@ VIBER_AUTH_TOKEN = os.getenv("VIBER_AUTH_TOKEN", "")
 SMS_GATEWAY_URL = os.getenv("SMS_GATEWAY_URL", "")
 SMS_GATEWAY_TOKEN = os.getenv("SMS_GATEWAY_TOKEN", "")
 SMS_SENDER_NAME = os.getenv("SMS_SENDER_NAME", "BNB")
-ANTHROPIC_API_KEY = "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"
+ANTHROPIC_API_KEY = "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"
+SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('SOCIAL_AUTH_FACEBOOK_KEY', '')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET', '')
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'fields': 'id,name,email'}
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/public/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/public/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login/'

@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
+from .otp_views import send_otp, verify_otp
 from .views import (
     budget_calculator,
     budget_excel,
@@ -16,15 +17,18 @@ from .views import (
     public_login,
     personal_profile,
     company_profile,
+    company_edit,
     auth_facebook,
     auth_emongolia,
     auth_bank,
     register_view,
     ad_create,
     ad_list,
+    api_material_prices,
 )
 
 urlpatterns = [
+    path("api/material-prices/", api_material_prices, name="api_material_prices"),
     path("", RedirectView.as_view(url="/public/", permanent=False), name="home"),
     path("home/", home, name="home_page"),
     path("public/", public_home, name="public_home"),
@@ -32,9 +36,9 @@ urlpatterns = [
     path("register/", register_view, name="register"),
     path("profile/", personal_profile, name="personal_profile"),
     path("company/<slug:slug>/", company_profile, name="company_profile"),
-    path("auth/facebook/", auth_facebook, name="auth_facebook"),
-    path("auth/emongolia/", auth_emongolia, name="auth_emongolia"),
-    path("auth/bank/", auth_bank, name="auth_bank"),
+    path("company/<slug:slug>/edit/", company_edit, name="company_edit"),
+    path("auth/send-otp/", send_otp, name="send_otp"),
+    path("auth/verify-otp/", verify_otp, name="verify_otp"),
     path("logout/", auth_views.LogoutView.as_view(next_page="/public/"), name="logout"),
     path("dashboard/", RedirectView.as_view(url="/public/", permanent=False)),
     path("ads/", ad_list, name="ad_list"),

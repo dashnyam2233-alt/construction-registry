@@ -6,8 +6,11 @@
   <title>Нэвтрэх</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:system-ui,sans-serif;background:#f0f4f8;min-height:100vh;display:grid;place-items:center;padding:24px;}
-    .card{width:min(400px,94vw);background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;}
+    body{font-family:system-ui,sans-serif;background:#f0f4f8;min-height:100vh;padding:16px;display:flex;justify-content:center;align-items:center;}
+    .wrap{width:min(400px,94vw);margin-top:0;}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#2f6477;text-decoration:none;font-weight:600;padding:7px 14px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;margin-bottom:20px;}
+    .back-btn:hover{background:#f0f4f8;}
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px;}
     .logo{text-align:center;margin-bottom:24px;}
     .logo-icon{width:52px;height:52px;background:#2f6477;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
     .logo-icon svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2;}
@@ -17,6 +20,10 @@
     .field label{display:block;font-size:12px;font-weight:600;color:#4a5568;margin-bottom:5px;}
     .field input{width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1a202c;outline:none;}
     .field input:focus{border-color:#2f6477;}
+    .pw-wrap{position:relative;}
+    .pw-wrap input{padding-right:40px;}
+    .pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#a0aec0;font-size:18px;line-height:1;padding:4px;}
+    .pw-eye:hover{color:#2f6477;}
     .btn-main{width:100%;padding:10px;background:#2f6477;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
     .divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
     .divider span{font-size:12px;color:#a0aec0;white-space:nowrap;}
@@ -29,38 +36,130 @@
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21v-6h6v6"/></svg>
+  <div class="wrap">
+    <div class="card">
+      <a href="javascript:history.back()" class="back-btn">&#8592; Буцах</a>
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21v-6h6v6"/></svg>
+        </div>
+        <h1>Барилгачдын нэгдсэн бүртгэл</h1>
+        <p>Нэвтрэх мэдээллээ оруулна уу</p>
       </div>
-      <h1>Барилгачдын нэгдсэн бүртгэл</h1>
-      <p>Нэвтрэх мэдээллээ оруулна уу</p>
-    </div>
-    {% if form.errors %}
-      <div class="err">Нэвтрэх мэдээлэл буруу байна. Дахин шалгаарай.</div>
-    {% endif %}
-    <form method="post">
-      {% csrf_token %}
-      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
-      <div class="field">
-        <label for="id_username">Хэрэглэгчийн нэр эсвэл и-мэйл</label>
-        <input type="text" name="username" id="id_username" placeholder="username" autofocus>
+      {% if form.errors %}
+        <div class="err">Нэвтрэх мэдээлэл буруу байна. Дахин шалгаарай.</div>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <div class="field">
+          <label for="id_username">Хэрэглэгчийн нэр эсвэл и-мэйл</label>
+          <input type="text" name="username" id="id_username" placeholder="username" autofocus>
+        </div>
+        <div class="field">
+          <label for="id_password">Нууц үг</label>
+          <div class="pw-wrap">
+            <input type="password" name="password" id="id_password" placeholder="••••••••">
+            <button type="button" class="pw-eye" onclick="togglePw()" id="pw-btn">&#128065;</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-main">Нэвтрэх</button>
+      </form>
+      <div class="divider"><hr><span>эсвэл</span><hr></div>
+      <a href="/auth/login/facebook/" class="btn-social">📘 Facebook-ээр нэвтрэх</a>
+      <a href="/auth/emongolia/" class="btn-social">e-Mongolia-аар нэвтрэх <span class="badge">Албан ёсны</span></a>
+      <a href="#" class="btn-social" onclick="openOTP();return false;">📱 Утасны дугаараар нэвтрэх</a>
+      <div class="footer">
+        <a href="/accounts/password_reset/">Нууц үг мартсан?</a>
+        <a href="/register/">Шинээр бүртгүүлэх</a>
       </div>
-      <div class="field">
-        <label for="id_password">Нууц үг</label>
-        <input type="password" name="password" id="id_password" placeholder="••••••••">
-      </div>
-      <button type="submit" class="btn-main">Нэвтрэх</button>
-    </form>
-    <div class="divider"><hr><span>эсвэл</span><hr></div>
-    <a href="/auth/facebook/" class="btn-social">Facebook-ээр нэвтрэх</a>
-    <a href="/auth/emongolia/" class="btn-social">e-Mongolia-аар нэвтрэх <span class="badge">Албан ёсны</span></a>
-    <a href="/auth/bank/" class="btn-social">Банкны кодоор нэвтрэх</a>
-    <div class="footer">
-     <a href="/accounts/password_reset/">Нууц үг мартсан?</a>
-      <a href="/register/">Шинээр бүртгүүлэх</a>
     </div>
   </div>
+  <script>
+  function togglePw(){
+    var inp = document.getElementById("id_password");
+    var btn = document.getElementById("pw-btn");
+    if(inp.type==="password"){inp.type="text";btn.innerHTML="&#128584;";}
+    else{inp.type="password";btn.innerHTML="&#128065;";}
+  }
+  </script>
+
+<!-- OTP Modal -->
+<style>
+.otp-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;}
+.otp-modal.open{display:flex;}
+.otp-box{background:#fff;border-radius:16px;padding:28px;width:min(360px,90vw);}
+.otp-title{font-size:16px;font-weight:700;color:#1a202c;margin-bottom:6px;}
+.otp-sub{font-size:13px;color:#718096;margin-bottom:20px;}
+.otp-inp{width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;}
+.otp-inp:focus{border-color:#2f6477;}
+.otp-btn{width:100%;padding:10px;background:#2f6477;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;}
+.otp-btn:disabled{background:#94a3b8;}
+.otp-err{color:#c53030;font-size:12px;margin-bottom:8px;display:none;}
+.otp-back{font-size:12px;color:#2f6477;cursor:pointer;text-align:center;display:block;margin-top:4px;}
+</style>
+<div class="otp-modal" id="otp-modal">
+  <div class="otp-box">
+    <div id="otp-step1">
+      <div class="otp-title">📱 Утасны дугаараар нэвтрэх</div>
+      <div class="otp-sub">Таны утасны дугаарт OTP код илгээнэ</div>
+      <input type="tel" id="otp-phone" class="otp-inp" placeholder="99xxxxxx">
+      <div class="otp-err" id="otp-err1"></div>
+      <button class="otp-btn" onclick="sendOTP()">Код илгээх</button>
+      <span class="otp-back" onclick="closeOTP()">← Буцах</span>
+    </div>
+    <div id="otp-step2" style="display:none;">
+      <div class="otp-title">🔐 OTP код оруулах</div>
+      <div class="otp-sub" id="otp-phone-display"></div>
+      <input type="number" id="otp-code" class="otp-inp" placeholder="6 оронтой код" maxlength="6">
+      <div class="otp-err" id="otp-err2"></div>
+      <button class="otp-btn" onclick="verifyOTP()">Нэвтрэх</button>
+      <span class="otp-back" onclick="backToPhone()">← Дугаар өөрчлөх</span>
+    </div>
+  </div>
+</div>
+<script>
+function openOTP(){document.getElementById("otp-modal").classList.add("open");}
+function closeOTP(){document.getElementById("otp-modal").classList.remove("open");}
+function backToPhone(){
+  document.getElementById("otp-step1").style.display="block";
+  document.getElementById("otp-step2").style.display="none";
+}
+async function sendOTP(){
+  var phone = document.getElementById("otp-phone").value.trim();
+  var err = document.getElementById("otp-err1");
+  if(!phone){err.style.display="block";err.textContent="Утасны дугаар оруулна уу";return;}
+  err.style.display="none";
+  var btn = document.querySelector("#otp-step1 .otp-btn");
+  btn.disabled=true;btn.textContent="Илгээж байна...";
+  try{
+    var r = await fetch("/auth/send-otp/",{method:"POST",headers:{"Content-Type":"application/json","X-CSRFToken":getCookie("csrftoken")},body:JSON.stringify({phone:phone})});
+    var d = await r.json();
+    if(d.success){
+      document.getElementById("otp-step1").style.display="none";
+      document.getElementById("otp-step2").style.display="block";
+      document.getElementById("otp-phone-display").textContent="+976 "+phone+" дугаарт код илгээлээ";
+    }else{err.style.display="block";err.textContent=d.error;}
+  }catch(e){err.style.display="block";err.textContent="Алдаа гарлаа";}
+  btn.disabled=false;btn.textContent="Код илгээх";
+}
+async function verifyOTP(){
+  var phone = document.getElementById("otp-phone").value.trim();
+  var code = document.getElementById("otp-code").value.trim();
+  var err = document.getElementById("otp-err2");
+  if(!code){err.style.display="block";err.textContent="Код оруулна уу";return;}
+  err.style.display="none";
+  var btn = document.querySelector("#otp-step2 .otp-btn");
+  btn.disabled=true;btn.textContent="Шалгаж байна...";
+  try{
+    var r = await fetch("/auth/verify-otp/",{method:"POST",headers:{"Content-Type":"application/json","X-CSRFToken":getCookie("csrftoken")},body:JSON.stringify({phone:phone,code:code})});
+    var d = await r.json();
+    if(d.success){window.location.href=d.redirect;}
+    else{err.style.display="block";err.textContent=d.error;}
+  }catch(e){err.style.display="block";err.textContent="Алдаа гарлаа";}
+  btn.disabled=false;btn.textContent="Нэвтрэх";
+}
+function getCookie(n){var v=document.cookie.match("(^|;) ?"+n+"=([^;]*)(;|$)");return v?v[2]:null;}
+</script>
 </body>
 </html>

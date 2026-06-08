@@ -295,6 +295,7 @@ class Tender(models.Model):
     organization = models.CharField("Захиалагч", max_length=300, blank=True, default="")
     price = models.CharField("Үнэ", max_length=100, blank=True, default="")
     deadline = models.CharField("Хугацаа", max_length=20, blank=True, default="")
+    open_date = models.CharField("Нээгдэх огноо", max_length=20, blank=True, default="")
     method = models.CharField("ХАА журам", max_length=200, blank=True, default="")
     tender_code = models.CharField("Тендерийн дугаар", max_length=100, blank=True, default="")
     url = models.URLField("Холбоос", max_length=500, blank=True, default="")

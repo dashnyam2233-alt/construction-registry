@@ -89,13 +89,263 @@
     .type-card .icon{font-size:28px;margin-bottom:6px;}
     .type-card .name{font-size:13px;font-weight:700;color:#1e293b;}
     .type-card .desc{font-size:11px;color:#64748b;margin-top:3px;}
-    .subtype-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+    .subtype-grid{display:none;}
+    .subtype-dropdown{margin-top:10px;margin-bottom:14px;}
+    .subtype-dropdown label{font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px;display:block;}
+    .subtype-select{width:100%;padding:10px 14px;border:1.5px solid #f59e0b;border-radius:8px;font-size:13px;color:#1e293b;background:#fff;cursor:pointer;appearance:auto;}
+    .subtype-select:focus{outline:none;border-color:#e08c00;}
     .subtype-card{border:1.5px solid #e2e8f0;border-radius:8px;padding:10px;cursor:pointer;transition:all 0.2s;}
     .subtype-card:hover{border-color:#f59e0b;}
     .subtype-card.selected{border-color:#f59e0b;background:#fef3c7;}
     .subtype-card .sname{font-size:12px;font-weight:600;color:#1e293b;}
     .subtype-card .sdesc{font-size:11px;color:#64748b;}
   </style>
+<script>
+window.showEngInput = function(engType) {
+  var names = {
+    heat_pit:'Дулааны худаг', water_pit:'Усны худаг',
+    heat_pipe:'Дулааны шугам', sewer:'Ариутгах татуурга',
+    electric_line:'Гадна цахилгааны шугам', lighting:'Гэрэлтүүлгийн шугам',
+    telecom:'Холбоо, дохиолол', gas_pipe:'Дулаан хангамжийн шугам'
+  };
+  var title = document.getElementById('eng_input_title');
+  if(title) title.textContent = '📐 ' + (names[engType]||engType) + ' — Хэмжээ оруулах';
+  var showLen = ['heat_pipe','sewer','electric_line','telecom','gas_pipe'].indexOf(engType) >= 0;
+  var lenRow = document.getElementById('eng_length_row');
+  var cntRow = document.getElementById('eng_count_row');
+  var lenLabel = document.getElementById('eng_length_label');
+  var cntLabel = document.getElementById('eng_count_label');
+  var lenLabels = {heat_pipe:'Шугамын урт (метр)', sewer:'Шугамын урт (метр)',
+    electric_line:'Кабелийн урт (метр)', telecom:'Кабелийн урт (метр)', gas_pipe:'Шугамын урт (метр)'};
+  var cntLabels = {heat_pit:'Тоо ширхэг', water_pit:'Тоо ширхэг', lighting:'Баганын тоо'};
+  if(lenLabel) lenLabel.textContent = lenLabels[engType] || 'Урт (метр)';
+  if(cntLabel) cntLabel.textContent = cntLabels[engType] || 'Тоо ширхэг';
+  if(lenRow) lenRow.style.display = showLen ? 'block' : 'none';
+  if(cntRow) cntRow.style.display = showLen ? 'none' : 'block';
+  var step1 = document.getElementById('step1');
+  var engCard = document.getElementById('eng_input_card');
+  var prog = document.getElementById('progress');
+  if(step1) step1.style.display = 'none';
+  if(engCard) engCard.style.display = 'block';
+  if(prog) prog.style.display = 'none';
+  // Extra fields
+  var extra = document.getElementById('eng_extra_fields');
+  if(extra) {
+    extra.innerHTML = '';
+    var fields = {
+      heat_pit: [
+        {id:'size',label:'Хэмжээ (урт x өргөн)',type:'select',opts:['1200x1200','1500x1500','2000x1500','2000x2000','2500x2000','3000x2000','өөр'],def:'1500x1500'},
+        {id:'depth',label:'Гүн (метр)',type:'number',def:'2.3',min:'1',step:'0.1'},
+        {id:'wall_thick',label:'Ханын зузаан (мм)',type:'select',opts:['200мм','250мм','300мм','350мм','400мм'],def:'300мм'},
+        {id:'concrete_grade',label:'Бетоны марк',type:'select',opts:['B20','B25','B30'],def:'B25'},
+        {id:'insulation',label:'Гадна дулаалга',type:'select',opts:['XPS 100мм','PPU 80мм','Дулаалгагүй'],def:'XPS 100мм'},
+      ],
+      water_pit: [
+        {id:'depth',label:'Гүн (метр)',type:'number',def:'3.0',min:'1',step:'0.5'},
+        {id:'diameter',label:'Диаметр (метр)',type:'number',def:'1.5',min:'0.8',step:'0.1'},
+        {id:'cover_material',label:'Бүрхүүлийн материал',type:'select',opts:['бетон','тоосго']},
+      ],
+      heat_pipe: [
+        {id:'pipe_diameter',label:'Хоолойн диаметр',type:'select',opts:['57мм','76мм','89мм','108мм','133мм','159мм','219мм','273мм'],def:'219мм'},
+        {id:'pipe_material',label:'Хоолойн материал',type:'select',opts:['Pre-insulated (PPU)','Ган утасгүй','Ган тосолсон','Зэс']},
+        {id:'insulation_type',label:'Дулаалгын төрөл',type:'select',opts:['PPU (полиуретан)','Минерал хөвөн','Шилэн хөвөн','Дулаалгагүй']},
+        {id:'trench_depth',label:'Шуудууны гүн (метр)',type:'number',def:'1.5',min:'1.0',step:'0.1'},
+        {id:'trench_type',label:'Шуудууны төрөл',type:'select',opts:['шороон','элстэй','бетон суваг']},
+      ],
+      sewer: [
+        {id:'pipe_diameter',label:'Хоолойн диаметр',type:'select',opts:['110мм','160мм','200мм','250мм','315мм','400мм','500мм'],def:'315мм'},
+        {id:'pipe_material',label:'Хоолойн материал',type:'select',opts:['PVC SN4','PVC SN8','HDPE','Бетон Ø300','Бетон Ø400']},
+        {id:'depth',label:'Гүн (метр)',type:'number',def:'2.0',min:'1.0',step:'0.5'},
+        {id:'manholes',label:'Худгийн тоо',type:'number',def:'2',min:'0'},
+        {id:'manhole_type',label:'Худгийн төрөл',type:'select',opts:['Бетон Ø1000','Бетон Ø1200','Полимер Ø1000','HDPE Ø1200']},
+      ],
+      electric_line: [
+        {id:'voltage',label:'Хүчдэл',type:'select',opts:['0.4кВ','6кВ','10кВ'],onchange:'updateCablesByVoltage(this.value)'},
+        {id:'cable_mark',label:'Кабелийн марк',type:'api_select',api:'/api/material-prices/?category=mat_elec&search=кабель&voltage=0.4кВ',def:'Кабель АВВГ 4х16'},
+        {id:'cable_type',label:'Суурилуулах арга',type:'select',opts:['газар доорх','агаарын']},
+        {id:'conduit',label:'Хамгаалалтын хоолой',type:'select',opts:['HDPE 50мм','HDPE 63мм','HDPE 110мм','хоолойгүй']},
+        {id:'poles',label:'Баганын тоо (0=хоолойгүй)',type:'number',def:'0',min:'0'},
+      ],
+      lighting: [
+        {id:'pole_height',label:'Баганын өндөр (метр)',type:'select',opts:['4м','5м','6м','8м','10м','12м'],def:'6м'},
+        {id:'lamp_type',label:'Гэрлийн төрөл',type:'select',opts:['LED 50Вт','LED 100Вт','LED 150Вт','натри 150Вт','металл галид 150Вт']},
+        {id:'cable_mark',label:'Кабелийн марк',type:'api_select',api:'/api/material-prices/?category=mat_elec&search=кабель',def:'АВВГ 4х16'},
+        {id:'pipe_length',label:'Кабелийн урт (метр)',type:'number',def:'250',min:'10'},
+      ],
+      telecom: [
+        {id:'cable_type',label:'Кабелийн төрөл',type:'select',opts:['оптик ВОЛС','оптик DropCable','UTP cat6','UTP cat6A','FTP cat6','коаксиал RG-6']},
+        {id:'conduit',label:'Хамгаалалтын хоолой',type:'select',opts:['HDPE 32мм','HDPE 40мм','HDPE 50мм','хоолойгүй']},
+      ],
+      gas_pipe: [
+        {id:'pipe_diameter',label:'Хоолойн диаметр',type:'select',opts:['57мм','76мм','89мм','108мм','133мм','159мм','219мм'],def:'108мм'},
+        {id:'pipe_material',label:'Хоолойн материал',type:'select',opts:['Ган (утасгүй)','Ган (тосолсон)','Pre-insulated','HDPE']},
+        {id:'insulation',label:'Дулаалгын төрөл',type:'select',opts:['PPU цилиндр','минерал хөвөн','шилэн хөвөн','дулаалгагүй']},
+        {id:'pressure',label:'Даралтын түвшин',type:'select',opts:['бага <0.05МПа','дунд 0.05-0.3МПа','өндөр >0.3МПа'],def:'дунд 0.05-0.3МПа'},
+      ],
+    };
+    var lst = 'width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1e293b;background:#fff;margin-top:3px;';
+    (fields[engType]||[]).forEach(function(f) {
+      var div = document.createElement('div');
+      var lbl = document.createElement('label');
+      lbl.textContent = f.label;
+      lbl.style.cssText = 'font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:3px;';
+      div.appendChild(lbl);
+      if(f.type==='api_select') {
+        var sel = document.createElement('select');
+        sel.id = 'eng_extra_'+f.id; sel.name = f.id; sel.style.cssText = lst;
+        var loadOpt = document.createElement('option');
+        loadOpt.textContent = '⏳ Ачааллаж байна...';
+        sel.appendChild(loadOpt);
+        div.appendChild(sel);
+        var customDiv2 = document.createElement('div');
+        customDiv2.style.cssText = 'display:none;margin-top:6px;';
+        var customInp2 = document.createElement('input');
+        customInp2.type = 'text';
+        customInp2.placeholder = 'Кабелийн марк бичнэ үү...';
+        customInp2.style.cssText = lst;
+        customInp2.id = 'custom_'+f.id;
+        customDiv2.appendChild(customInp2);
+        div.appendChild(customDiv2);
+        (function(s, defVal, cd, ci) {
+          fetch(f.api)
+            .then(function(r){return r.json();})
+            .then(function(data){
+              s.innerHTML='';
+              data.items.forEach(function(item){
+                var o=document.createElement('option');
+                o.value=item.name;
+                o.textContent=item.name+' — '+item.price.toLocaleString()+'₮/м';
+                if(item.name===defVal) o.selected=true;
+                s.appendChild(o);
+              });
+              var oo=document.createElement('option');
+              oo.value='өөр'; oo.textContent='✏️ Өөр марк оруулах...';
+              s.appendChild(oo);
+              s.addEventListener('change',function(){
+                cd.style.display=this.value==='өөр'?'block':'none';
+              });
+            }).catch(function(){s.innerHTML='<option>Алдаа</option>';});
+        })(sel, f.def||'', customDiv2, customInp2);
+      } else if(f.type==='select') {
+        var sel = document.createElement('select');
+        sel.id = 'eng_extra_'+f.id; sel.name = f.id; sel.style.cssText = lst;
+        if(f.onchange) sel.setAttribute('onchange', f.onchange);
+        (f.opts||[]).forEach(function(o) {
+          var opt = document.createElement('option');
+          opt.value=o; opt.textContent= o==='өөр' ? '✏️ Өөр хэмжээ оруулах...' : o;
+          if(f.def && o===f.def) opt.selected=true;
+          sel.appendChild(opt);
+        });
+        div.appendChild(sel);
+        // Өөр хэмжээ оруулах input (нуугдсан)
+        if(f.onchange) {
+          var customDiv = document.createElement('div');
+          customDiv.id = 'custom_'+f.id+'_div';
+          customDiv.style.display = 'none';
+          customDiv.style.marginTop = '6px';
+          var customInp = document.createElement('input');
+          customInp.type = 'text';
+          customInp.id = 'custom_'+f.id;
+          customInp.placeholder = 'Жишээ: 1800x1800';
+          customInp.style.cssText = lst;
+          customInp.oninput = function() {
+            document.getElementById('eng_extra_'+f.id).value = this.value || 'өөр';
+          };
+          customDiv.appendChild(customInp);
+          div.appendChild(customDiv);
+        }
+      } else {
+        var inp = document.createElement('input');
+        inp.type='number'; inp.id='eng_extra_'+f.id; inp.name=f.id; inp.style.cssText=lst;
+        if(f.def) inp.value=f.def;
+        if(f.min) inp.min=f.min;
+        if(f.step) inp.step=f.step;
+        div.appendChild(inp);
+      }
+      extra.appendChild(div);
+    });
+  }
+};
+window.toggleCustomSize = function(sel) {
+  var div = document.getElementById('custom_size_div');
+  if(!div) {
+    // id-г динамикаар олох
+    var parent = sel.parentNode;
+    var divs = parent.querySelectorAll('div');
+    for(var i=0;i<divs.length;i++) {
+      if(divs[i].id && divs[i].id.indexOf('custom_') === 0) {
+        div = divs[i]; break;
+      }
+    }
+  }
+  if(div) div.style.display = sel.value==='өөр' ? 'block' : 'none';
+};
+window.submitEngInput = function() {
+  var engType = document.getElementById('hidden_eng_type').value;
+  var countEl = document.getElementById('eng_count_inp');
+  var lengthEl = document.getElementById('eng_length_inp');
+  var count = countEl ? countEl.value : '';
+  var length = lengthEl ? lengthEl.value : '';
+  var showLen = ['heat_pipe','sewer','electric_line','telecom','gas_pipe'].indexOf(engType) >= 0;
+  if(showLen && !length) { alert('Уртыг оруулна уу!'); return; }
+  if(!showLen && !count) { alert('Тоо ширхэгийг оруулна уу!'); return; }
+  document.getElementById('hid_eng_count').value = showLen ? length : count;
+  document.getElementById('hid_eng_length').value = showLen ? length : count;
+  document.getElementById('building_type_input').value = 'engineering';
+  document.getElementById('building_category').value = 'engineering';
+  // eng_extra_* field-үүдийг form-д нэмэх
+  var form = document.getElementById('main-form');
+  form.querySelectorAll('.eng-extra-hidden').forEach(function(el){ el.remove(); });
+  // Мөн hidden_* field-үүдийг устгах
+  ['pipe_length','voltage','cable_mark','cable_type','conduit','poles','pole_height','lamp_type','pipe_diameter','pipe_material','insulation','depth','manholes','manhole_type'].forEach(function(fname) {
+    var old = form.querySelector('input[name="' + fname + '"]');
+    if (old) old.remove();
+  });
+  var extraIds = ['pipe_length','voltage','cable_mark','cable_type','conduit','poles',
+                  'pole_height','lamp_type','pipe_diameter','pipe_material','insulation',
+                  'depth','manholes','manhole_type'];
+  extraIds.forEach(function(fname) {
+    var el = document.getElementById('eng_extra_' + fname);
+    if (!el) return;
+    var hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = fname;
+    hidden.value = el.value;
+    hidden.className = 'eng-extra-hidden';
+    form.appendChild(hidden);
+  });
+  // eng_extra_fields div дотрох select-үүдийг нэмэлтээр нэмэх
+  var extraDiv = document.getElementById('eng_extra_fields');
+  if (extraDiv) {
+    extraDiv.querySelectorAll('select, input[type="number"]').forEach(function(el) {
+      var fname = el.id ? el.id.replace('eng_extra_', '') : '';
+      if (!fname || extraIds.indexOf(fname) >= 0) return;
+      var hidden = document.createElement('input');
+      hidden.type = 'hidden';
+      hidden.name = fname;
+      hidden.value = el.value;
+      hidden.className = 'eng-extra-hidden';
+      form.appendChild(hidden);
+    });
+  }
+  form.submit();
+};
+window.onStep1Next = function() {
+  var buildingMain = document.getElementById('sel_building_main') ? document.getElementById('sel_building_main').value : '';
+  var engMain = document.getElementById('sel_eng_main') ? document.getElementById('sel_eng_main').value : '';
+  if(!buildingMain && !engMain) { alert('Барилгын төрөл эсвэл шугам сүлжээ сонгоно уу!'); return; }
+  if(buildingMain && engMain) { alert('Барилга эсвэл шугам сүлжээний аль нэгийг сонгоно уу!'); return; }
+  if(engMain) {
+    document.getElementById('building_type_input').value = 'engineering';
+    document.getElementById('hidden_eng_type').value = engMain;
+    window.showEngInput(engMain);
+  } else {
+    var btype = document.getElementById('building_type_input').value;
+    if(!btype) { alert('Барилгын дэд төрөл сонгоно уу!'); return; }
+    goStep(1,2);
+  }
+};
+</script>
 </head>
 <body>
 <nav class="nav">
@@ -140,131 +390,89 @@
   <div class="step-title">1️⃣ Барилгын төрөл сонгох</div>
   <div class="step-desc">Барилгын үндсэн зориулалтыг сонгоно уу</div>
 
-  <div class="type-grid">
-    <div class="type-card" onclick="selectType('low_rise')" id="tc_low_rise">
-      <div class="icon">🏡</div>
-      <div class="name">Амины орон сууц</div>
-      <div class="desc">1-2 давхар, нэг өрх</div>
+  <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px;">
+
+    <!-- Барилга dropdown -->
+    <div style="border:1.5px solid #e2e8f0;border-radius:10px;padding:16px;background:#fff;" id="group_building">
+      <div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px;">🏗 Барилга</div>
+      <select id="sel_building_main" onchange="onBuildingMainChange(this.value)"
+        style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1e293b;background:#fff;cursor:pointer;">
+        <option value="">— Барилгын төрөл сонгох —</option>
+        <option value="low_rise">🏡 Амины орон сууц (1-2 давхар)</option>
+        <option value="apartment">🏢 Олон айлын орон сууц (3+ давхар)</option>
+        <option value="office">🏢 Оффис / Нийтийн барилга</option>
+        <option value="warehouse">🏭 Үйлдвэр / Агуулах</option>
+      </select>
+      <div id="sub_building" style="margin-top:10px;display:none;">
+        <select id="sel_building_sub" onchange="onBuildingSubChange(this.value)"
+          style="width:100%;padding:10px 14px;border:1.5px solid #f59e0b;border-radius:8px;font-size:13px;color:#1e293b;background:#fff;cursor:pointer;">
+        </select>
+      </div>
     </div>
-    <div class="type-card" onclick="selectType('apartment')" id="tc_apartment">
-      <div class="icon">🏢</div>
-      <div class="name">Олон айлын орон сууц</div>
-      <div class="desc">3+ давхар, олон айл</div>
+
+    <!-- Шугам сүлжээ dropdown -->
+    <div style="border:1.5px solid #e2e8f0;border-radius:10px;padding:16px;background:#fff;" id="group_eng">
+      <div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px;">⚙️ Шугам сүлжээ</div>
+      <select id="sel_eng_main" onchange="onEngMainChange(this.value)"
+        style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1e293b;background:#fff;cursor:pointer;">
+        <option value="">— Инженерийн байгууламж сонгох —</option>
+        <optgroup label="🏗 Дулаан, ус хангамж">
+        <option value="heat_pit">🔥 Дулааны худаг</option>
+        <option value="water_pit">💧 Усны худаг</option>
+        <option value="heat_pipe">🌡 Дулааны шугам</option>
+        <option value="sewer">♻️ Ариутгах татуурга</option>
+        </optgroup>
+        <optgroup label="⚡ Цахилгаан, гэрэлтүүлэг">
+        <option value="electric_line">⚡ Гадна цахилгааны шугам</option>
+        <option value="lighting">💡 Гэрэлтүүлгийн шугам</option>
+        </optgroup>
+        <optgroup label="📡 Холбоо, дохиолол">
+        <option value="telecom">📡 Холбоо, дохиолол (оптик/UTP)</option>
+        </optgroup>
+        <optgroup label="🔧 Бусад">
+        <option value="gas_pipe">🔧 Дулаан хангамжийн шугам</option>
+        </optgroup>
+      </select>
     </div>
-    <div class="type-card" onclick="selectType('office')" id="tc_office">
-      <div class="icon">🏢</div>
-      <div class="name">Оффис / Нийтийн</div>
-      <div class="desc">Оффис, дэлгүүр, сургууль</div>
-    </div>
-    <div class="type-card" onclick="selectType('warehouse')" id="tc_warehouse">
-      <div class="icon">🏭</div>
-      <div class="name">Үйлдвэр / Агуулах</div>
-      <div class="desc">Агуулах, гараж, үйлдвэр</div>
-    </div>
+
   </div>
 
-  <!-- Дэд төрөл -->
-  <div id="subtype_low_rise" style="display:none;">
-    <div class="field"><label>Дэд төрөл</label></div>
-    <div class="subtype-grid">
-      <div class="subtype-card selected" onclick="selectSubtype('low_rise','Амины орон сууц (1 давхар)')" id="st_lr1">
-        <div class="sname">🏠 1 давхар</div>
-        <div class="sdesc">Ердийн амины байшин</div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('low_rise','Амины орон сууц (2 давхар)')" id="st_lr2">
-        <div class="sname">🏠 2 давхар</div>
-        <div class="sdesc">Давхар амины байшин</div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('low_rise','Амины орон сууц (хагас подвалтай)')" id="st_lr3">
-        <div class="sname">🏠 Подвалтай</div>
-        <div class="sdesc">Хагас газар доорх давхартай</div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('low_rise','Засвар өргөтгөл')" id="st_lr4">
-        <div class="sname">🔧 Засвар/Өргөтгөл</div>
-        <div class="sdesc">Байгаа барилгад нэмэлт</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="subtype_apartment" style="display:none;">
-    <div class="field"><label>Давхарын тоо</label></div>
-    <div class="subtype-grid">
-      <div class="subtype-card selected" onclick="selectSubtype('apartment','Олон айлын орон сууц (3-5 давхар)')" id="st_ap1">
-        <div class="sname">🏢 3-5 давхар</div>
-        <div class="sdesc">Дунд давхар</div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('apartment','Олон айлын орон сууц (6-9 давхар)')" id="st_ap2">
-        <div class="sname">🏢 6-9 давхар</div>
-        <div class="sdesc">Өндөр давхар</div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('apartment','Олон айлын орон сууц (10+ давхар)')" id="st_ap3">
-        <div class="sname">🏙 10+ давхар</div>
-        <div class="sdesc">Өндөр цамхаг</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="subtype_office" style="display:none;">
-    <div class="subtype-grid">
-      <div class="subtype-card selected" onclick="selectSubtype('office','Оффисын барилга')" id="st_of1">
-        <div class="sname">🏢 Оффис</div><div class="sdesc"></div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('office','Дэлгүүр, худалдааны төв')" id="st_of2">
-        <div class="sname">🏪 Дэлгүүр</div><div class="sdesc"></div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('office','Сургууль, цэцэрлэг')" id="st_of3">
-        <div class="sname">🏫 Сургууль</div><div class="sdesc"></div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('office','Эмнэлэг')" id="st_of4">
-        <div class="sname">🏥 Эмнэлэг</div><div class="sdesc"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="subtype_warehouse" style="display:none;">
-    <div class="subtype-grid">
-      <div class="subtype-card selected" onclick="selectSubtype('warehouse','Агуулах (хөнгөн бүтэц)')" id="st_wh1">
-        <div class="sname">🏭 Агуулах</div><div class="sdesc">Хөнгөн бүтэц</div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('warehouse','Үйлдвэрийн барилга')" id="st_wh2">
-        <div class="sname">🏭 Үйлдвэр</div><div class="sdesc"></div>
-      </div>
-      <div class="subtype-card" onclick="selectSubtype('warehouse','Гараж, паркинг')" id="st_wh3">
-        <div class="sname">🚗 Гараж</div><div class="sdesc"></div>
-      </div>
-    </div>
-  </div>
-
+  <!-- Hidden inputs -->
   <input type="hidden" name="building_type" id="building_type_input" value="">
   <input type="hidden" name="building_category" id="building_category" value="">
+  <input type="hidden" name="eng_type" id="hidden_eng_type" value="">
 
-  <div class="field-row" style="margin-top:14px;">
-    <div class="field">
-      <label>Чанарын түвшин</label>
-      <select name="quality">
-        <option value="эконом">💰 Эконом</option>
-        <option value="дунд" selected>⭐ Дунд</option>
-        <option value="премиум">💎 Премиум</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Байршил</label>
-      <select name="location">
-        <option value="Улаанбаатар">🏙 Улаанбаатар</option>
-        <option value="Дархан">Дархан</option>
-        <option value="Эрдэнэт">Эрдэнэт</option>
-        <option value="Орон нутаг (аймгийн төв)">Орон нутаг (аймгийн төв)</option>
-        <option value="Орон нутаг (сум)">Орон нутаг (сум)</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="btn-row">
-    <button type="button" class="btn-next" onclick="goStep(1,2)">Дараах →</button>
+  <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+    <button type="button" class="btn-next" onclick="event.preventDefault();event.stopPropagation();onStep1Next();return false;">Дараах →</button>
   </div>
 </div>
 
-<!-- ============================================================ -->
+<div id="eng_input_card" style="display:none;" class="card">
+  <div class="step-title" id="eng_input_title">📐 Хэмжээ оруулах</div>
+  <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+    <div id="eng_count_row">
+      <label id="eng_count_label" style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px;display:block;">Тоо ширхэг</label>
+      <input type="number" id="eng_count_inp" min="1" value="1"
+        style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;">
+      <input type="hidden" name="eng_count" id="hid_eng_count" value="">
+      <input type="hidden" name="length" id="hid_eng_length" value="">
+    </div>
+    <div id="eng_length_row" style="display:none;">
+      <label id="eng_length_label" style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px;display:block;">Шугамын урт (метр)</label>
+      <input type="number" id="eng_length_inp" min="1" value=""
+        style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;" placeholder="100">
+    </div>
+    <!-- Динамик extra fields -->
+    <div id="eng_extra_fields" style="display:flex;flex-direction:column;gap:12px;margin-top:4px;"></div>
+
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <button type="button" onclick="document.getElementById('eng_input_card').style.display='none';document.getElementById('step1').style.display='block';document.getElementById('progress').style.display='flex';"
+        style="padding:10px 20px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;cursor:pointer;">← Буцах</button>
+      <button type="button" onclick="submitEngInput()" class="btn-next" style="flex:1;">🤖 Тооцоолох →</button>
+    </div>
+  </div>
+</div>
+
 <!-- АЛХАМ 2: Хэмжээс -->
 <!-- ============================================================ -->
 <div class="card" id="step2" style="display:none;">
@@ -648,16 +856,173 @@
     <div class="field" id="sel_roof" style="display:none;">
       <input type="hidden" name="roof_type" id="roof_type_hidden" value="Налуу дээвэр (метал)">
     </div>
+    <!-- ГАДНА ФАСАДЫН СИСТЕМ -->
     <div class="field">
-      <label>Гадна фасад</label>
-      <select name="facade">
-        <option value="Шавар штукатур">Шавар штукатур — нийтлэг</option>
-        <option value="Өнгөлгөөний тоосго">Өнгөлгөөний тоосго</option>
-        <option value="Эмульс будаг">Эмульс будаг</option>
-        <option value="Композит хавтан">Композит хавтан</option>
-        <option value="Шилэн фасад">Шилэн фасад</option>
+      <label>Фасадын үндсэн систем</label>
+      <select name="facade_system" id="sel_facade_system" onchange="updateFacadeOptions()">
+        <optgroup label="🪣 Шавардлага + Будаг (СФТК систем)">
+          <option value="plaster_paint">Шавардлага + эмульс будаг — хямд, нийтлэг</option>
+          <option value="plaster_texture">Бүтэцтэй шавардлага (декоратив) — дунд</option>
+          <option value="plaster_tile">Шавардлага + жижиг плита — дунд</option>
+        </optgroup>
+        <optgroup label="🧱 Өрлөгийн фасад">
+          <option value="brick_facing">Өнгөлгөөний тоосго (клинкер)</option>
+          <option value="brick_ceramic">Керамик фасадны плита</option>
+          <option value="stone_natural">Байгалийн чулуу</option>
+          <option value="stone_artificial">Хиймэл чулуу, боржин дуурайлган</option>
+        </optgroup>
+        <optgroup label="🏗 Вентилируемый фасад (Агааржуулалттай)">
+          <option value="vent_composite">Алюмин композит хавтан (ACM)</option>
+          <option value="vent_metal_cassette">Металл касет хавтан</option>
+          <option value="vent_fiber_cement">Фиброцемент хавтан</option>
+          <option value="vent_hpl">HPL хавтан (фенол давирхай)</option>
+          <option value="vent_porcelain">Порцелан гранит хавтан</option>
+        </optgroup>
+        <optgroup label="🔩 Сайдинг">
+          <option value="siding_metal">Металл сайдинг</option>
+          <option value="siding_vinyl">Винил сайдинг — хямд</option>
+          <option value="siding_wood">Модон сайдинг (вагонка)</option>
+          <option value="siding_fiber">Фиброцемент сайдинг</option>
+        </optgroup>
+        <optgroup label="🪟 Шилэн фасад">
+          <option value="glass_curtain">Шилэн хөшиг фасад (Curtain wall)</option>
+          <option value="glass_structural">Бүтцийн шилэн фасад</option>
+          <option value="glass_semi">Хагас шилэн фасад</option>
+        </optgroup>
+        <optgroup label="🏭 Бусад">
+          <option value="sandwich_panel">Сэндвич хавтан — агуулах, үйлдвэр</option>
+          <option value="profsheet">Профнастил гадна хана — хямд</option>
+          <option value="wood_log">Мод, бүртгэл — амины байшин</option>
+        </optgroup>
       </select>
     </div>
+
+    <!-- Фасадын дэлгэрэнгүй сонголт -->
+    <div id="facade_detail_plaster" style="display:block;">
+      <div class="field-row">
+        <div class="field">
+          <label>Будаг, шавардлагын төрөл</label>
+          <select name="facade_paint_type">
+            <option value="Акрил эмульс будаг">Акрил эмульс будаг — стандарт</option>
+            <option value="Силикон будаг">Силикон будаг — тэсвэртэй</option>
+            <option value="Минерал шавардлага">Минерал шавардлага</option>
+            <option value="Акрил бүтэцтэй шавардлага">Акрил бүтэцтэй шавардлага</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Давхаргын тоо</label>
+          <select name="facade_layers">
+            <option value="2 үе">2 үе — стандарт</option>
+            <option value="3 үе">3 үе — чанартай</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="facade_detail_brick" style="display:none;">
+      <div class="field-row">
+        <div class="field">
+          <label>Тоосго, плитын хэмжээ</label>
+          <select name="facade_brick_size">
+            <option value="Клинкер тоосго стандарт">Клинкер тоосго 250x120x65</option>
+            <option value="Фасадны жижиг плита">Жижиг плита 200x50мм</option>
+            <option value="Том форматын плита">Том форматын плита 600x300</option>
+            <option value="Байгалийн чулуу хавтан">Байгалийн чулуу 300x600</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Угсралтын арга</label>
+          <select name="facade_brick_method">
+            <option value="Цавуугаар наах">Цавуугаар наах</option>
+            <option value="Механик бэхэлгээ">Механик бэхэлгээтэй</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="facade_detail_vent" style="display:none;">
+      <div class="field-row">
+        <div class="field">
+          <label>Хавтангийн зузаан</label>
+          <select name="facade_panel_thick">
+            <option value="3мм">3мм — хөнгөн</option>
+            <option value="4мм" selected>4мм — стандарт</option>
+            <option value="6мм">6мм — хүнд</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Субструктурын материал</label>
+          <select name="facade_subframe">
+            <option value="Алюмин профиль">Алюмин профиль — стандарт</option>
+            <option value="Гальваник төмөр">Гальваник төмөр — хямд</option>
+            <option value="Зэврэлтэнд тэсвэртэй ган">Зэврэлтэнд тэсвэртэй ган</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Агааржуулалтын завсар</label>
+        <select name="facade_air_gap">
+          <option value="20-30мм" selected>20-30мм — стандарт</option>
+          <option value="40-50мм">40-50мм — өргөн</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="facade_detail_siding" style="display:none;">
+      <div class="field-row">
+        <div class="field">
+          <label>Сайдингийн өргөн</label>
+          <select name="facade_siding_width">
+            <option value="150мм">150мм — нарийн</option>
+            <option value="200мм" selected>200мм — стандарт</option>
+            <option value="250мм">250мм — өргөн</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Өнгө засал</label>
+          <select name="facade_siding_finish">
+            <option value="Уртасгал будагтай">Уртасгал будагтай</option>
+            <option value="Гялгар">Гялгар (глянц)</option>
+            <option value="Матт">Матт</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="facade_detail_glass" style="display:none;">
+      <div class="field-row">
+        <div class="field">
+          <label>Шилний төрөл</label>
+          <select name="facade_glass_type">
+            <option value="2 давхар шил (IGU)">2 давхар шил (IGU) — стандарт</option>
+            <option value="3 давхар шил">3 давхар шил — өндөр дулаан</option>
+            <option value="Low-E шил">Low-E шил — эрчим хүч хэмнэлттэй</option>
+            <option value="Tinted шил">Тунгалаг бус (tinted) шил</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Хүрээний систем</label>
+          <select name="facade_glass_frame">
+            <option value="Алюмин хүрээ">Алюмин хүрээ — стандарт</option>
+            <option value="Хүрээгүй систем">Хүрээгүй (frameless)</option>
+            <option value="Нийлмэл хүрээ">Нийлмэл хүрээ</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="facade_detail_other" style="display:none;">
+      <div class="field">
+        <label>Нэмэлт тайлбар</label>
+        <select name="facade_other_type">
+          <option value="Сэндвич хавтан гадна">Сэндвич хавтан (PIR/PUR дулаалгатай)</option>
+          <option value="Профнастил гадна хана">Профнастил С8, С10</option>
+          <option value="Мод бүртгэл">Модон бүртгэл, вагонка</option>
+        </select>
+      </div>
+    </div>
+
+    <input type="hidden" name="facade" id="facade_hidden" value="Шавар штукатур">
   </div>
 
   <!-- Хөрс -->
@@ -874,6 +1239,23 @@
 // ============================================================
 // STATE
 // ============================================================
+
+function onStep1Next() {
+  var buildingMain = document.getElementById('sel_building_main') ? document.getElementById('sel_building_main').value : '';
+  var engMain = document.getElementById('sel_eng_main') ? document.getElementById('sel_eng_main').value : '';
+  if(!buildingMain && !engMain) { alert('Барилгын төрөл эсвэл шугам сүлжээ сонгоно уу!'); return; }
+  if(buildingMain && engMain) { alert('Барилга эсвэл шугам сүлжээний аль нэгийг сонгоно уу!'); return; }
+  if(engMain) {
+    document.getElementById('building_type_input').value = 'engineering';
+    document.getElementById('hidden_eng_type').value = engMain;
+    showEngInput(engMain);
+  } else {
+    var btype = document.getElementById('building_type_input').value;
+    if(!btype) { alert('Барилгын дэд төрөл сонгоно уу!'); return; }
+    goStep(1, 2);
+  }
+}
+
 let currentStep = 1;
 let selectedType = '';
 let selectedSubtype = '';
@@ -904,6 +1286,11 @@ function selectType(type) {
 
   // Step 2 талбаруудыг тохируулах
   updateStep2Fields(type);
+  // Инженерийн карт reset
+  ['heat_pit','water_pit','heat_pipe','sewer'].forEach(t => {
+    const tc = document.getElementById('card-'+t);
+    if(tc) tc.classList.remove('selected');
+  });
 }
 
 function selectSubtype(type, subtype) {
@@ -1026,6 +1413,61 @@ function updateFloorFields() {
 }
 
 // ============================================================
+// ФАСАДЫН СОНГОЛТ
+// ============================================================
+function updateFacadeOptions() {
+  const system = document.getElementById('sel_facade_system').value;
+
+  // Бүх дэлгэрэнгүй hide
+  ['plaster','brick','vent','siding','glass','other'].forEach(t => {
+    const el = document.getElementById('facade_detail_'+t);
+    if(el) el.style.display = 'none';
+  });
+
+  // Facade hidden value update
+  const facadeMap = {
+    plaster_paint: 'Шавардлага + эмульс будаг',
+    plaster_texture: 'Бүтэцтэй шавардлага',
+    plaster_tile: 'Шавардлага + плита',
+    brick_facing: 'Өнгөлгөөний тоосго',
+    brick_ceramic: 'Керамик фасадны плита',
+    stone_natural: 'Байгалийн чулуу',
+    stone_artificial: 'Хиймэл чулуу',
+    vent_composite: 'Алюмин композит хавтан',
+    vent_metal_cassette: 'Металл касет хавтан',
+    vent_fiber_cement: 'Фиброцемент хавтан',
+    vent_hpl: 'HPL хавтан',
+    vent_porcelain: 'Порцелан гранит хавтан',
+    siding_metal: 'Металл сайдинг',
+    siding_vinyl: 'Винил сайдинг',
+    siding_wood: 'Модон сайдинг',
+    siding_fiber: 'Фиброцемент сайдинг',
+    glass_curtain: 'Шилэн хөшиг фасад',
+    glass_structural: 'Бүтцийн шилэн фасад',
+    glass_semi: 'Хагас шилэн фасад',
+    sandwich_panel: 'Сэндвич хавтан',
+    profsheet: 'Профнастил гадна хана',
+    wood_log: 'Модон фасад',
+  };
+  document.getElementById('facade_hidden').value = facadeMap[system] || 'Шавар штукатур';
+
+  // Тохирох дэлгэрэнгүй харуулах
+  if(system.startsWith('plaster')) {
+    document.getElementById('facade_detail_plaster').style.display = 'block';
+  } else if(system.startsWith('brick') || system.startsWith('stone')) {
+    document.getElementById('facade_detail_brick').style.display = 'block';
+  } else if(system.startsWith('vent')) {
+    document.getElementById('facade_detail_vent').style.display = 'block';
+  } else if(system.startsWith('siding')) {
+    document.getElementById('facade_detail_siding').style.display = 'block';
+  } else if(system.startsWith('glass')) {
+    document.getElementById('facade_detail_glass').style.display = 'block';
+  } else {
+    document.getElementById('facade_detail_other').style.display = 'block';
+  }
+}
+
+// ============================================================
 // ДЭЭВРИЙН СОНГОЛТ
 // ============================================================
 function updateRoofOptions() {
@@ -1060,10 +1502,63 @@ document.addEventListener('DOMContentLoaded', function() {
 // ============================================================
 // WIZARD NAVIGATION
 // ============================================================
+
+function submitBudget() {
+  const form = document.getElementById('main-form');
+  if (form) form.submit();
+}
+
 function goStep(from, to) {
   // Validation
+  // Инженерийн бол building_type_input-г баталгаажуулах
+  if (window._engType || currentEngType) {
+    document.getElementById('building_type_input').value = 'engineering';
+  }
+  const btype = document.getElementById('building_type_input').value;
   if(to > from) {
-    if(from === 1 && !document.getElementById('building_type_input').value) {
+  // Инженерийн байгууламж бол step 2,3-г алгасаж step 4 руу очно
+  if(from === 1 && btype === 'engineering') {
+    updateEngFormData();
+    // Инженерийн байгууламж: step 2,3 алгасаж шууд form submit хийнэ
+    const form = document.getElementById('main-form');
+    if (form) {
+      // Eng input-уудыг hidden field болгон нэмэх
+      const engFields = {
+        eng_type: currentEngType,
+        length:   document.getElementById('eng-length')?.value   || '',
+        width:    document.getElementById('eng-width')?.value    || '',
+        depth:    document.getElementById('eng-depth')?.value    || document.getElementById('eng-depth2')?.value || '',
+        wall_thick:     document.getElementById('eng-thick')?.value     || '',
+        concrete_grade: document.getElementById('eng-concrete')?.value  || '',
+        diameter:       document.getElementById('eng-diameter')?.value  || '',
+        pipe_length:    document.getElementById('eng-pipe-len')?.value  || document.getElementById('eng-sewer-len')?.value || '',
+        pipe_diameter:  document.getElementById('eng-pipe-dia')?.value  || '',
+        manholes:       document.getElementById('eng-manholes')?.value  || '',
+      };
+      // eng_extra_fields дотрох бүх select, input-ийг нэмэх
+      var extraDiv = document.getElementById('eng_extra_fields');
+      if (extraDiv) {
+        extraDiv.querySelectorAll('select, input').forEach(function(el) {
+          var fname = el.id ? el.id.replace('eng_extra_', '') : el.name;
+          if (!fname) return;
+          engFields[fname] = el.value;
+        });
+      }
+      // pipe_length нэмэх
+      var plEl = document.getElementById('eng_length_inp');
+      if (plEl && plEl.value) engFields['pipe_length'] = plEl.value;
+      Object.entries(engFields).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) {
+          let inp = form.querySelector(`input[name="${k}"]`);
+          if (!inp) { inp = document.createElement('input'); inp.type='hidden'; inp.name=k; form.appendChild(inp); }
+          inp.value = v;
+        }
+      });
+      form.submit();
+    }
+    return;
+  }
+  if(from === 1 && !btype && !document.getElementById('hidden_eng_type').value) {
       alert('Барилгын төрлийг сонгоно уу!');
       return;
     }
@@ -1095,6 +1590,21 @@ function goStep(from, to) {
 
 // Form submit
 document.getElementById('main-form') && document.getElementById('main-form').addEventListener('submit', function(e) {
+  var _et = document.getElementById('hidden_eng_type');
+  if (_et && _et.value) {
+    document.getElementById('building_type_input').value = 'engineering';
+  }
+  const engType = document.getElementById('hidden_eng_type')?.value;
+  if (engType) {
+    document.getElementById('building_type_input').value = 'engineering';
+  }
+  // Инженерийн бол eng_input_card харуулах — submit болохгүй
+  const engMain = document.getElementById('sel_eng_main')?.value;
+  if (engMain && !document.getElementById('hid_eng_count')?.value && !document.getElementById('hid_eng_length')?.value) {
+    e.preventDefault();
+    showEngInput(engMain);
+    return;
+  }
   // Validate
   if(!document.getElementById('building_type_input').value) {
     e.preventDefault();
@@ -1116,7 +1626,321 @@ document.getElementById('main-form') && document.getElementById('main-form').add
   document.getElementById('loading').classList.add('show');
 });
 
+
+// JavaScript-аар тоог таслалтай болгох
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll("td.r, .val, .grand-box .val").forEach(function(el) {
+    var text = el.textContent.trim();
+    if(text.endsWith("₮")) {
+      var num = text.replace("₮","").replace(/,/g,"").trim();
+      var n = parseFloat(num);
+      if(!isNaN(n)) {
+        el.textContent = n.toLocaleString("en-US") + "₮";
+      }
+    }
+  });
+});
+
+// Engineering type selection
+let currentEngType = '';
+// Инженерийн картуудад click listener нэмэх
+document.addEventListener('DOMContentLoaded', function() {
+  ['heat_pit','water_pit','heat_pipe','sewer'].forEach(function(t) {
+    (function(type) {
+      var card = document.getElementById('card-' + type);
+      if (card) {
+        card.addEventListener('click', function(e) {
+          e.stopPropagation();
+          selectEngType(type);
+        }, true);
+      }
+    })(t);
+  });
+});
+function selectEngType(type) {
+  currentEngType = type;
+  // Барилгын карт reset
+  ['low_rise','apartment','office','warehouse'].forEach(t => {
+    const tc = document.getElementById('tc_'+t);
+    if(tc) tc.classList.remove('selected');
+    const sub = document.getElementById('subtype_'+t);
+    if(sub) sub.style.display = 'none';
+  });
+  window._engType = type;
+  // Form-д шууд eng_type оруулах
+  var form = document.getElementById('main-form');
+  if (form) {
+    form.action = '/budget/';
+  }
+  document.querySelectorAll('#card-heat_pit,#card-water_pit,#card-heat_pipe,#card-sewer').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('card-' + type);
+  if (card) card.classList.add('selected');
+  // building_type input-г шууд тохируулах
+  // building_type_input-г шууд engineering болгох
+  document.getElementById('building_type_input').value = 'engineering';
+  // Глобал хувьсагчид хадгалах
+  window._engType = type;
+  // eng_type hidden input-д хадгалах
+  let etInput = document.getElementById('hidden_eng_type');
+  if (!etInput) {
+    etInput = document.createElement('input');
+    etInput.type = 'hidden';
+    etInput.id = 'hidden_eng_type';
+    etInput.name = 'eng_type';
+    document.querySelector('form') && document.querySelector('form').appendChild(etInput);
+  }
+  etInput.value = type;
+  // eng-inputs харуулах
+  const engInputs = document.getElementById('eng-inputs');
+  if (engInputs) engInputs.style.display = 'block';
+  ['heat_pit','water_pit','heat_pipe','sewer'].forEach(t => {
+    const el = document.getElementById('eng-' + t);
+    if (el) el.style.display = t === type ? 'block' : 'none';
+  });
+  // Инженерийн input-уудыг харуулах
+  document.getElementById('eng-inputs').style.display = 'block';
+  ['heat_pit','water_pit','heat_pipe','sewer'].forEach(t => {
+    const el = document.getElementById('eng-' + t);
+    if (el) el.style.display = t === type ? 'block' : 'none';
+  });
+  updateEngFormData();
+}
+
+function updateCablesByVoltage(voltage) {
+  var sel = document.getElementById('eng_extra_cable_mark');
+  if (!sel) return;
+  sel.innerHTML = '<option>⏳ Ачааллаж байна...</option>';
+  fetch('/api/material-prices/?category=mat_elec&voltage=' + encodeURIComponent(voltage))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      sel.innerHTML = '';
+      data.items.forEach(function(item){
+        var o = document.createElement('option');
+        o.value = item.name;
+        o.textContent = item.name + ' — ' + item.price.toLocaleString() + '₮/м';
+        sel.appendChild(o);
+      });
+      var oo = document.createElement('option');
+      oo.value = 'өөр'; oo.textContent = '✏️ Өөр марк оруулах...';
+      sel.appendChild(oo);
+    }).catch(function(){ sel.innerHTML = '<option>Алдаа</option>'; });
+}
+
+function updateEngFormData() {
+  // Инженерийн хэмжээсүүдийг hidden input-уудад хадгална
+  const setHidden = (name, val) => {
+    let el = document.getElementById('hidden_' + name);
+    if (!el) {
+      el = document.createElement('input');
+      el.type = 'hidden';
+      el.id = 'hidden_' + name;
+      el.name = name;
+      document.querySelector('form') && document.querySelector('form').appendChild(el);
+    }
+    el.value = val;
+  };
+  if (currentEngType === 'heat_pit') {
+    setHidden('length',         document.getElementById('eng-length')?.value    || 3.5);
+    setHidden('width',          document.getElementById('eng-width')?.value     || 1.5);
+    setHidden('depth',          document.getElementById('eng-depth')?.value     || 2.3);
+    setHidden('wall_thick',     document.getElementById('eng-thick')?.value     || 0.45);
+    setHidden('concrete_grade', document.getElementById('eng-concrete')?.value  || 'B25');
+  } else if (currentEngType === 'water_pit') {
+    setHidden('diameter', document.getElementById('eng-diameter')?.value || 1.5);
+    setHidden('depth',    document.getElementById('eng-depth2')?.value   || 3.0);
+  } else if (currentEngType === 'heat_pipe') {
+    setHidden('pipe_length',   document.getElementById('eng-pipe-len')?.value || 100);
+    setHidden('pipe_diameter', document.getElementById('eng-pipe-dia')?.value || '219мм');
+    setHidden('insulated',     'true');
+  } else if (currentEngType === 'sewer') {
+    setHidden('pipe_length', document.getElementById('eng-sewer-len')?.value || 50);
+    setHidden('manholes',    document.getElementById('eng-manholes')?.value   || 2);
+  } else if (currentEngType === 'electric_line') {
+    setHidden('pipe_length', document.getElementById('eng_extra_pipe_length')?.value || 100);
+    setHidden('voltage',     document.getElementById('eng_extra_voltage')?.value     || '0.4кВ');
+    setHidden('cable_mark',  document.getElementById('eng_extra_cable_mark')?.value  || '');
+    setHidden('cable_type',  document.getElementById('eng_extra_cable_type')?.value  || 'газар доорх');
+    setHidden('conduit',     document.getElementById('eng_extra_conduit')?.value     || 'HDPE 50мм');
+    setHidden('poles',       document.getElementById('eng_extra_poles')?.value       || 0);
+  }
+}
+
+
+</script>
+
+<script>
+// Page load-д бүх карт reset — зөвхөн хэрэглэгч дарсан үед сонгогдох
+document.addEventListener('DOMContentLoaded', function() {
+  // Барилгын карт-уудыг reset
+  ['low_rise','apartment','office','warehouse'].forEach(function(t) {
+    var tc = document.getElementById('tc_'+t);
+    if(tc) tc.classList.remove('selected');
+    var sub = document.getElementById('subtype_'+t);
+    if(sub) sub.style.display = 'none';
+  });
+  // Инженерийн карт-уудыг reset
+  ['heat_pit','water_pit','heat_pipe','sewer'].forEach(function(t) {
+    var tc = document.getElementById('card-'+t);
+    if(tc) tc.classList.remove('selected');
+  });
+});
+</script>
+
+<script>
+// ── Барилга main dropdown ──
+function onBuildingMainChange(val) {
+  const subSel = document.getElementById('sel_building_sub');
+  const subDiv = document.getElementById('sub_building');
+  const engSel = document.getElementById('sel_eng_main');
+
+  // Eng reset
+  engSel.value = '';
+  document.getElementById('hidden_eng_type').value = '';
+
+  const subs = {
+    low_rise: [
+      ['Амины орон сууц (1 давхар)', '🏠 1 давхар'],
+      ['Амины орон сууц (2 давхар)', '🏠 2 давхар'],
+      ['Амины орон сууц (хагас подвалтай)', '🏠 Подвалтай'],
+      ['Засвар өргөтгөл', '🔧 Засвар / Өргөтгөл'],
+    ],
+    apartment: [
+      ['Олон айлын орон сууц (3-5 давхар)', '🏢 3-5 давхар'],
+      ['Олон айлын орон сууц (6-9 давхар)', '🏢 6-9 давхар'],
+      ['Олон айлын орон сууц (10+ давхар)', '🏢 10+ давхар'],
+    ],
+    office: [
+      ['Оффисын барилга', '🏢 Оффис'],
+      ['Дэлгүүр, худалдааны төв', '🏪 Дэлгүүр'],
+      ['Сургууль, цэцэрлэг', '🏫 Сургууль'],
+      ['Эмнэлэг', '🏥 Эмнэлэг'],
+    ],
+    warehouse: [
+      ['Агуулах (хөнгөн бүтэц)', '🏭 Агуулах'],
+      ['Үйлдвэрийн барилга', '🏭 Үйлдвэр'],
+      ['Гараж', '🚗 Гараж'],
+    ],
+  };
+
+  if (!val) {
+    subDiv.style.display = 'none';
+    document.getElementById('building_type_input').value = '';
+    document.getElementById('building_category').value = '';
+    return;
+  }
+
+  // Sub dropdown-г дүүргэх
+  subSel.innerHTML = '';
+  (subs[val] || []).forEach(function(item) {
+    var opt = document.createElement('option');
+    opt.value = item[0];
+    opt.textContent = item[1];
+    subSel.appendChild(opt);
+  });
+  subDiv.style.display = 'block';
+
+  // Default утга
+  document.getElementById('building_type_input').value = subs[val][0][0];
+  document.getElementById('building_category').value = val;
+  document.getElementById('hidden_eng_type').value = '';
+  updateStep2Fields(val);
+}
+
+function onBuildingSubChange(val) {
+  document.getElementById('building_type_input').value = val;
+}
+
+// ── Инженерийн dropdown ──
+function onEngMainChange(val) {
+  if (!val) {
+    document.getElementById('hidden_eng_type').value = '';
+    document.getElementById('building_type_input').value = '';
+    document.getElementById('building_category').value = '';
+    return;
+  }
+  // Барилга reset
+  document.getElementById('sel_building_main').value = '';
+  document.getElementById('sub_building').style.display = 'none';
+  document.getElementById('building_type_input').value = 'engineering';
+  document.getElementById('building_category').value = 'engineering';
+  document.getElementById('hidden_eng_type').value = val;
+}
+
+function submitEngInput() {
+  var engType = document.getElementById('hidden_eng_type').value;
+  var lengthEl = document.getElementById('eng_length_inp');
+  var length = lengthEl ? lengthEl.value : '';
+  var showLen = ['heat_pipe','sewer','electric_line','telecom','gas_pipe'].indexOf(engType) >= 0;
+  if(showLen && !length) { alert('Уртыг оруулна уу!'); return; }
+  document.getElementById('hid_eng_count').value = length || '1';
+  document.getElementById('hid_eng_length').value = length || '1';
+  document.getElementById('building_type_input').value = 'engineering';
+  document.getElementById('building_category').value = 'engineering';
+  var form = document.getElementById('main-form');
+  form.querySelectorAll('.eng-extra-hidden').forEach(function(el){ el.remove(); });
+  // eng_extra_fields дотрох бүх select, input
+  document.querySelectorAll('#eng_extra_fields select, #eng_extra_fields input').forEach(function(el) {
+    var fname = el.id ? el.id.replace('eng_extra_', '') : el.name;
+    if (!fname) return;
+    var h = document.createElement('input');
+    h.type='hidden'; h.name=fname; h.value=el.value; h.className='eng-extra-hidden';
+    form.appendChild(h);
+  });
+  // pipe_length — eng_length_inp-аас авах
+  var pipeLenEl = document.getElementById('eng_length_inp');
+  var pipeVal = pipeLenEl ? pipeLenEl.value : (length || '100');
+  var h2 = document.createElement('input');
+  h2.type='hidden'; h2.name='pipe_length'; h2.value=pipeVal; h2.className='eng-extra-hidden';
+  form.appendChild(h2);
+  form.action = '/budget/';
+  form.method = 'post';
+  form.submit();
+}
+
+function submitEngForm2() {
+  if (!showLen && !count) {
+    alert('Тоо ширхэгийг оруулна уу!');
+    return;
+  }
+  // Hidden field-д утга оруулах
+  document.getElementById('hid_eng_count').value = count;
+  document.getElementById('hid_eng_length').value = showLen ? length : count;
+  document.getElementById('building_type_input').value = 'engineering';
+  document.getElementById('building_category').value = 'engineering';
+  // eng_extra_* field-үүдийг form-д нэмэх
+  var form = document.getElementById('main-form');
+  // Хуучин eng_extra hidden field-үүдийг устгах
+  form.querySelectorAll('.eng-extra-hidden').forEach(function(el){ el.remove(); });
+  // Шинээр нэмэх — submit хийхээс ӨМНӨ утгуудыг цуглуулах
+  var extraIds = ['pipe_length','voltage','cable_mark','cable_type','conduit','poles',
+                  'pole_height','lamp_type','pipe_diameter','pipe_material','insulation',
+                  'depth','manholes','manhole_type'];
+  extraIds.forEach(function(fname) {
+    var el = document.getElementById('eng_extra_' + fname);
+    if (!el) return;
+    var hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = fname;
+    hidden.value = el.value;
+    hidden.className = 'eng-extra-hidden';
+    form.appendChild(hidden);
+  });
+  form.action = '/budget/';
+  form.method = 'post';
+  // Бүх шаардлагатай hidden field-г шалгах
+  var csrfInput = form.querySelector('[name=csrfmiddlewaretoken]');
+  if (!csrfInput) {
+    alert('CSRF алдаа!');
+    return;
+  }
+  form.submit();
+}
+// ── Дараах товч ──
+
+</script>
+
 {% if result %}
+<script>
 function downloadExcel() {
   const data = {{ result_json|safe }};
   const form = document.createElement("form");
@@ -1135,21 +1959,7 @@ function downloadExcel() {
   document.body.appendChild(form);
   form.submit();
 }
-{% endif %}
-
-// JavaScript-аар тоог таслалтай болгох
-document.addEventListener("DOMContentLoaded", function() {
-  document.querySelectorAll("td.r, .val, .grand-box .val").forEach(function(el) {
-    var text = el.textContent.trim();
-    if(text.endsWith("₮")) {
-      var num = text.replace("₮","").replace(/,/g,"").trim();
-      var n = parseFloat(num);
-      if(!isNaN(n)) {
-        el.textContent = n.toLocaleString("en-US") + "₮";
-      }
-    }
-  });
-});
 </script>
+{% endif %}
 </body>
 </html>

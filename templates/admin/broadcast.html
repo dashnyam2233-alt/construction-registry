@@ -1,0 +1,60 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>📢 Олон хүнд мессеж илгээх</h1>
+{% if result %}
+<div style="background:{% if result.success %}#d4edda{% else %}#f8d7da{% endif %};padding:15px;border-radius:8px;margin-bottom:20px;">
+  <strong>{% if result.success %}✅{% else %}❌{% endif %} {{ result.message }}</strong>
+  {% if result.details %}
+  <ul style="margin-top:10px;">
+    {% for d in result.details %}<li>{{ d }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endif %}
+<form method="post" style="max-width:700px;">
+  {% csrf_token %}
+  <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">
+    <h3 style="margin-bottom:15px;">📡 Илгээх суваг</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <label style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #ddd;border-radius:8px;cursor:pointer;">
+        <input type="checkbox" name="channels" value="email"> ✉️ Email
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #ddd;border-radius:8px;cursor:pointer;">
+        <input type="checkbox" name="channels" value="sms"> 📱 SMS (Утас)
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #ddd;border-radius:8px;cursor:pointer;">
+        <input type="checkbox" name="channels" value="telegram"> ✈️ Telegram
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #ddd;border-radius:8px;cursor:pointer;">
+        <input type="checkbox" name="channels" value="facebook"> 📘 Facebook
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #ddd;border-radius:8px;cursor:pointer;">
+        <input type="checkbox" name="channels" value="viber"> 💬 Viber
+      </label>
+    </div>
+  </div>
+  <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">
+    <h3 style="margin-bottom:15px;">👥 Хүлээн авагчид</h3>
+    <select name="target_type" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;">
+      <option value="all_companies">🏢 Бүх компани</option>
+      <option value="all_workers">👤 Бүх ажиллагсад</option>
+      <option value="all_brigades">👷 Бүх бригад</option>
+      <option value="all_users">🌐 Бүх хэрэглэгч</option>
+    </select>
+  </div>
+  <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">
+    <h3 style="margin-bottom:15px;">✍️ Мессежийн агуулга</h3>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-weight:600;margin-bottom:5px;">Гарчиг (Email-д)</label>
+      <input type="text" name="subject" placeholder="Мессежийн гарчиг" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;">
+    </div>
+    <div>
+      <label style="display:block;font-weight:600;margin-bottom:5px;">Мессеж</label>
+      <textarea name="body" rows="6" placeholder="Мессежийн агуулга бичнэ үү..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;"></textarea>
+    </div>
+  </div>
+  <button type="submit" style="background:#417690;color:#fff;padding:12px 30px;border:none;border-radius:6px;font-size:16px;cursor:pointer;width:100%;">
+    📤 Илгээх
+  </button>
+</form>
+{% endblock %}
